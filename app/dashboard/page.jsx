@@ -3,17 +3,15 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth';
-import { auth, db } from '@/lib/firebase';
+import { auth } from '@/lib/firebase';
 import { ref, listAll } from 'firebase/storage';
 import { getStorage } from 'firebase/storage';
-import { doc, getDoc } from 'firebase/firestore';
 import Link from 'next/link';
 
 const storage = getStorage();
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [contracts, setContracts] = useState([]);
   const [error, setError] = useState('');
@@ -23,15 +21,6 @@ export default function Dashboard() {
     const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        
-        try {
-          const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
-          const userData = userDoc.data();
-          setIsAdmin(true);
-        } catch (err) {
-          console.error('Error fetching user role:', err);
-        }
-
         loadContracts();
       } else {
         router.push('/login');
@@ -87,13 +76,11 @@ export default function Dashboard() {
             </h1>
           </Link>
           <div className="space-x-4 flex items-center">
-            {isAdmin && (
-              <Link href="/admin">
-                <button className="bg-red-700 hover:bg-red-600 text-white font-bold py-2 px-6 rounded transition-all duration-300 uppercase">
-                  Admin Panel
-                </button>
-              </Link>
-            )}
+            <Link href="/admin">
+              <button className="bg-red-700 hover:bg-red-600 text-white font-bold py-2 px-6 rounded transition-all duration-300 uppercase">
+                Admin Panel
+              </button>
+            </Link>
             <button
               onClick={handleLogout}
               className="bg-ups-brown hover:bg-ups-gold text-ups-gold hover:text-ups-brown font-bold py-2 px-6 rounded transition-all duration-300 uppercase"
@@ -107,9 +94,7 @@ export default function Dashboard() {
       <main className="max-w-6xl mx-auto p-6">
         <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8 mb-8">
           <h2 className="text-3xl font-bold text-ups-gold mb-2">Welcome, {user?.email}!</h2>
-          <p className="text-gray-400">
-            {isAdmin ? 'Admin User - Contract Analysis & Grievance Filing' : 'Contract Analysis & Grievance Filing'}
-          </p>
+          <p className="text-gray-400">Contract Analysis & Grievance Filing</p>
         </div>
 
         {error && (
@@ -139,7 +124,7 @@ export default function Dashboard() {
             </div>
           ) : (
             <div className="bg-gray-800 border-2 border-ups-brown rounded-lg p-8 text-center">
-              <p className="text-gray-400">No contracts available yet. {isAdmin && 'Upload one from the Admin Panel.'}</p>
+              <p className="text-gray-400">No contracts available yet. Upload one from the Admin Panel.</p>
             </div>
           )}
         </div>
