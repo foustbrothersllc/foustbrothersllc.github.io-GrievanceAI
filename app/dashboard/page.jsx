@@ -4,21 +4,43 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import Link from 'next/link';
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
+  const [userName, setUserName] = useState('');
   const [loading, setLoading] = useState(true);
   const [contracts, setContracts] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        const snapshot = await getDocs(collection(db, 'contracts'));
-        setContracts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        
+        // Get user data including name and role
+        try {
+          const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+          if (userDoc.exists()) {
+            setUserName(userDoc.data().name || currentUser.email);
+            setIsAdmin(userDoc.data().role === 'admin');
+          } else {
+            setUserName(currentUser.email);
+          }
+        } catch (err) {
+          console.error('Error fetching user data:', err);
+          setUserName(currentUser.email);
+        }
+
+        // Load contracts
+        try {
+          const snapshot = await getDocs(collection(db, 'contracts'));
+          setContracts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        } catch (err) {
+          console.error('Error loading contracts:', err);
+        }
       } else {
         router.push('/login');
       }
@@ -35,14 +57,17 @@ export default function Dashboard() {
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <Link href="/"><h1 className="text-3xl font-bold text-ups-gold">GRIEVANCE AI</h1></Link>
           <div className="space-x-4">
-            <Link href="/admin"><button className="bg-ups-brown text-ups-gold px-6 py-2 rounded uppercase">Admin</button></Link>
+            {isAdmin && (
+              <Link href="/admin"><button className="bg-ups-brown text-ups-gold px-6 py-2 rounded uppercase">Admin</button></Link>
+            )}
             <button onClick={() => { signOut(auth); router.push('/'); }} className="bg-ups-brown text-ups-gold px-6 py-2 rounded uppercase">Logout</button>
           </div>
         </div>
       </header>
       <main className="max-w-6xl mx-auto p-6">
         <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8 mb-8">
-          <h2 className="text-3xl font-bold text-ups-gold mb-2">Welcome, {user?.email}!</h2>
+          <h2 className="text-3xl font-bold text-ups-gold mb-2">Welcome, {userName}!</h2>
+          <p className="text-gray-400">Analyze contracts for labor law violations</p>
         </div>
         <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8">
           <h3 className="text-2xl font-bold text-ups-gold mb-6">Available Contracts ({contracts.length})</h3>
