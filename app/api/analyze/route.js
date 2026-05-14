@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const genAI = new GoogleGenerativeAI("AIzaSyAKlt8Ulle36RA-wlfM04z2Lyg3MSJGF2U");
+const genAI = new GoogleGenerativeAI("AIzaSyBCsWv144FkqsorpXiTC4_3mRjejj7msoA");
 
 export async function POST(request) {
   try {
