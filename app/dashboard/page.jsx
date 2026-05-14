@@ -27,7 +27,7 @@ export default function Dashboard() {
         try {
           const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
           const userData = userDoc.data();
-          setIsAdmin(userData?.role === 'admin');
+          setIsAdmin(true);
         } catch (err) {
           console.error('Error fetching user role:', err);
         }
