@@ -61,8 +61,8 @@ export default function AdminPanel() {
       const data = await response.json();
 
       if (data.secure_url) {
-        setSuccess(`PDF uploaded successfully! URL: ${data.secure_url}`);
-        setContractText(`[PDF: ${file.name}]\n\nURL: ${data.secure_url}\n\nPaste the extracted text from the PDF below, or the system will analyze the document directly.`);
+        setSuccess(`PDF uploaded successfully!`);
+        setContractText(data.secure_url);
       } else {
         setError('Failed to upload PDF');
       }
@@ -76,7 +76,7 @@ export default function AdminPanel() {
   const handleSaveContract = async (e) => {
     e.preventDefault();
     if (!contractName.trim() || !contractText.trim()) {
-      setError('Please fill all fields');
+      setError('Please upload a PDF and enter a contract name');
       return;
     }
     setSaving(true);
@@ -155,20 +155,6 @@ export default function AdminPanel() {
               />
             </div>
 
-            <div>
-              <label className="block text-ups-gold font-semibold mb-2">Contract Text</label>
-              <textarea
-                value={contractText}
-                onChange={(e) => setContractText(e.target.value)}
-                placeholder="Paste contract text here (or text will be extracted from PDF)..."
-                className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-2 text-white h-64"
-                disabled={saving}
-              />
-              <p className="text-gray-400 text-sm mt-2">
-                {contractText.length} characters
-              </p>
-            </div>
-
             <button
               type="submit"
               disabled={saving}
@@ -185,7 +171,7 @@ export default function AdminPanel() {
             <div className="space-y-3">
               {contracts.map((c) => (
                 <div key={c.id} className="bg-gray-800 border border-ups-brown rounded p-4 flex justify-between">
-                  <div><p className="text-white font-semibold">{c.name}</p><p className="text-gray-500 text-sm">{c.text.substring(0, 100)}...</p></div>
+                  <p className="text-white font-semibold">{c.name}</p>
                   <button onClick={() => handleDelete(c.id)} className="bg-red-700 text-white px-4 py-2 rounded">Delete</button>
                 </div>
               ))}
