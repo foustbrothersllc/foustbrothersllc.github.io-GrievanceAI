@@ -1,118 +1,186 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { auth } from '@/lib/firebase';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { signOut } from 'firebase/auth';
 
-export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function AnalyzePage() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [contractName, setContractName] = useState('');
+  const [analysisResults, setAnalysisResults] = useState(null);
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log('Login successful:', userCredential.user.email);
-      router.push('/dashboard');
-    } catch (err) {
-      console.error('Login error:', err.code, err.message);
-      
-      if (err.code === 'auth/user-not-found') {
-        setError('Email not found. Please create an account.');
-      } else if (err.code === 'auth/wrong-password') {
-        setError('Incorrect password.');
-      } else if (err.code === 'auth/invalid-email') {
-        setError('Invalid email address.');
-      } else if (err.code === 'auth/too-many-requests') {
-        setError('Too many login attempts. Please try again later.');
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+        const contract = searchParams.get('contract');
+        if (contract) setContractName(decodeURIComponent(contract));
       } else {
-        setError('Login failed: ' + (err.message || 'Unknown error'));
+        router.push('/login');
       }
       setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [router, searchParams]);
+
+  const handleAnalyze = async () => {
+    if (!contractName) {
+      setError('No contract selected');
+      return;
+    }
+
+    setAnalyzing(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contractName,
+          userId: user.uid,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.error) {
+        setError(data.error);
+      } else {
+        setAnalysisResults(data);
+      }
+    } catch (err) {
+      console.error('Analysis error:', err);
+      setError('Failed to analyze contract');
+    } finally {
+      setAnalyzing(false);
     }
   };
 
+  const handleLogout = async () => {
+    await signOut(auth);
+    router.push('/');
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-ups-black flex items-center justify-center">
+        <p className="text-ups-gold text-xl">Loading...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-ups-black flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
+    <div className="min-h-screen bg-ups-black">
+      {/* Header */}
+      <header className="border-b border-ups-brown bg-gray-900 p-6">
+        <div className="max-w-6xl mx-auto flex justify-between items-center">
           <Link href="/">
             <h1 className="text-3xl font-bold text-ups-gold hover:text-yellow-300 cursor-pointer">
               GRIEVANCE AI
             </h1>
           </Link>
-          <p className="text-gray-400 mt-2">Sign In to Your Account</p>
-        </div>
-
-        <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-6 mb-6">
-          {error && (
-            <div className="bg-red-900 border-2 border-red-600 text-red-100 p-3 rounded mb-4 text-sm">
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <label className="block text-ups-gold font-semibold mb-2 text-sm">
-                Email Address
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                required
-                disabled={loading}
-                className="w-full px-4 py-2 bg-gray-800 border-2 border-ups-brown rounded text-white placeholder-gray-600 focus:outline-none focus:border-ups-gold focus:ring-2 focus:ring-ups-gold/30"
-              />
-            </div>
-
-            <div>
-              <label className="block text-ups-gold font-semibold mb-2 text-sm">
-                Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                required
-                disabled={loading}
-                className="w-full px-4 py-2 bg-gray-800 border-2 border-ups-brown rounded text-white placeholder-gray-600 focus:outline-none focus:border-ups-gold focus:ring-2 focus:ring-ups-gold/30"
-              />
-            </div>
-
+          <div className="space-x-4">
+            <Link href="/dashboard">
+              <button className="bg-ups-brown hover:bg-ups-gold text-ups-gold hover:text-ups-brown font-bold py-2 px-6 rounded transition-all duration-300 uppercase">
+                Dashboard
+              </button>
+            </Link>
             <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-ups-brown hover:bg-ups-gold text-ups-gold hover:text-ups-brown font-bold py-3 px-4 rounded transition-all duration-300 disabled:opacity-50 uppercase tracking-wide"
+              onClick={handleLogout}
+              className="bg-ups-brown hover:bg-ups-gold text-ups-gold hover:text-ups-brown font-bold py-2 px-6 rounded transition-all duration-300 uppercase"
             >
-              {loading ? 'SIGNING IN...' : 'SIGN IN'}
+              Logout
             </button>
-          </form>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-6xl mx-auto p-6">
+        <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8 mb-8">
+          <h2 className="text-3xl font-bold text-ups-gold mb-2">Contract Analysis</h2>
+          <p className="text-gray-400">Analyze {contractName} for potential violations</p>
         </div>
 
-        <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-6 text-center">
-          <p className="text-gray-400 mb-3">Don't have an account?</p>
-          <Link href="/signup">
-            <button className="text-ups-gold font-semibold hover:text-yellow-300 transition-colors">
-              Create Account
-            </button>
-          </Link>
+        {error && (
+          <div className="bg-red-900 border-2 border-red-600 text-red-100 p-4 rounded mb-8">
+            {error}
+          </div>
+        )}
+
+        <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8 mb-8">
+          <h3 className="text-2xl font-bold text-ups-gold mb-6">Analysis Options</h3>
+          
+          <button
+            onClick={handleAnalyze}
+            disabled={analyzing}
+            className="bg-ups-brown hover:bg-ups-gold text-ups-gold hover:text-ups-brown font-bold py-3 px-8 rounded transition-all duration-300 uppercase disabled:opacity-50"
+          >
+            {analyzing ? 'ANALYZING...' : 'ANALYZE CONTRACT'}
+          </button>
         </div>
 
-        <div className="text-center mt-6 text-xs text-gray-600">
-          <p>Secure Firebase Authentication</p>
-        </div>
-      </div>
+        {analysisResults && (
+          <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8">
+            <h3 className="text-2xl font-bold text-ups-gold mb-6">Analysis Results</h3>
+            
+            <div className="space-y-6">
+              {/* Violations */}
+              {analysisResults.violations && analysisResults.violations.length > 0 && (
+                <div className="bg-gray-800 border border-red-600 rounded p-6">
+                  <h4 className="text-xl font-bold text-red-400 mb-4">
+                    ⚠️ Potential Violations Found ({analysisResults.violations.length})
+                  </h4>
+                  <ul className="space-y-3">
+                    {analysisResults.violations.map((violation, idx) => (
+                      <li key={idx} className="text-gray-300 border-l-4 border-red-600 pl-4">
+                        <p className="font-semibold">{violation.type}</p>
+                        <p className="text-sm text-gray-400">{violation.description}</p>
+                        <p className="text-sm text-gray-500 mt-1">Section: {violation.section}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Compliant Clauses */}
+              {analysisResults.compliant && analysisResults.compliant.length > 0 && (
+                <div className="bg-gray-800 border border-green-600 rounded p-6">
+                  <h4 className="text-xl font-bold text-green-400 mb-4">
+                    ✅ Compliant Clauses ({analysisResults.compliant.length})
+                  </h4>
+                  <ul className="space-y-2">
+                    {analysisResults.compliant.map((clause, idx) => (
+                      <li key={idx} className="text-gray-300">✓ {clause}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Summary */}
+              <div className="bg-gray-800 border border-ups-gold rounded p-6">
+                <h4 className="text-xl font-bold text-ups-gold mb-4">Summary</h4>
+                <p className="text-gray-300">{analysisResults.summary}</p>
+              </div>
+
+              {/* File Grievance Button */}
+              <Link href={`/grievance?violations=${encodeURIComponent(JSON.stringify(analysisResults.violations))}`}>
+                <button className="w-full bg-ups-brown hover:bg-ups-gold text-ups-gold hover:text-ups-brown font-bold py-3 px-8 rounded transition-all duration-300 uppercase">
+                  File Grievance Based on Analysis
+                </button>
+              </Link>
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 }
