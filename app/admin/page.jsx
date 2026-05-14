@@ -33,7 +33,7 @@ export default function AdminPanel() {
           const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
           const userData = userDoc.data();
           
-          if (userData?.role === 'admin') {
+           setLoading(false);
             setIsAdmin(true);
             loadContracts();
             loadUsers();
