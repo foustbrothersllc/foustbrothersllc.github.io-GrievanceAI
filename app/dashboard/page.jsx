@@ -136,7 +136,7 @@ export default function Dashboard() {
               <textarea
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
-                placeholder="e.g., Does this violate the 40-hour work week rule?"
+                placeholder="e.g., Can UPS send me home before I get my 8 hours?"
                 className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-2 text-white h-24"
                 disabled={analyzing}
               />
