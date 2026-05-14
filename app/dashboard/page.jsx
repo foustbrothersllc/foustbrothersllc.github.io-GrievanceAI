@@ -53,9 +53,15 @@ export default function Dashboard() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
-    if (!file.type.includes('pdf')) {
-      setError('Please upload a PDF file');
+    // Validate file type - accept PDF and JSON
+    const validTypes = ['application/pdf', 'application/json'];
+    const validExtensions = ['.pdf', '.json'];
+    
+    const hasValidType = validTypes.includes(file.type);
+    const hasValidExtension = validExtensions.some(ext => file.name.endsWith(ext));
+
+    if (!hasValidType && !hasValidExtension) {
+      setError('Please upload a PDF or JSON file');
       return;
     }
 
@@ -79,7 +85,7 @@ export default function Dashboard() {
       e.target.value = '';
     } catch (err) {
       console.error('Upload error:', err);
-      setError('Failed to upload contract');
+      setError('Failed to upload file');
     } finally {
       setUploading(false);
     }
@@ -141,11 +147,11 @@ export default function Dashboard() {
           <div className="border-2 border-dashed border-ups-brown rounded-lg p-8 text-center mb-6 hover:border-ups-gold transition-colors">
             <label className="cursor-pointer">
               <div className="text-ups-gold text-6xl mb-4">📄</div>
-              <p className="text-ups-gold font-semibold mb-2">Choose a PDF Contract</p>
-              <p className="text-gray-400 text-sm mb-4">or drag and drop</p>
+              <p className="text-ups-gold font-semibold mb-2">Choose a Contract File</p>
+              <p className="text-gray-400 text-sm mb-4">PDF or JSON</p>
               <input
                 type="file"
-                accept=".pdf"
+                accept=".pdf,.json"
                 onChange={handleFileUpload}
                 disabled={uploading}
                 className="hidden"
@@ -161,7 +167,7 @@ export default function Dashboard() {
           </div>
 
           <p className="text-gray-400 text-sm text-center">
-            Maximum file size: 10MB • Supported format: PDF
+            Maximum file size: 10MB • Supported formats: PDF, JSON
           </p>
         </div>
 
