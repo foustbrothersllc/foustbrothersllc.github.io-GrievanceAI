@@ -160,12 +160,10 @@ export default function AdminPanel() {
           </div>
         )}
 
-        {/* Add Contract Form */}
         <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8 mb-8">
           <h3 className="text-2xl font-bold text-ups-gold mb-6">Add New Contract</h3>
           
           <form onSubmit={handleSaveContract} className="space-y-6">
-            {/* Contract Name */}
             <div>
               <label className="block text-ups-gold font-semibold mb-2">Contract Name</label>
               <input
@@ -178,7 +176,6 @@ export default function AdminPanel() {
               />
             </div>
 
-            {/* Contract Text */}
             <div>
               <label className="block text-ups-gold font-semibold mb-2">Contract Text</label>
               <textarea
@@ -193,7 +190,6 @@ export default function AdminPanel() {
               </p>
             </div>
 
-            {/* Save Button */}
             <button
               type="submit"
               disabled={saving}
@@ -204,7 +200,6 @@ export default function AdminPanel() {
           </form>
         </div>
 
-        {/* Contracts List */}
         <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8">
           <h3 className="text-2xl font-bold text-ups-gold mb-6">Shared Contracts ({contracts.length})</h3>
           
