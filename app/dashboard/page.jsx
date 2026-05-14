@@ -163,21 +163,6 @@ export default function Dashboard() {
             )}
           </div>
         )}
-
-        <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8">
-          <h3 className="text-2xl font-bold text-ups-gold mb-6">Available Contracts ({contracts.length})</h3>
-          {contracts.length > 0 ? (
-            <div className="space-y-3">
-              {contracts.map((c) => (
-                <div key={c.id} className="bg-gray-800 border border-ups-brown rounded p-4">
-                  <p className="text-white font-semibold">{c.name}</p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-400">No contracts yet. Admin can add them.</p>
-          )}
-        </div>
       </main>
     </div>
   );
