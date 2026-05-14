@@ -3,21 +3,19 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-import { ref, uploadBytes, listAll, deleteObject } from 'firebase/storage';
-import { getStorage } from 'firebase/storage';
+import { auth, db } from '@/lib/firebase';
+import { collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
 import Link from 'next/link';
-
-const storage = getStorage();
 
 export default function AdminPanel() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [contracts, setContracts] = useState([]);
-  const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [contractName, setContractName] = useState('');
+  const [contractText, setContractText] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -36,89 +34,68 @@ export default function AdminPanel() {
 
   const loadContracts = async () => {
     try {
-      const contractsRef = ref(storage, 'contracts/shared');
-      const result = await listAll(contractsRef);
-      
-      const contractList = result.items.map(item => ({
-        name: item.name,
-        path: item.fullPath,
-        uploadedAt: new Date(item.metadata?.timeCreated).toLocaleDateString()
+      const querySnapshot = await getDocs(collection(db, 'contracts'));
+      const contractList = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        name: doc.data().name,
+        uploadedAt: doc.data().createdAt?.toDate().toLocaleDateString() || 'Unknown',
+        preview: doc.data().text.substring(0, 100) + '...'
       }));
       
       setContracts(contractList);
     } catch (err) {
       console.error('Error loading contracts:', err);
+      setError('Failed to load contracts');
     }
   };
 
-  const handleFileUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const validTypes = ['application/pdf', 'application/json'];
-    const validExtensions = ['.pdf', '.json'];
+  const handleSaveContract = async (e) => {
+    e.preventDefault();
     
-    const hasValidType = validTypes.includes(file.type);
-    const hasValidExtension = validExtensions.some(ext => file.name.endsWith(ext));
-
-    if (!hasValidType && !hasValidExtension) {
-      setError('Please upload a PDF or JSON file');
+    if (!contractName.trim()) {
+      setError('Please enter a contract name');
       return;
     }
 
-    if (file.size > 10 * 1024 * 1024) {
-      setError('File size must be less than 10MB');
+    if (!contractText.trim()) {
+      setError('Please enter contract text');
       return;
     }
 
-    setUploading(true);
-    setUploadProgress(0);
+    setSaving(true);
     setError('');
     setSuccess('');
 
     try {
-      const contractRef = ref(storage, `contracts/shared/${file.name}`);
-      
-      // Simulate progress
-      const progressInterval = setInterval(() => {
-        setUploadProgress(prev => {
-          if (prev >= 90) return 90;
-          return prev + Math.random() * 30;
-        });
-      }, 200);
+      await addDoc(collection(db, 'contracts'), {
+        name: contractName,
+        text: contractText,
+        createdAt: serverTimestamp(),
+        uploadedBy: user.email
+      });
 
-      await uploadBytes(contractRef, file);
-      
-      clearInterval(progressInterval);
-      setUploadProgress(100);
-      setSuccess(`${file.name} uploaded successfully! ✅`);
-      
-      setTimeout(() => {
-        loadContracts();
-        e.target.value = '';
-      }, 1000);
+      setSuccess(`"${contractName}" saved successfully! ✅`);
+      setContractName('');
+      setContractText('');
+      loadContracts();
     } catch (err) {
-      console.error('Upload error:', err);
-      setError(`Upload failed: ${err.message || 'Unknown error'}`);
+      console.error('Save error:', err);
+      setError(`Failed to save contract: ${err.message}`);
     } finally {
-      setTimeout(() => {
-        setUploading(false);
-        setUploadProgress(0);
-      }, 1500);
+      setSaving(false);
     }
   };
 
-  const handleDeleteContract = async (path) => {
+  const handleDeleteContract = async (id) => {
     if (!window.confirm('Are you sure you want to delete this contract?')) return;
 
     try {
-      const fileRef = ref(storage, path);
-      await deleteObject(fileRef);
+      await deleteDoc(doc(db, 'contracts', id));
       setSuccess('Contract deleted successfully!');
       loadContracts();
     } catch (err) {
       console.error('Delete error:', err);
-      setError(`Failed to delete contract: ${err.message || 'Unknown error'}`);
+      setError(`Failed to delete contract: ${err.message}`);
     }
   };
 
@@ -167,7 +144,7 @@ export default function AdminPanel() {
       <main className="max-w-6xl mx-auto p-6">
         <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8 mb-8">
           <h2 className="text-3xl font-bold text-ups-gold mb-2">Admin Panel</h2>
-          <p className="text-gray-400">Manage contracts</p>
+          <p className="text-gray-400">Add and manage contracts</p>
         </div>
 
         {error && (
@@ -183,71 +160,84 @@ export default function AdminPanel() {
           </div>
         )}
 
+        {/* Add Contract Form */}
         <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8 mb-8">
-          <h3 className="text-2xl font-bold text-ups-gold mb-6">Upload Contract</h3>
+          <h3 className="text-2xl font-bold text-ups-gold mb-6">Add New Contract</h3>
           
-          <div className="border-2 border-dashed border-ups-brown rounded-lg p-8 text-center mb-6 hover:border-ups-gold transition-colors">
-            <label className="cursor-pointer">
-              <div className="text-ups-gold text-6xl mb-4">📄</div>
-              <p className="text-ups-gold font-semibold mb-2">Choose a Contract File</p>
-              <p className="text-gray-400 text-sm mb-4">PDF or JSON</p>
+          <form onSubmit={handleSaveContract} className="space-y-6">
+            {/* Contract Name */}
+            <div>
+              <label className="block text-ups-gold font-semibold mb-2">Contract Name</label>
               <input
-                type="file"
-                accept=".pdf,.json"
-                onChange={handleFileUpload}
-                disabled={uploading}
-                className="hidden"
+                type="text"
+                value={contractName}
+                onChange={(e) => setContractName(e.target.value)}
+                placeholder="e.g., Union Agreement 2024"
+                className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-ups-gold"
+                disabled={saving}
               />
-              <button
-                onClick={(e) => e.currentTarget.parentElement.parentElement.querySelector('input').click()}
-                disabled={uploading}
-                className="bg-ups-brown hover:bg-ups-gold text-ups-gold hover:text-ups-brown font-bold py-2 px-6 rounded transition-all duration-300 uppercase disabled:opacity-50"
-              >
-                {uploading ? 'UPLOADING...' : 'SELECT FILE'}
-              </button>
-            </label>
-          </div>
-
-          {uploading && (
-            <div className="mb-6">
-              <div className="w-full bg-gray-800 rounded-full h-4 border border-ups-brown overflow-hidden">
-                <div 
-                  className="bg-ups-gold h-full transition-all duration-300"
-                  style={{ width: `${uploadProgress}%` }}
-                ></div>
-              </div>
-              <p className="text-ups-gold text-sm mt-2 text-center">{Math.round(uploadProgress)}%</p>
             </div>
-          )}
 
-          <p className="text-gray-400 text-sm text-center">
-            Maximum file size: 10MB • Supported formats: PDF, JSON
-          </p>
+            {/* Contract Text */}
+            <div>
+              <label className="block text-ups-gold font-semibold mb-2">Contract Text</label>
+              <textarea
+                value={contractText}
+                onChange={(e) => setContractText(e.target.value)}
+                placeholder="Paste or type the full contract text here..."
+                className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-ups-gold h-64"
+                disabled={saving}
+              />
+              <p className="text-gray-400 text-sm mt-2">
+                {contractText.length} characters
+              </p>
+            </div>
+
+            {/* Save Button */}
+            <button
+              type="submit"
+              disabled={saving}
+              className="w-full bg-ups-brown hover:bg-ups-gold text-ups-gold hover:text-ups-brown font-bold py-3 px-6 rounded transition-all duration-300 uppercase disabled:opacity-50"
+            >
+              {saving ? 'SAVING...' : 'SAVE CONTRACT'}
+            </button>
+          </form>
         </div>
 
+        {/* Contracts List */}
         <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8">
           <h3 className="text-2xl font-bold text-ups-gold mb-6">Shared Contracts ({contracts.length})</h3>
           
           {contracts.length > 0 ? (
             <div className="space-y-3">
-              {contracts.map((contract, index) => (
-                <div key={index} className="bg-gray-800 border border-ups-brown rounded p-4 flex justify-between items-center">
-                  <div>
-                    <p className="text-white font-semibold">{contract.name}</p>
-                    <p className="text-gray-400 text-sm">Uploaded: {contract.uploadedAt}</p>
+              {contracts.map((contract) => (
+                <div key={contract.id} className="bg-gray-800 border border-ups-brown rounded p-4">
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex-1">
+                      <p className="text-white font-semibold text-lg">{contract.name}</p>
+                      <p className="text-gray-400 text-sm">Uploaded: {contract.uploadedAt}</p>
+                      <p className="text-gray-500 text-sm mt-2">{contract.preview}</p>
+                    </div>
+                    <div className="space-x-2 ml-4">
+                      <Link href={`/analyze?contract=${encodeURIComponent(contract.name)}`}>
+                        <button className="bg-ups-brown hover:bg-ups-gold text-ups-gold hover:text-ups-brown font-bold py-2 px-4 rounded transition-all duration-300 uppercase text-sm">
+                          Analyze
+                        </button>
+                      </Link>
+                      <button
+                        onClick={() => handleDeleteContract(contract.id)}
+                        className="bg-red-700 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-all duration-300 uppercase text-sm"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
-                  <button
-                    onClick={() => handleDeleteContract(contract.path)}
-                    className="bg-red-700 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-all duration-300 uppercase text-sm"
-                  >
-                    Delete
-                  </button>
                 </div>
               ))}
             </div>
           ) : (
             <div className="bg-gray-800 border-2 border-ups-brown rounded-lg p-8 text-center">
-              <p className="text-gray-400">No contracts uploaded yet.</p>
+              <p className="text-gray-400">No contracts yet. Add one above to get started!</p>
             </div>
           )}
         </div>
