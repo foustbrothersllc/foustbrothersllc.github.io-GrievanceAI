@@ -1,172 +1,43 @@
-'use client';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { signOut } from 'firebase/auth';
-import { auth, db } from '@/lib/firebase';
-import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
-import Link from 'next/link';
+const genAI = new GoogleGenerativeAI("AIzaSyAKlt8Ulle36RA-wlfM04z2Lyg3MSJGF2U");
 
-export default function Dashboard() {
-  const [user, setUser] = useState(null);
-  const [userName, setUserName] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [contracts, setContracts] = useState([]);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [classification, setClassification] = useState('');
-  const [question, setQuestion] = useState('');
-  const [analyzing, setAnalyzing] = useState(false);
-  const [results, setResults] = useState(null);
-  const [error, setError] = useState('');
-  const router = useRouter();
+export async function POST(request) {
+  try {
+    const { contracts, classification, question } = await request.json();
 
-  const jobTypes = ['Feeder Driver', 'Sleeper Team', 'Package Car Driver', 'Specialist', 'Mechanic', 'Combo Worker', 'Part Time'];
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-        
-        try {
-          const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
-          if (userDoc.exists()) {
-            setUserName(userDoc.data().name || currentUser.email);
-            setIsAdmin(userDoc.data().role === 'admin');
-          } else {
-            setUserName(currentUser.email);
-          }
-        } catch (err) {
-          console.error('Error fetching user data:', err);
-          setUserName(currentUser.email);
-        }
-
-        try {
-          const snapshot = await getDocs(collection(db, 'contracts'));
-          setContracts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-        } catch (err) {
-          console.error('Error loading contracts:', err);
-        }
-      } else {
-        router.push('/login');
-      }
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, [router]);
-
-  const handleAnalyze = async () => {
-    if (!classification.trim()) {
-      setError('Please select a job classification');
-      return;
-    }
-    if (!question.trim()) {
-      setError('Please ask a question');
-      return;
+    if (!contracts || !classification || !question) {
+      return Response.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    setAnalyzing(true);
-    setError('');
-    setResults(null);
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-    try {
-      const response = await fetch('/api/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contracts: contracts.map(c => ({ name: c.name, text: c.text })),
-          classification,
-          question
-        })
-      });
+    // Format all contracts
+    const contractsText = contracts.map(c => `Contract: ${c.name}\n${c.text}`).join('\n\n---\n\n');
 
-      const data = await response.json();
-      setResults(data);
-    } catch (err) {
-      setError('Analysis failed');
-    } finally {
-      setAnalyzing(false);
-    }
-  };
+    const prompt = `You are a labor law expert. A ${classification} is asking the following question about their union contract:
 
-  if (loading) return <div className="min-h-screen bg-ups-black flex items-center justify-center"><p className="text-ups-gold">Loading...</p></div>;
+Question: ${question}
 
-  return (
-    <div className="min-h-screen bg-ups-black">
-      <header className="border-b border-ups-brown bg-gray-900 p-6">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <Link href="/"><h1 className="text-3xl font-bold text-ups-gold">GRIEVANCE AI</h1></Link>
-          <div className="space-x-4">
-            {isAdmin && (
-              <Link href="/admin"><button className="bg-ups-brown text-ups-gold px-6 py-2 rounded uppercase">Admin</button></Link>
-            )}
-            <button onClick={() => { signOut(auth); router.push('/'); }} className="bg-ups-brown text-ups-gold px-6 py-2 rounded uppercase">Logout</button>
-          </div>
-        </div>
-      </header>
-      <main className="max-w-6xl mx-auto p-6">
-        <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8 mb-8">
-          <h2 className="text-3xl font-bold text-ups-gold mb-2">Welcome, {userName}!</h2>
-          <p className="text-gray-400">Check if contract violations apply to your position</p>
-        </div>
+Here are all the contracts on file:
 
-        {error && <div className="bg-red-900 text-red-100 p-4 rounded mb-8">{error}</div>}
-        {results && <div className="bg-green-900 text-green-100 p-4 rounded mb-8">{results}</div>}
+${contractsText}
 
-        <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8 mb-8">
-          <h3 className="text-2xl font-bold text-ups-gold mb-6">Contract Analysis</h3>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-ups-gold font-semibold mb-2">Job Classification</label>
-              <select
-                value={classification}
-                onChange={(e) => setClassification(e.target.value)}
-                className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-2 text-white"
-                disabled={analyzing}
-              >
-                <option value="">Select your job type...</option>
-                {jobTypes.map((type) => (
-                  <option key={type} value={type}>{type}</option>
-                ))}
-              </select>
-            </div>
+Based on these contracts, answer:
+1. Does this question reveal a violation? (YES or NO)
+2. Which contract clause applies?
+3. Brief explanation
 
-            <div>
-              <label className="block text-ups-gold font-semibold mb-2">Ask a Question</label>
-              <textarea
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-                placeholder="e.g., Does this violate the 40-hour work week rule?"
-                className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-2 text-white h-24"
-                disabled={analyzing}
-              />
-            </div>
+Format your response as:
+VIOLATION: YES/NO
+CLAUSE: [contract name and relevant clause]
+EXPLANATION: [brief explanation]`;
 
-            <button
-              onClick={handleAnalyze}
-              disabled={analyzing}
-              className="w-full bg-ups-brown text-ups-gold py-3 rounded uppercase font-bold"
-            >
-              {analyzing ? 'Analyzing...' : 'Analyze'}
-            </button>
-          </div>
-        </div>
-
-        <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8">
-          <h3 className="text-2xl font-bold text-ups-gold mb-6">Available Contracts ({contracts.length})</h3>
-          {contracts.length > 0 ? (
-            <div className="space-y-3">
-              {contracts.map((c) => (
-                <div key={c.id} className="bg-gray-800 border border-ups-brown rounded p-4">
-                  <p className="text-white font-semibold">{c.name}</p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-400">No contracts yet. Admin can add them.</p>
-          )}
-        </div>
-      </main>
-    </div>
-  );
+    const result = await model.generateContent(prompt);
+    const text = result.response.text();
+    
+    return Response.json({ analysis: text });
+  } catch (error) {
+    return Response.json({ error: `Analysis failed: ${error.message}` }, { status: 500 });
+  }
 }
