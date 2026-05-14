@@ -75,10 +75,7 @@ export default function Dashboard() {
             <div className="space-y-3">
               {contracts.map((c) => (
                 <div key={c.id} className="bg-gray-800 border border-ups-brown rounded p-4 flex justify-between items-center">
-                  <div>
-                    <p className="text-white font-semibold">{c.name}</p>
-                    <p className="text-gray-500 text-sm">{c.text.substring(0, 100)}...</p>
-                  </div>
+                  <p className="text-white font-semibold">{c.name}</p>
                   <Link href={`/analyze?id=${c.id}`}><button className="bg-ups-brown text-ups-gold px-4 py-2 rounded">Analyze</button></Link>
                 </div>
               ))}
