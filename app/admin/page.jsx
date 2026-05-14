@@ -1,50 +1,29 @@
-
 'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth';
-import { auth, db } from '@/lib/firebase';
+import { auth } from '@/lib/firebase';
 import { ref, uploadBytes, listAll, deleteObject } from 'firebase/storage';
 import { getStorage } from 'firebase/storage';
-import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
 import Link from 'next/link';
 
 const storage = getStorage();
 
 export default function AdminPanel() {
   const [user, setUser] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [contracts, setContracts] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [users, setUsers] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        
-        // Check if user is admin
-        try {
-          const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
-          const userData = userDoc.data();
-          
-           setLoading(false);
-            setIsAdmin(true);
-            loadContracts();
-            loadUsers();
-          } else {
-            // Not admin, redirect to dashboard
-            router.push('/dashboard');
-          }
-        } catch (err) {
-          console.error('Error checking admin status:', err);
-          router.push('/dashboard');
-        }
+        loadContracts();
       } else {
         router.push('/login');
       }
@@ -68,22 +47,6 @@ export default function AdminPanel() {
       setContracts(contractList);
     } catch (err) {
       console.error('Error loading contracts:', err);
-    }
-  };
-
-  const loadUsers = async () => {
-    try {
-      const usersSnapshot = await getDocs(collection(db, 'users'));
-      const usersList = usersSnapshot.docs.map(doc => ({
-        id: doc.id,
-        email: doc.data().email,
-        role: doc.data().role || 'user',
-        createdAt: doc.data().createdAt
-      }));
-      
-      setUsers(usersList);
-    } catch (err) {
-      console.error('Error loading users:', err);
     }
   };
 
@@ -157,14 +120,6 @@ export default function AdminPanel() {
     );
   }
 
-  if (!isAdmin) {
-    return (
-      <div className="min-h-screen bg-ups-black flex items-center justify-center">
-        <p className="text-red-400 text-xl">Access Denied - Admin Only</p>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-ups-black">
       <header className="border-b border-ups-brown bg-gray-900 p-6">
@@ -193,7 +148,7 @@ export default function AdminPanel() {
       <main className="max-w-6xl mx-auto p-6">
         <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8 mb-8">
           <h2 className="text-3xl font-bold text-ups-gold mb-2">Admin Panel</h2>
-          <p className="text-gray-400">Manage contracts and users</p>
+          <p className="text-gray-400">Manage contracts</p>
         </div>
 
         {error && (
@@ -238,7 +193,7 @@ export default function AdminPanel() {
           </p>
         </div>
 
-        <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8 mb-8">
+        <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8">
           <h3 className="text-2xl font-bold text-ups-gold mb-6">Shared Contracts ({contracts.length})</h3>
           
           {contracts.length > 0 ? (
@@ -261,31 +216,6 @@ export default function AdminPanel() {
           ) : (
             <div className="bg-gray-800 border-2 border-ups-brown rounded-lg p-8 text-center">
               <p className="text-gray-400">No contracts uploaded yet.</p>
-            </div>
-          )}
-        </div>
-
-        <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8">
-          <h3 className="text-2xl font-bold text-ups-gold mb-6">Users ({users.length})</h3>
-          
-          {users.length > 0 ? (
-            <div className="space-y-3">
-              {users.map((u) => (
-                <div key={u.id} className="bg-gray-800 border border-ups-brown rounded p-4">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="text-white font-semibold">{u.email}</p>
-                      <p className="text-gray-400 text-sm">
-                        Role: <span className={u.role === 'admin' ? 'text-red-400' : 'text-ups-gold'}>{u.role}</span>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="bg-gray-800 border-2 border-ups-brown rounded-lg p-8 text-center">
-              <p className="text-gray-400">No users found.</p>
             </div>
           )}
         </div>
