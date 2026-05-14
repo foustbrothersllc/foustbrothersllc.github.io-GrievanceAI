@@ -13,14 +13,20 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [contracts, setContracts] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [classification, setClassification] = useState('');
+  const [question, setQuestion] = useState('');
+  const [analyzing, setAnalyzing] = useState(false);
+  const [results, setResults] = useState(null);
+  const [error, setError] = useState('');
   const router = useRouter();
+
+  const jobTypes = ['Feeder Driver', 'Sleeper Team', 'Package Car Driver', 'Specialist', 'Mechanic', 'Combo Worker', 'Part Time'];
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
         
-        // Get user data including name and role
         try {
           const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
           if (userDoc.exists()) {
@@ -34,7 +40,6 @@ export default function Dashboard() {
           setUserName(currentUser.email);
         }
 
-        // Load contracts
         try {
           const snapshot = await getDocs(collection(db, 'contracts'));
           setContracts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
@@ -48,6 +53,40 @@ export default function Dashboard() {
     });
     return () => unsubscribe();
   }, [router]);
+
+  const handleAnalyze = async () => {
+    if (!classification.trim()) {
+      setError('Please select a job classification');
+      return;
+    }
+    if (!question.trim()) {
+      setError('Please ask a question');
+      return;
+    }
+
+    setAnalyzing(true);
+    setError('');
+    setResults(null);
+
+    try {
+      const response = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contracts: contracts.map(c => ({ name: c.name, text: c.text })),
+          classification,
+          question
+        })
+      });
+
+      const data = await response.json();
+      setResults(data);
+    } catch (err) {
+      setError('Analysis failed');
+    } finally {
+      setAnalyzing(false);
+    }
+  };
 
   if (loading) return <div className="min-h-screen bg-ups-black flex items-center justify-center"><p className="text-ups-gold">Loading...</p></div>;
 
@@ -67,16 +106,59 @@ export default function Dashboard() {
       <main className="max-w-6xl mx-auto p-6">
         <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8 mb-8">
           <h2 className="text-3xl font-bold text-ups-gold mb-2">Welcome, {userName}!</h2>
-          <p className="text-gray-400">Analyze contracts for labor law violations</p>
+          <p className="text-gray-400">Check if contract violations apply to your position</p>
         </div>
+
+        {error && <div className="bg-red-900 text-red-100 p-4 rounded mb-8">{error}</div>}
+        {results && <div className="bg-green-900 text-green-100 p-4 rounded mb-8">{results}</div>}
+
+        <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8 mb-8">
+          <h3 className="text-2xl font-bold text-ups-gold mb-6">Contract Analysis</h3>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-ups-gold font-semibold mb-2">Job Classification</label>
+              <select
+                value={classification}
+                onChange={(e) => setClassification(e.target.value)}
+                className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-2 text-white"
+                disabled={analyzing}
+              >
+                <option value="">Select your job type...</option>
+                {jobTypes.map((type) => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-ups-gold font-semibold mb-2">Ask a Question</label>
+              <textarea
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+                placeholder="e.g., Does this violate the 40-hour work week rule?"
+                className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-2 text-white h-24"
+                disabled={analyzing}
+              />
+            </div>
+
+            <button
+              onClick={handleAnalyze}
+              disabled={analyzing}
+              className="w-full bg-ups-brown text-ups-gold py-3 rounded uppercase font-bold"
+            >
+              {analyzing ? 'Analyzing...' : 'Analyze'}
+            </button>
+          </div>
+        </div>
+
         <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8">
           <h3 className="text-2xl font-bold text-ups-gold mb-6">Available Contracts ({contracts.length})</h3>
           {contracts.length > 0 ? (
             <div className="space-y-3">
               {contracts.map((c) => (
-                <div key={c.id} className="bg-gray-800 border border-ups-brown rounded p-4 flex justify-between items-center">
+                <div key={c.id} className="bg-gray-800 border border-ups-brown rounded p-4">
                   <p className="text-white font-semibold">{c.name}</p>
-                  <Link href={`/analyze?id=${c.id}`}><button className="bg-ups-brown text-ups-gold px-4 py-2 rounded">Analyze</button></Link>
                 </div>
               ))}
             </div>
