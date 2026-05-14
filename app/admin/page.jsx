@@ -15,6 +15,7 @@ export default function AdminPanel() {
   const [loading, setLoading] = useState(true);
   const [contracts, setContracts] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const router = useRouter();
@@ -71,21 +72,39 @@ export default function AdminPanel() {
     }
 
     setUploading(true);
+    setUploadProgress(0);
     setError('');
     setSuccess('');
 
     try {
       const contractRef = ref(storage, `contracts/shared/${file.name}`);
+      
+      // Simulate progress
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => {
+          if (prev >= 90) return 90;
+          return prev + Math.random() * 30;
+        });
+      }, 200);
+
       await uploadBytes(contractRef, file);
       
-      setSuccess(`${file.name} uploaded successfully!`);
-      loadContracts();
-      e.target.value = '';
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+      setSuccess(`${file.name} uploaded successfully! ✅`);
+      
+      setTimeout(() => {
+        loadContracts();
+        e.target.value = '';
+      }, 1000);
     } catch (err) {
       console.error('Upload error:', err);
-      setError('Failed to upload contract');
+      setError(`Upload failed: ${err.message || 'Unknown error'}`);
     } finally {
-      setUploading(false);
+      setTimeout(() => {
+        setUploading(false);
+        setUploadProgress(0);
+      }, 1500);
     }
   };
 
@@ -99,7 +118,7 @@ export default function AdminPanel() {
       loadContracts();
     } catch (err) {
       console.error('Delete error:', err);
-      setError('Failed to delete contract');
+      setError(`Failed to delete contract: ${err.message || 'Unknown error'}`);
     }
   };
 
@@ -153,13 +172,14 @@ export default function AdminPanel() {
 
         {error && (
           <div className="bg-red-900 border-2 border-red-600 text-red-100 p-4 rounded mb-8">
-            {error}
+            <p className="font-semibold">❌ Error</p>
+            <p>{error}</p>
           </div>
         )}
 
         {success && (
           <div className="bg-green-900 border-2 border-green-600 text-green-100 p-4 rounded mb-8">
-            {success}
+            <p>{success}</p>
           </div>
         )}
 
@@ -187,6 +207,18 @@ export default function AdminPanel() {
               </button>
             </label>
           </div>
+
+          {uploading && (
+            <div className="mb-6">
+              <div className="w-full bg-gray-800 rounded-full h-4 border border-ups-brown overflow-hidden">
+                <div 
+                  className="bg-ups-gold h-full transition-all duration-300"
+                  style={{ width: `${uploadProgress}%` }}
+                ></div>
+              </div>
+              <p className="text-ups-gold text-sm mt-2 text-center">{Math.round(uploadProgress)}%</p>
+            </div>
+          )}
 
           <p className="text-gray-400 text-sm text-center">
             Maximum file size: 10MB • Supported formats: PDF, JSON
