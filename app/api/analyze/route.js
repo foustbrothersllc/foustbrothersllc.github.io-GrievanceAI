@@ -9,7 +9,7 @@ const CONTRACT_URLS = [
   }
 ];
 
-const buildPrompt = (question, classification, contractText) => `You are a labor relations expert specializing in UPS Teamsters contracts.
+const buildPrompt = (question, classification, contractText, issueCount = 1) => `You are a labor relations expert specializing in UPS Teamsters contracts.
 
 CRITICAL RULES:
 1. The Supplemental Agreement (Atlantic Area Agreement) ALWAYS takes precedence over the National Master Agreement. Check Supplement first. Both can apply simultaneously - cite BOTH when relevant.
@@ -27,7 +27,7 @@ CONTRACTS TO ANALYZE:
 ${contractText}
 
 INSTRUCTIONS:
-First, read the worker's complaint carefully and identify EVERY separate issue they mentioned (there may be 2, 3, or more).
+First, read the worker's complaint carefully and identify EVERY separate issue they mentioned. Based on the complaint, there appear to be approximately ${issueCount} or more separate issues. Find ALL of them - do not stop after the first one.
 
 Then for EACH issue found, provide a separate analysis block in this exact format:
 
@@ -54,7 +54,7 @@ async function analyzeWithGroq(prompt) {
     body: JSON.stringify({
       model: 'llama-3.3-70b-versatile',
       messages: [{ role: 'user', content: prompt }],
-      max_tokens: 2048,
+      max_tokens: 4096,
       temperature: 0.2
     })
   });
@@ -76,7 +76,7 @@ async function analyzeWithGemini(prompt) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { maxOutputTokens: 2048, temperature: 0.2 }
+        generationConfig: { maxOutputTokens: 4096, temperature: 0.2 }
       })
     }
   );
@@ -97,7 +97,7 @@ async function analyzeWithMistral(prompt) {
     body: JSON.stringify({
       model: 'open-mistral-7b',
       messages: [{ role: 'user', content: prompt }],
-      max_tokens: 2048,
+      max_tokens: 4096,
       temperature: 0.2
     })
   });
@@ -118,7 +118,7 @@ async function analyzeWithCohere(prompt) {
     body: JSON.stringify({
       model: 'command-r',
       messages: [{ role: 'user', content: prompt }],
-      max_tokens: 2048,
+      max_tokens: 4096,
       temperature: 0.2
     })
   });
@@ -161,11 +161,16 @@ export async function POST(request) {
       CONTRACT_URLS.map(async (c) => {
         const res = await fetch(c.url);
         const text = await res.text();
-        return `=== ${c.name} ===\n${text}`;
+        // Truncate each contract to 60,000 chars to stay within token limits
+        const truncated = text.length > 60000 ? text.slice(0, 60000) + '\n...[contract continues]' : text;
+        return `=== ${c.name} ===\n${truncated}`;
       })
     );
     const contractText = texts.join('\n\n');
-    const prompt = buildPrompt(question, classification, contractText);
+
+    // Count issues in the question to add to prompt
+    const issueCount = (question.match(/and|also|plus|additionally|furthermore|second|third|another/gi) || []).length + 1;
+    const prompt = buildPrompt(question, classification, contractText, issueCount);
 
     const providers = [
       { name: 'Groq', fn: analyzeWithGroq },
