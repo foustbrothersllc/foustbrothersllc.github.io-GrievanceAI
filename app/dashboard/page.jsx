@@ -7,7 +7,7 @@ import { auth, db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import Link from 'next/link';
 
-const GEMINI_API_KEY = 'AIzaSyAlyXt5QtA-IN44gVy5xefoCnBA1oyYAag';
+const GEMINI_API_KEY = 'AIzaSyDKXVs0HnI-SsLFuv7nEIJNNlrdmmLa71g';
 
 const CONTRACT_URLS = [
   {
