@@ -136,11 +136,17 @@ VIOLATION: ${violation}
 
 WORKER'S SITUATION: ${question}
 
-Generate TWO things for a formal Teamsters Local 391 grievance form. Be specific, professional, and cite the articles.
+GRIEVANT NAME: ${grievantName}
+SUPERVISOR: ${form.supervisor}
+DATE OF INCIDENT: ${form.dateOfIncident}
+RUN/LOAD: ${form.runLoad}
+CLASSIFICATION: ${classification}
+
+Generate TWO things for a formal Teamsters Local 391 grievance form. Use the grievant's name in the nature of grievance. Be specific, professional, and cite the articles.
 
 Format EXACTLY like this with no extra text before or after:
-NATURE: [Write 3-4 sentences in first person describing exactly what happened and how it violated the contract, referencing the specific articles]
-REMEDY: [Write 2-3 sentences with the specific remedy requested, including make whole pay, cease and desist, or other appropriate remedies based on the violation]`
+NATURE: [Write 3-4 sentences in first person using the grievant's name, describing exactly what happened on the date of incident, who the supervisor was, and how it violated the specific articles]
+REMEDY: [Write 2-3 sentences with the specific remedy requested, including make whole pay, cease and desist, or other appropriate remedies based on the violation and articles cited]`
         })
       });
       const data = await response.json();
@@ -408,6 +414,15 @@ REMEDY: [Write 2-3 sentences with the specific remedy requested, including make 
               <input type="text" name="runLoad" value={form.runLoad} onChange={handleChange} className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base" />
             </div>
 
+            {/* Generate Button - inside form */}
+            <button
+              onClick={handleGenerate}
+              disabled={generating}
+              className="w-full bg-ups-gold text-ups-brown py-4 rounded uppercase font-bold text-base disabled:opacity-50"
+            >
+              {generating ? '⏳ Generating...' : '✨ Generate Nature & Remedy'}
+            </button>
+
             <div>
               <label className="block text-ups-gold font-semibold mb-2 text-sm">Nature of Grievance</label>
               <textarea ref={natureRef} name="natureOfGrievance" value={form.natureOfGrievance} onChange={handleChange} placeholder="Click 'Generate' below or type manually..." className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base" style={{minHeight: '80px', overflow: 'hidden', resize: 'none'}} />
@@ -419,15 +434,6 @@ REMEDY: [Write 2-3 sentences with the specific remedy requested, including make 
             </div>
           </div>
         </div>
-
-        {/* Generate Button */}
-        <button
-          onClick={handleGenerate}
-          disabled={generating}
-          className="w-full bg-ups-brown text-ups-gold py-4 rounded uppercase font-bold text-base mb-4 disabled:opacity-50"
-        >
-          {generating ? '⏳ Generating Nature & Remedy...' : '✨ Generate Nature & Remedy'}
-        </button>
 
         {/* Save as PDF Button */}
         <button
