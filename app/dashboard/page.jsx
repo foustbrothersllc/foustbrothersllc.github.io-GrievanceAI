@@ -124,19 +124,25 @@ Then:
 4. If no violation, still clearly explain what the worker's rights ARE under the contract`;
 
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${GEMINI_API_KEY}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }]
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: {
+              maxOutputTokens: 2048,
+              temperature: 0.2
+            }
           })
         }
       );
 
       const data = await response.json();
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
+      if (data.error) throw new Error(data.error.message);
+
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!text) throw new Error('No response from Gemini');
       setResults(text);
     } catch (err) {
@@ -205,8 +211,8 @@ Then:
               <textarea
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
-                placeholder="e.g., Can UPS send me home before I get my 8 hours?"
-                className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-2 text-white h-24"
+                placeholder="e.g., Can UPS send me home before I get my 8 hours? Describe your situation in as much detail as possible."
+                className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-2 text-white h-72"
                 disabled={analyzing}
               />
             </div>
@@ -216,7 +222,7 @@ Then:
               disabled={analyzing || !contractsLoaded}
               className="w-full bg-ups-brown text-ups-gold py-3 rounded uppercase font-bold disabled:opacity-50"
             >
-              {analyzing ? 'Analyzing...' : !contractsLoaded ? 'Loading Contracts...' : 'Analyze'}
+              {analyzing ? 'Analyzing... This may take 30-60 seconds' : !contractsLoaded ? 'Loading Contracts...' : 'Analyze'}
             </button>
           </div>
         </div>
