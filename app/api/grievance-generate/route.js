@@ -1,4 +1,3 @@
-
 async function callGroq(prompt) {
   const key = process.env.GROQ_API_KEY;
   if (!key) throw new Error('No Groq key');
@@ -118,11 +117,35 @@ REMEDY: [2-3 sentences with specific remedy - make whole pay, cease and desist, 
     for (const provider of providers) {
       try {
         const text = await provider.fn(prompt);
-        const natureMatch = text.match(/NATURE:\s*([\s\S]+?)(?=\nREMEDY:|$)/);
-        const remedyMatch = text.match(/REMEDY:\s*([\s\S]+?)$/);
+        // Try multiple parsing strategies
+        let nature = '';
+        let remedy = '';
+
+        // Strategy 1: NATURE:/REMEDY: labels
+        const natureMatch = text.match(/NATURE:\s*([\s\S]+?)(?=
+REMEDY:|
+REMEDY |$)/i);
+        const remedyMatch = text.match(/REMEDY(?:\s+REQUESTED)?:\s*([\s\S]+?)$/i);
+        if (natureMatch) nature = natureMatch[1].trim();
+        if (remedyMatch) remedy = remedyMatch[1].trim();
+
+        // Strategy 2: if no labels found, split in half
+        if (!nature && !remedy) {
+          const lines = text.split('
+').filter(l => l.trim());
+          const mid = Math.floor(lines.length / 2);
+          nature = lines.slice(0, mid).join('
+').trim();
+          remedy = lines.slice(mid).join('
+').trim();
+        }
+
+        // Strategy 3: if still empty, put everything in nature
+        if (!nature) nature = text.trim();
+
         return Response.json({
-          nature: natureMatch?.[1]?.trim() || '',
-          remedy: remedyMatch?.[1]?.trim() || '',
+          nature,
+          remedy,
           provider: provider.name
         });
       } catch (err) {
