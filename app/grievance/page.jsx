@@ -189,62 +189,64 @@ function GrievanceContent() {
       <main className="max-w-4xl mx-auto p-6">
 
         {/* PRINT VERSION */}
-        <div className="hidden print:block">
-          <div className="text-center mb-6">
-            <h1 className="text-2xl font-bold uppercase">OFFICIAL GRIEVANCE FORM</h1>
-            <h2 className="text-xl font-bold">Teamsters Local Union No. 391</h2>
+        <div className="hidden print:block" style={{fontFamily: 'Arial, sans-serif', fontSize: '12px', margin: '0', padding: '20px'}}>
+          <style>{`
+            @media print {
+              @page { margin: 0.5in; }
+              body { -webkit-print-color-adjust: exact; }
+              a[href]:after { content: none !important; }
+              * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            }
+          `}</style>
+
+          <div style={{textAlign: 'center', marginBottom: '16px'}}>
+            <div style={{fontSize: '16px', fontWeight: 'bold', textTransform: 'uppercase'}}>OFFICIAL GRIEVANCE FORM</div>
+            <div style={{fontSize: '14px', fontWeight: 'bold'}}>Teamsters Local Union No. 391</div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-4 border border-black p-4">
-            <div>
-              <span className="font-bold">Grievant Name: </span>{grievantName}
-            </div>
-            <div>
-              <span className="font-bold">Date Filed: </span>{form.dateFiled}
-            </div>
-            <div>
-              <span className="font-bold">Classification: </span>{classification} — Violation
-            </div>
-            <div>
-              <span className="font-bold">Date: </span>{form.dateOfIncident}
-            </div>
-            <div>
-              <span className="font-bold">Supervisor: </span>{form.supervisor}
-            </div>
-            <div>
-              <span className="font-bold">Run/Load #: </span>{form.runLoad}
-            </div>
+          <table style={{width: '100%', borderCollapse: 'collapse', marginBottom: '8px'}}>
+            <tbody>
+              <tr>
+                <td style={{border: '1px solid black', padding: '6px', width: '50%'}}><strong>Grievant Name:</strong> {grievantName}</td>
+                <td style={{border: '1px solid black', padding: '6px', width: '50%'}}><strong>Date Filed:</strong> {form.dateFiled}</td>
+              </tr>
+              <tr>
+                <td style={{border: '1px solid black', padding: '6px'}}><strong>Classification:</strong> {classification} — Violation</td>
+                <td style={{border: '1px solid black', padding: '6px'}}><strong>Violation Date:</strong> {form.dateOfIncident}</td>
+              </tr>
+              <tr>
+                <td style={{border: '1px solid black', padding: '6px'}}><strong>Supervisor:</strong> {form.supervisor}</td>
+                <td style={{border: '1px solid black', padding: '6px'}}><strong>Run/Load #:</strong> {form.runLoad}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div style={{border: '1px solid black', padding: '8px', marginBottom: '8px'}}>
+            <div style={{fontWeight: 'bold', marginBottom: '4px'}}>ARTICLES VIOLATED:</div>
+            <div>{selectedArticles.map(a => a.text).join(', ')}</div>
           </div>
 
-          <div className="border border-black p-4 mb-4">
-            <p className="font-bold mb-2">ARTICLES VIOLATED:</p>
-            <p>{selectedArticles.map(a => a.text).join(', ')}</p>
+          <div style={{border: '1px solid black', padding: '8px', marginBottom: '8px', minHeight: '120px'}}>
+            <div style={{fontWeight: 'bold', marginBottom: '4px'}}>NATURE OF GRIEVANCE:</div>
+            <div>{form.natureOfGrievance}</div>
           </div>
 
-          <div className="border border-black p-4 mb-4" style={{minHeight: '150px'}}>
-            <p className="font-bold mb-2">NATURE OF GRIEVANCE:</p>
-            <p>{form.natureOfGrievance}</p>
-            <br/>
-            <p className="font-bold mb-2">AI Analysis Summary:</p>
-            <p style={{fontSize: '11px'}}>{violation}</p>
+          <div style={{border: '1px solid black', padding: '8px', marginBottom: '16px', minHeight: '100px'}}>
+            <div style={{fontWeight: 'bold', marginBottom: '4px'}}>REMEDY REQUESTED:</div>
+            <div>{form.remedy}</div>
           </div>
 
-          <div className="border border-black p-4 mb-6" style={{minHeight: '100px'}}>
-            <p className="font-bold mb-2">REMEDY REQUESTED:</p>
-            <p>{form.remedy}</p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-8">
+          <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px', marginTop: '24px'}}>
             <div>
-              <div className="border-b border-black mb-1 mt-8"></div>
-              <p className="text-sm">Grievant Signature</p>
+              <div style={{borderBottom: '1px solid black', marginBottom: '4px', height: '30px'}}></div>
+              <div style={{fontSize: '11px'}}>Grievant Signature</div>
             </div>
             <div>
-              <div className="border-b border-black mb-1 mt-8"></div>
-              <p className="text-sm">Shop Steward Signature</p>
+              <div style={{borderBottom: '1px solid black', marginBottom: '4px', height: '30px'}}></div>
+              <div style={{fontSize: '11px'}}>Shop Steward Signature</div>
             </div>
           </div>
-          <p className="text-xs mt-4 italic">Note: Ensure all evidence (logs, DIAD messages, unit numbers) is attached or cited. Provide copies to your Steward and keep one for your personal records.</p>
+          <p style={{fontSize: '10px', marginTop: '12px', fontStyle: 'italic'}}>Note: Ensure all evidence (logs, DIAD messages, unit numbers) is attached or cited. Provide copies to your Steward and keep one for your personal records.</p>
         </div>
 
         {/* SCREEN VERSION */}
