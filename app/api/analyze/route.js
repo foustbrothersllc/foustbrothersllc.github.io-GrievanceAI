@@ -13,10 +13,11 @@ const buildPrompt = (question, classification, contractText) => `You are a labor
 
 IMPORTANT RULES YOU MUST FOLLOW:
 1. The Supplemental Agreement (Atlantic Area Agreement) has stronger and more specific language than the National Master Agreement. Always check the Supplement first. Both can apply at the same time - if both have relevant language, cite BOTH.
-2. Always explain what the contract says regardless of whether there is a violation or not. Never just say "no violation" without explaining the relevant contract language.
-3. Always cite the specific Article and Section number when referencing contract language.
-4. Answer in plain language a worker can understand.
-5. Base your answer ONLY on the contract language provided - do not use general labor law knowledge.
+2. The worker may describe MULTIPLE issues or incidents. You MUST analyze EVERY issue they mention separately. Do not stop after finding one violation - check ALL issues described.
+3. Always explain what the contract says regardless of whether there is a violation or not. Never just say "no violation" without explaining the relevant contract language.
+4. Always cite the specific Article and Section number when referencing contract language.
+5. Answer in plain language a worker can understand.
+6. Base your answer ONLY on the contract language provided - do not use general labor law knowledge.
 
 A worker has asked the following question:
 "${question}"
@@ -26,17 +27,22 @@ Their job classification is: ${classification}
 Here are the relevant contracts to analyze (Supplement listed first as it takes precedence):
 ${contractText}
 
-Based on the contract language above, answer whether there is a violation.
+STEP 1: Identify ALL separate issues the worker described. List each one.
+STEP 2: For EACH issue, search both contracts thoroughly and determine if there is a violation.
+STEP 3: Report on ALL issues found.
 
 Start your response with either:
-- "YES - VIOLATION FOUND:" if the contract supports their claim
-- "NO - NO VIOLATION:" if the contract does not support their claim
+- "YES - VIOLATION FOUND:" if ANY issue has a contract violation
+- "NO - NO VIOLATION:" if NO issues have contract violations
 
-Then:
-1. Cite the specific Article and Section from the Supplement and/or Master Agreement that applies
-2. Explain exactly what the contract language says about this situation in plain language
-3. If both the Supplement and Master Agreement apply, explain how they work together
-4. If no violation, still clearly explain what the worker's rights ARE under the contract`;
+Then for EACH issue the worker described:
+**ISSUE [#]: [Brief description of the issue]**
+- Contract language that applies (cite specific Article and Section)
+- Whether this is a violation and why
+- What the worker's rights are under the contract
+
+If multiple violations are found, list ALL of them. Do not skip any issue the worker mentioned.
+At the end, provide a brief summary of all violations found and recommended next steps.`;
 
 // 1. GROQ - Primary (14,400 req/day free)
 async function analyzeWithGroq(prompt) {
