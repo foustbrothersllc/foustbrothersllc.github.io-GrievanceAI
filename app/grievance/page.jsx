@@ -159,7 +159,8 @@ function GrievanceContent() {
   <title>Grievance Form - ${grievantName}</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; font-size: 12px; background: white; color: black; padding: 40px; }
+    html, body { width: 8.5in; background: white; color: black; }
+    body { font-family: Arial, sans-serif; font-size: 12px; padding: 0.75in; }
     h1 { font-size: 16px; text-align: center; text-transform: uppercase; margin-bottom: 4px; }
     h2 { font-size: 14px; text-align: center; margin-bottom: 20px; }
     table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
@@ -173,8 +174,17 @@ function GrievanceContent() {
     .sig-label { font-size: 10px; }
     .note { font-size: 9px; font-style: italic; margin-top: 12px; }
     @media print {
-      body { padding: 0.5in; }
-      @page { margin: 0; size: letter; }
+      html, body { width: 100%; }
+      @page { size: letter; margin: 0.75in; }
+      body { padding: 0; }
+    }
+    @media screen {
+      body { 
+        max-width: 8.5in;
+        margin: 0 auto;
+        box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        min-height: 11in;
+      }
     }
   </style>
 </head>
