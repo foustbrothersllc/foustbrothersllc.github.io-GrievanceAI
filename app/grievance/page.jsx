@@ -184,11 +184,15 @@ function GrievanceContent() {
   <table>
     <tr>
       <td><strong>Grievant Name:</strong> ${grievantName}</td>
+      <td><strong>Phone:</strong> ${form.phone}</td>
+    </tr>
+    <tr>
       <td><strong>Date Filed:</strong> ${form.dateFiled}</td>
+      <td><strong>Violation Date:</strong> ${form.dateOfIncident}</td>
     </tr>
     <tr>
       <td><strong>Classification:</strong> ${classification} — Violation</td>
-      <td><strong>Violation Date:</strong> ${form.dateOfIncident}</td>
+      <td><strong>Employee ID:</strong> ${form.employeeId}</td>
     </tr>
     <tr>
       <td><strong>Supervisor:</strong> ${form.supervisor}</td>
