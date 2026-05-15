@@ -13,7 +13,6 @@ function GrievanceContent() {
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState('');
   const [allUsers, setAllUsers] = useState([]);
-  const [pdfPreviewUrl, setPdfPreviewUrl] = useState(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const natureRef = useRef(null);
@@ -165,118 +164,87 @@ REMEDY: [Write 2-3 sentences with the specific remedy requested, including make 
     }
   };
 
-  const handleSaveAsPDF = async () => {
-    try {
-      // Dynamically import jsPDF
-      const { jsPDF } = await import('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
-      
-      const pdf = new jsPDF({ orientation: 'portrait', unit: 'in', format: 'letter' });
-      const margin = 0.75;
-      const pageWidth = 8.5;
-      const contentWidth = pageWidth - margin * 2;
-      let y = margin;
-
-      // Helper functions
-      const addText = (text, x, yPos, options = {}) => {
-        pdf.text(text || '', x, yPos, options);
-      };
-
-      const addWrappedText = (text, x, yPos, maxWidth) => {
-        const lines = pdf.splitTextToSize(text || '', maxWidth);
-        pdf.text(lines, x, yPos);
-        return lines.length * 0.18;
-      };
-
-      const drawRect = (x, yPos, w, h) => {
-        pdf.rect(x, yPos, w, h);
-      };
-
-      // Title
-      pdf.setFontSize(14);
-      pdf.setFont('helvetica', 'bold');
-      addText('OFFICIAL GRIEVANCE FORM', pageWidth / 2, y, { align: 'center' });
-      y += 0.25;
-      addText('Teamsters Local Union No. 391', pageWidth / 2, y, { align: 'center' });
-      y += 0.35;
-
-      // Info grid
-      pdf.setFontSize(10);
-      const col1 = margin;
-      const col2 = margin + contentWidth / 2;
-      const rowH = 0.3;
-
-      const rows = [
-        [`Grievant Name: ${grievantName}`, `Date Filed: ${form.dateFiled}`],
-        [`Classification: ${classification} — Violation`, `Violation Date: ${form.dateOfIncident}`],
-        [`Supervisor: ${form.supervisor}`, `Run/Load #: ${form.runLoad}`],
-      ];
-
-      rows.forEach(([left, right]) => {
-        drawRect(col1, y, contentWidth / 2, rowH);
-        drawRect(col2, y, contentWidth / 2, rowH);
-        pdf.setFont('helvetica', 'normal');
-        addText(left, col1 + 0.05, y + 0.18);
-        addText(right, col2 + 0.05, y + 0.18);
-        y += rowH;
-      });
-
-      y += 0.1;
-
-      // Articles
-      const articlesText = selectedArticles.map(a => a.text).join(', ');
-      const articlesBoxH = 0.4;
-      drawRect(margin, y, contentWidth, articlesBoxH);
-      pdf.setFont('helvetica', 'bold');
-      addText('ARTICLES VIOLATED:', margin + 0.05, y + 0.15);
-      pdf.setFont('helvetica', 'normal');
-      addText(articlesText, margin + 0.05, y + 0.3);
-      y += articlesBoxH + 0.1;
-
-      // Nature of Grievance
-      const natureLines = pdf.splitTextToSize(form.natureOfGrievance || '', contentWidth - 0.1);
-      const natureH = Math.max(1.2, natureLines.length * 0.18 + 0.3);
-      drawRect(margin, y, contentWidth, natureH);
-      pdf.setFont('helvetica', 'bold');
-      addText('NATURE OF GRIEVANCE:', margin + 0.05, y + 0.15);
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(natureLines, margin + 0.05, y + 0.3);
-      y += natureH + 0.1;
-
-      // Remedy
-      const remedyLines = pdf.splitTextToSize(form.remedy || '', contentWidth - 0.1);
-      const remedyH = Math.max(1.0, remedyLines.length * 0.18 + 0.3);
-      drawRect(margin, y, contentWidth, remedyH);
-      pdf.setFont('helvetica', 'bold');
-      addText('REMEDY REQUESTED:', margin + 0.05, y + 0.15);
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(remedyLines, margin + 0.05, y + 0.3);
-      y += remedyH + 0.3;
-
-      // Signatures
-      const sigWidth = contentWidth / 2 - 0.2;
-      pdf.line(margin, y, margin + sigWidth, y);
-      pdf.line(col2, y, col2 + sigWidth, y);
-      y += 0.1;
-      pdf.setFontSize(9);
-      addText('Grievant Signature', margin, y);
-      addText('Shop Steward Signature', col2, y);
-      y += 0.3;
-
-      // Note
-      pdf.setFontSize(8);
-      pdf.setFont('helvetica', 'italic');
-      const noteLines = pdf.splitTextToSize('Note: Ensure all evidence (logs, DIAD messages, unit numbers) is attached or cited. Provide copies to your Steward and keep one for your personal records.', contentWidth);
-      pdf.text(noteLines, margin, y);
-
-      // Generate blob URL for preview
-      const pdfBlob = pdf.output('blob');
-      const url = URL.createObjectURL(pdfBlob);
-      setPdfPreviewUrl(url);
-
-    } catch (err) {
-      // Fallback to print if jsPDF fails
-      console.error('jsPDF failed, falling back to print:', err);
+  const handleSaveAsPDF = () => {
+    const articlesText = selectedArticles.map(a => a.text).join(', ');
+    const htmlContent = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Grievance Form - ${grievantName}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; font-size: 12px; background: white; color: black; padding: 40px; }
+    h1 { font-size: 16px; text-align: center; text-transform: uppercase; margin-bottom: 4px; }
+    h2 { font-size: 14px; text-align: center; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+    td { border: 1px solid black; padding: 6px 8px; width: 50%; }
+    .section { border: 1px solid black; padding: 8px; margin-bottom: 12px; min-height: 80px; }
+    .section-title { font-weight: bold; margin-bottom: 6px; }
+    .section-content { white-space: pre-wrap; line-height: 1.5; }
+    .signatures { display: flex; gap: 60px; margin-top: 30px; }
+    .sig-block { flex: 1; }
+    .sig-line { border-bottom: 1px solid black; margin-bottom: 4px; height: 40px; }
+    .sig-label { font-size: 10px; }
+    .note { font-size: 9px; font-style: italic; margin-top: 12px; }
+    @media print {
+      body { padding: 0.5in; }
+      @page { margin: 0; size: letter; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Official Grievance Form</h1>
+  <h2>Teamsters Local Union No. 391</h2>
+  <table>
+    <tr>
+      <td><strong>Grievant Name:</strong> ${grievantName}</td>
+      <td><strong>Date Filed:</strong> ${form.dateFiled}</td>
+    </tr>
+    <tr>
+      <td><strong>Classification:</strong> ${classification} — Violation</td>
+      <td><strong>Violation Date:</strong> ${form.dateOfIncident}</td>
+    </tr>
+    <tr>
+      <td><strong>Supervisor:</strong> ${form.supervisor}</td>
+      <td><strong>Run/Load #:</strong> ${form.runLoad}</td>
+    </tr>
+  </table>
+  <div class="section">
+    <div class="section-title">ARTICLES VIOLATED:</div>
+    <div class="section-content">${articlesText}</div>
+  </div>
+  <div class="section">
+    <div class="section-title">NATURE OF GRIEVANCE:</div>
+    <div class="section-content">${form.natureOfGrievance}</div>
+  </div>
+  <div class="section">
+    <div class="section-title">REMEDY REQUESTED:</div>
+    <div class="section-content">${form.remedy}</div>
+  </div>
+  <div class="signatures">
+    <div class="sig-block">
+      <div class="sig-line"></div>
+      <div class="sig-label">Grievant Signature</div>
+    </div>
+    <div class="sig-block">
+      <div class="sig-line"></div>
+      <div class="sig-label">Shop Steward Signature</div>
+    </div>
+  </div>
+  <div class="note">Note: Ensure all evidence (logs, DIAD messages, unit numbers) is attached or cited. Provide copies to your Steward and keep one for your personal records.</div>
+  <script>
+    window.onload = function() {
       window.print();
+    };
+  </script>
+</body>
+</html>`;
+
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const newWindow = window.open(url, '_blank');
+    if (!newWindow) {
+      alert('Please allow popups for this site to preview the PDF');
     }
   };
 
@@ -286,37 +254,6 @@ REMEDY: [Write 2-3 sentences with the specific remedy requested, including make 
     </div>
   );
 
-  // PDF Preview Modal
-  if (pdfPreviewUrl) {
-    return (
-      <div className="min-h-screen bg-ups-black flex flex-col">
-        <div className="bg-gray-900 border-b border-ups-brown p-4 flex justify-between items-center">
-          <h2 className="text-ups-gold font-bold text-lg">📄 PDF Preview</h2>
-          <div className="flex gap-3">
-            <a
-              href={pdfPreviewUrl}
-              download="grievance.pdf"
-              className="bg-ups-gold text-ups-brown px-6 py-2 rounded uppercase font-bold text-sm"
-            >
-              💾 Download PDF
-            </a>
-            <button
-              onClick={() => setPdfPreviewUrl(null)}
-              className="bg-ups-brown text-ups-gold px-6 py-2 rounded uppercase font-bold text-sm"
-            >
-              ← Back
-            </button>
-          </div>
-        </div>
-        <iframe
-          src={pdfPreviewUrl}
-          className="flex-1 w-full"
-          style={{ minHeight: 'calc(100vh - 70px)' }}
-          title="Grievance PDF Preview"
-        />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-ups-black">
