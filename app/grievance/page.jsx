@@ -124,39 +124,25 @@ function GrievanceContent() {
     setError('');
     try {
       const articleList = selectedArticles.map(a => a.text).join(', ');
-      const response = await fetch('/api/analyze', {
+      const response = await fetch('/api/grievance-generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          grievantName,
+          supervisor: form.supervisor,
+          dateOfIncident: form.dateOfIncident,
+          runLoad: form.runLoad,
           classification,
-          question: `Based on this violation analysis and the articles violated (${articleList}):
-
-VIOLATION: ${violation}
-
-WORKER'S SITUATION: ${question}
-
-GRIEVANT NAME: ${grievantName}
-SUPERVISOR: ${form.supervisor}
-DATE OF INCIDENT: ${form.dateOfIncident}
-RUN/LOAD: ${form.runLoad}
-CLASSIFICATION: ${classification}
-
-Generate TWO things for a formal Teamsters Local 391 grievance form. Use the grievant's name in the nature of grievance. Be specific, professional, and cite the articles.
-
-Format EXACTLY like this with no extra text before or after:
-NATURE: [Write 3-4 sentences in first person using the grievant's name, describing exactly what happened on the date of incident, who the supervisor was, and how it violated the specific articles]
-REMEDY: [Write 2-3 sentences with the specific remedy requested, including make whole pay, cease and desist, or other appropriate remedies based on the violation and articles cited]`
+          articleList,
+          violation,
+          question
         })
       });
       const data = await response.json();
       if (data.error) throw new Error(data.error);
 
-      const text = data.analysis || '';
-      const natureMatch = text.match(/NATURE:\s*([\s\S]+?)(?=\nREMEDY:|$)/);
-      const remedyMatch = text.match(/REMEDY:\s*([\s\S]+?)$/);
-
-      if (natureMatch) setForm(f => ({ ...f, natureOfGrievance: natureMatch[1].trim() }));
-      if (remedyMatch) setForm(f => ({ ...f, remedy: remedyMatch[1].trim() }));
+      if (data.nature) setForm(f => ({ ...f, natureOfGrievance: data.nature }));
+      if (data.remedy) setForm(f => ({ ...f, remedy: data.remedy }));
     } catch (err) {
       setError('Failed to generate: ' + err.message);
     } finally {
