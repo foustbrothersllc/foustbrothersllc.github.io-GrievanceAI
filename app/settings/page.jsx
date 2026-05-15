@@ -18,6 +18,17 @@ export default function SettingsPage() {
   const [success, setSuccess] = useState('');
   const router = useRouter();
 
+  const formatPhone = (value) => {
+    const digits = value.replace(/\D/g, '').slice(0, 10);
+    if (digits.length <= 3) return digits.length ? '(' + digits : '';
+    if (digits.length <= 6) return '(' + digits.slice(0, 3) + ') ' + digits.slice(3);
+    return '(' + digits.slice(0, 3) + ') ' + digits.slice(3, 6) + '-' + digits.slice(6);
+  };
+
+  const handlePhoneChange = (e) => {
+    setPhone(formatPhone(e.target.value));
+  };
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
       if (currentUser) {
@@ -107,7 +118,7 @@ export default function SettingsPage() {
               <input
                 type="tel"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={handlePhoneChange}
                 placeholder="e.g., (555) 123-4567"
                 className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-2 text-white"
                 disabled={saving}
