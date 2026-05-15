@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { auth, db } from '@/lib/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 import Link from 'next/link';
 
 export default function LoginPage() {
@@ -25,7 +26,17 @@ export default function LoginPage() {
     setLoading(true);
     setError('');
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCred = await signInWithEmailAndPassword(auth, email, password);
+      
+      // Check if account is disabled in Firestore
+      const userDoc = await getDoc(doc(db, 'users', userCred.user.uid));
+      if (userDoc.exists() && userDoc.data().status === 'disabled') {
+        await signOut(auth);
+        setError('Your account has been disabled. Please contact your union representative for assistance.');
+        setLoading(false);
+        return;
+      }
+
       router.push('/dashboard');
     } catch (err) {
       setError(err.message);
