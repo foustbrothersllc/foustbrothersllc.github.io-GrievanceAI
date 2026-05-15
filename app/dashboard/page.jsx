@@ -77,66 +77,74 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-ups-black">
-      <header className="border-b border-ups-brown bg-gray-900 p-6">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <Link href="/"><h1 className="text-3xl font-bold text-ups-gold">GRIEVANCE AI</h1></Link>
-          <div className="space-x-4">
+      <header className="border-b border-ups-brown bg-gray-900 p-4">
+        <div className="max-w-6xl mx-auto">
+          {/* Top row - logo and logout */}
+          <div className="flex justify-between items-center mb-3">
+            <Link href="/"><h1 className="text-2xl font-bold text-ups-gold">GRIEVANCE AI</h1></Link>
+            <button onClick={() => { signOut(auth); router.push('/'); }} className="bg-ups-brown text-ups-gold px-4 py-2 rounded uppercase text-sm font-bold">Logout</button>
+          </div>
+          {/* Bottom row - nav buttons */}
+          <div className="flex gap-2">
             {isAdmin && (
-              <Link href="/admin">
-                <button className="bg-ups-brown text-ups-gold px-6 py-2 rounded uppercase">🔑 Admin</button>
+              <Link href="/admin" className="flex-1">
+                <button className="w-full bg-ups-brown text-ups-gold px-3 py-2 rounded uppercase text-xs font-bold">🔑 Admin</button>
               </Link>
             )}
-            <Link href="/settings">
-              <button className="bg-ups-brown text-ups-gold px-6 py-2 rounded uppercase">⚙️ Settings</button>
+            <Link href="/settings" className="flex-1">
+              <button className="w-full bg-ups-brown text-ups-gold px-3 py-2 rounded uppercase text-xs font-bold">⚙️ Settings</button>
             </Link>
-            <button onClick={() => { signOut(auth); router.push('/'); }} className="bg-ups-brown text-ups-gold px-6 py-2 rounded uppercase">Logout</button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto p-6">
-        <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8 mb-8">
-          <h2 className="text-3xl font-bold text-ups-gold mb-2">Welcome, {userName}!</h2>
-          <p className="text-gray-400">Check if contract violations apply to your position</p>
+      <main className="max-w-6xl mx-auto p-4">
+        <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-6 mb-6">
+          <h2 className="text-2xl font-bold text-ups-gold mb-1">Welcome, {userName}!</h2>
+          <p className="text-gray-400 text-sm">Check if contract violations apply to your position</p>
         </div>
 
-        {error && <div className="bg-red-900 text-red-100 p-4 rounded mb-8">{error}</div>}
+        {error && <div className="bg-red-900 text-red-100 p-4 rounded mb-6 text-sm">{error}</div>}
 
-        <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8 mb-8">
-          <h3 className="text-2xl font-bold text-ups-gold mb-6">Contract Analysis</h3>
+        <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-6 mb-6">
+          <h3 className="text-xl font-bold text-ups-gold mb-4">Contract Analysis</h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-ups-gold font-semibold mb-2">Job Classification</label>
-              <select value={classification} onChange={(e) => setClassification(e.target.value)} className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-2 text-white" disabled={analyzing}>
+              <label className="block text-ups-gold font-semibold mb-2 text-sm">Job Classification</label>
+              <select value={classification} onChange={(e) => setClassification(e.target.value)} className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base" disabled={analyzing}>
                 <option value="">Select your job type...</option>
                 {jobTypes.map((type) => (<option key={type} value={type}>{type}</option>))}
               </select>
             </div>
             <div>
-              <label className="block text-ups-gold font-semibold mb-2">Ask a Question</label>
+              <label className="block text-ups-gold font-semibold mb-2 text-sm">Ask a Question</label>
               <textarea
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
-                placeholder="e.g., Can UPS send me home before I get my 8 hours? Describe your situation in as much detail as possible."
-                className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-2 text-white h-72"
+                placeholder="e.g., Can UPS send me home before I get my 8 hours? Describe your situation in detail."
+                className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white h-48 text-base"
                 disabled={analyzing}
               />
             </div>
-            <button onClick={handleAnalyze} disabled={analyzing} className="w-full bg-ups-brown text-ups-gold py-3 rounded uppercase font-bold disabled:opacity-50">
-              {analyzing ? 'Analyzing... This may take up to 60 seconds' : 'Analyze'}
+            <button
+              onClick={handleAnalyze}
+              disabled={analyzing}
+              className="w-full bg-ups-brown text-ups-gold py-4 rounded uppercase font-bold text-base disabled:opacity-50"
+            >
+              {analyzing ? '⏳ Analyzing... Please wait' : 'Analyze'}
             </button>
           </div>
         </div>
 
         {results && (
-          <div className={`border-2 rounded-lg p-8 mb-8 ${results.includes('NO - NO VIOLATION') ? 'bg-green-900 border-green-600 text-green-100' : 'bg-red-900 border-red-600 text-red-100'}`}>
-            <h3 className="text-2xl font-bold mb-4">
+          <div className={`border-2 rounded-lg p-6 mb-6 ${results.includes('NO - NO VIOLATION') ? 'bg-green-900 border-green-600 text-green-100' : 'bg-red-900 border-red-600 text-red-100'}`}>
+            <h3 className="text-xl font-bold mb-3">
               {results.includes('NO - NO VIOLATION') ? '✅ No Violation Found' : '⚠️ Violation Found'}
             </h3>
-            <p className="whitespace-pre-wrap mb-6">{results}</p>
+            <p className="whitespace-pre-wrap mb-6 text-sm leading-relaxed">{results}</p>
             {results.includes('YES - VIOLATION FOUND') && (
               <Link href={`/grievance?violation=${encodeURIComponent(results)}&classification=${classification}&question=${encodeURIComponent(question)}`}>
-                <button className="w-full bg-ups-gold text-ups-brown py-2 rounded uppercase font-bold">
+                <button className="w-full bg-ups-gold text-ups-brown py-4 rounded uppercase font-bold text-base">
                   📄 File Grievance
                 </button>
               </Link>
