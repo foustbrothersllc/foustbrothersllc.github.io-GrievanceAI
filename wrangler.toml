@@ -1,0 +1,7 @@
+name = "grievance-ai"
+pages_build_output_dir = ".next"
+compatibility_date = "2026-05-15"
+compatibility_flags = ["nodejs_compat"]
+
+[build]
+command = "npm run build"
