@@ -95,7 +95,7 @@ async function analyzeWithMistral(prompt) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
     body: JSON.stringify({
-      model: 'mistral-small-latest',
+      model: 'open-mistral-7b',
       messages: [{ role: 'user', content: prompt }],
       max_tokens: 2048,
       temperature: 0.2
@@ -116,7 +116,7 @@ async function analyzeWithCohere(prompt) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
     body: JSON.stringify({
-      model: 'command-r-plus',
+      model: 'command-r',
       messages: [{ role: 'user', content: prompt }],
       max_tokens: 2048,
       temperature: 0.2
