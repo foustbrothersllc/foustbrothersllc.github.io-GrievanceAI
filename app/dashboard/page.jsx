@@ -40,8 +40,6 @@ export default function Dashboard() {
     const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-
-        // Load user profile from Firestore
         try {
           const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
           if (userDoc.exists()) {
@@ -51,11 +49,9 @@ export default function Dashboard() {
             setUserName(currentUser.email);
           }
         } catch (err) {
-          console.error('Error fetching user data:', err);
           setUserName(currentUser.email);
         }
 
-        // Load contracts directly from GitHub
         try {
           const texts = await Promise.all(
             CONTRACT_URLS.map(async (c) => {
@@ -67,10 +63,8 @@ export default function Dashboard() {
           setContractText(texts.join('\n\n'));
           setContractsLoaded(true);
         } catch (err) {
-          console.error('Error loading contracts from GitHub:', err);
           setError('Failed to load contracts. Please refresh the page.');
         }
-
       } else {
         router.push('/login');
       }
@@ -80,14 +74,8 @@ export default function Dashboard() {
   }, [router]);
 
   const handleAnalyze = async () => {
-    if (!classification.trim()) {
-      setError('Please select a job classification');
-      return;
-    }
-    if (!question.trim()) {
-      setError('Please ask a question');
-      return;
-    }
+    if (!classification.trim()) { setError('Please select a job classification'); return; }
+    if (!question.trim()) { setError('Please ask a question'); return; }
 
     setAnalyzing(true);
     setError('');
@@ -97,11 +85,11 @@ export default function Dashboard() {
       const prompt = `You are a labor relations expert specializing in UPS Teamsters contracts.
 
 IMPORTANT RULES YOU MUST FOLLOW:
-1. The Supplemental Agreement (Atlantic Area Agreement) has stronger and more specific language than the National Master Agreement. Always check the Supplement first. Both can apply at the same time — if both have relevant language, cite BOTH.
+1. The Supplemental Agreement (Atlantic Area Agreement) has stronger and more specific language than the National Master Agreement. Always check the Supplement first. Both can apply at the same time - if both have relevant language, cite BOTH.
 2. Always explain what the contract says regardless of whether there is a violation or not. Never just say "no violation" without explaining the relevant contract language.
 3. Always cite the specific Article and Section number when referencing contract language.
 4. Answer in plain language a worker can understand.
-5. Base your answer ONLY on the contract language provided — do not use general labor law knowledge.
+5. Base your answer ONLY on the contract language provided - do not use general labor law knowledge.
 
 A worker has asked the following question:
 "${question}"
@@ -124,29 +112,25 @@ Then:
 4. If no violation, still clearly explain what the worker's rights ARE under the contract`;
 
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${GEMINI_API_KEY}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: {
-              maxOutputTokens: 2048,
-              temperature: 0.2
-            }
+            generationConfig: { maxOutputTokens: 2048, temperature: 0.2 }
           })
         }
       );
 
       const data = await response.json();
-
-      if (data.error) throw new Error(data.error.message);
-
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!text) throw new Error('No response from Gemini');
+      if (data.error) throw new Error('Gemini API error: ' + data.error.message);
+      if (!data.candidates || data.candidates.length === 0) throw new Error('Gemini blocked the request. Block reason: ' + (data.promptFeedback ? JSON.stringify(data.promptFeedback) : 'unknown'));
+      const text = data.candidates[0]?.content?.parts?.[0]?.text;
+      if (!text) throw new Error('Empty response from Gemini. Finish reason: ' + (data.candidates[0]?.finishReason || 'unknown'));
       setResults(text);
     } catch (err) {
-      setError(`Analysis failed: ${err.message}`);
+      setError('Analysis failed: ' + err.message);
     } finally {
       setAnalyzing(false);
     }
@@ -181,9 +165,7 @@ Then:
         <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8 mb-8">
           <h2 className="text-3xl font-bold text-ups-gold mb-2">Welcome, {userName}!</h2>
           <p className="text-gray-400">Check if contract violations apply to your position</p>
-          {contractsLoaded && (
-            <p className="text-green-400 text-sm mt-2">✅ Contracts loaded and ready</p>
-          )}
+          {contractsLoaded && <p className="text-green-400 text-sm mt-2">✅ Contracts loaded and ready</p>}
         </div>
 
         {error && <div className="bg-red-900 text-red-100 p-4 rounded mb-8">{error}</div>}
@@ -193,19 +175,11 @@ Then:
           <div className="space-y-4">
             <div>
               <label className="block text-ups-gold font-semibold mb-2">Job Classification</label>
-              <select
-                value={classification}
-                onChange={(e) => setClassification(e.target.value)}
-                className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-2 text-white"
-                disabled={analyzing}
-              >
+              <select value={classification} onChange={(e) => setClassification(e.target.value)} className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-2 text-white" disabled={analyzing}>
                 <option value="">Select your job type...</option>
-                {jobTypes.map((type) => (
-                  <option key={type} value={type}>{type}</option>
-                ))}
+                {jobTypes.map((type) => (<option key={type} value={type}>{type}</option>))}
               </select>
             </div>
-
             <div>
               <label className="block text-ups-gold font-semibold mb-2">Ask a Question</label>
               <textarea
@@ -216,13 +190,8 @@ Then:
                 disabled={analyzing}
               />
             </div>
-
-            <button
-              onClick={handleAnalyze}
-              disabled={analyzing || !contractsLoaded}
-              className="w-full bg-ups-brown text-ups-gold py-3 rounded uppercase font-bold disabled:opacity-50"
-            >
-              {analyzing ? 'Analyzing... This may take 30-60 seconds' : !contractsLoaded ? 'Loading Contracts...' : 'Analyze'}
+            <button onClick={handleAnalyze} disabled={analyzing || !contractsLoaded} className="w-full bg-ups-brown text-ups-gold py-3 rounded uppercase font-bold disabled:opacity-50">
+              {analyzing ? 'Analyzing... This may take up to 60 seconds' : !contractsLoaded ? 'Loading Contracts...' : 'Analyze'}
             </button>
           </div>
         </div>
@@ -235,9 +204,7 @@ Then:
             <p className="whitespace-pre-wrap mb-6">{results}</p>
             {results.includes('YES - VIOLATION FOUND') && (
               <Link href={`/grievance?violation=${encodeURIComponent(results)}&classification=${classification}&question=${encodeURIComponent(question)}`}>
-                <button className="w-full bg-ups-gold text-ups-brown py-2 rounded uppercase font-bold">
-                  📄 File Grievance
-                </button>
+                <button className="w-full bg-ups-gold text-ups-brown py-2 rounded uppercase font-bold">📄 File Grievance</button>
               </Link>
             )}
           </div>
