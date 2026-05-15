@@ -152,6 +152,9 @@ function GrievanceContent() {
 
   const handleSaveAsPDF = () => {
     const articlesText = selectedArticles.map(a => a.text).join(', ');
+    const currentName = form.useCustomName ? form.grievantNameCustom : form.grievantName;
+    const currentPhone = form.phone || '';
+    const currentEmployeeId = form.employeeId || '';
     const htmlContent = `<!DOCTYPE html>
 <html>
 <head>
@@ -193,8 +196,8 @@ function GrievanceContent() {
   <h2>Teamsters Local Union No. 391</h2>
   <table>
     <tr>
-      <td><strong>Grievant Name:</strong> ${grievantName}</td>
-      <td><strong>Phone:</strong> ${form.phone}</td>
+      <td><strong>Grievant Name:</strong> ${currentName}</td>
+      <td><strong>Phone:</strong> ${currentPhone}</td>
     </tr>
     <tr>
       <td><strong>Date Filed:</strong> ${form.dateFiled}</td>
@@ -202,10 +205,10 @@ function GrievanceContent() {
     </tr>
     <tr>
       <td><strong>Classification:</strong> ${classification} — Violation</td>
-      <td><strong>Employee ID:</strong> ${form.employeeId}</td>
+      <td><strong>Employee ID:</strong> ${currentEmployeeId}</td>
     </tr>
     <tr>
-      <td><strong>Supervisor:</strong> ${form.supervisor}</td>
+      <td><strong>Immediate Supervisor:</strong> ${form.supervisor}</td>
       <td><strong>Run/Load #:</strong> ${form.runLoad}</td>
     </tr>
   </table>
@@ -342,7 +345,7 @@ function GrievanceContent() {
             </div>
 
             <div>
-              <label className="block text-ups-gold font-semibold mb-2 text-sm">Supervisor</label>
+              <label className="block text-ups-gold font-semibold mb-2 text-sm">Immediate Supervisor (who you report to)</label>
               <input type="text" name="supervisor" value={form.supervisor} onChange={handleChange} className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base" />
             </div>
 
