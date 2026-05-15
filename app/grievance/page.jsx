@@ -433,18 +433,11 @@ function GrievanceContent() {
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex space-x-4">
-            <button
-              onClick={handleSave}
-              disabled={saving || saved}
-              className="flex-1 bg-ups-brown text-ups-gold py-3 rounded uppercase font-bold disabled:opacity-50"
-            >
-              {saving ? 'Saving...' : saved ? '✅ Saved' : '💾 Save Grievance'}
-            </button>
+          {/* Action Button */}
+          <div>
             <button
               onClick={handlePrint}
-              className="flex-1 bg-ups-gold text-ups-brown py-3 rounded uppercase font-bold"
+              className="w-full bg-ups-gold text-ups-brown py-4 rounded uppercase font-bold text-base"
             >
               🖨️ Print / Download PDF
             </button>
