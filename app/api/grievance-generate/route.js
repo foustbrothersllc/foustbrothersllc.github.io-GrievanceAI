@@ -88,7 +88,7 @@ export async function POST(request) {
 Using the following information, write the Nature of Grievance and Remedy Requested sections.
 
 GRIEVANT: ${grievantName}
-SUPERVISOR: ${supervisor || 'unknown'}
+IMMEDIATE SUPERVISOR (who grievant reports to, not necessarily who committed the act): ${supervisor || 'unknown'}
 DATE OF INCIDENT: ${dateOfIncident || 'the date of incident'}
 RUN/LOAD: ${runLoad || 'N/A'}
 CLASSIFICATION: ${classification}
@@ -101,9 +101,10 @@ WORKER'S ORIGINAL COMPLAINT:
 ${question}
 
 Write professional, specific grievance language. Use the grievant's name. Reference the specific articles. Be concise and factual.
+NOTE: The supervisor field is the grievant's immediate supervisor they report to - do NOT describe them as the person who committed the act.
 
 Respond in this EXACT format with no other text:
-NATURE: [3-4 sentences describing what happened, naming the grievant, supervisor if known, date, and how the contract was violated]
+NATURE: [3-4 sentences describing what happened, naming the grievant, the date, and how the contract was violated. Reference the supervisor as the immediate supervisor, not as the wrongdoer]
 REMEDY: [2-3 sentences with specific remedy - make whole pay, cease and desist, etc.]`;
 
     const providers = [
