@@ -4,16 +4,28 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
-import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import Link from 'next/link';
 
 const GEMINI_API_KEY = 'AIzaSyBCsWv144FkqsorpXiTC4_3mRjejj7msoA';
+
+const CONTRACT_URLS = [
+  {
+    name: 'Atlantic Area Supplemental Agreement 2023-2028',
+    url: 'https://raw.githubusercontent.com/foustbrothersllc/foustbrothersllc.github.io-GrievanceAI/main/local-agreement.txt'
+  },
+  {
+    name: 'National Master UPS Agreement 2023-2028',
+    url: 'https://raw.githubusercontent.com/foustbrothersllc/foustbrothersllc.github.io-GrievanceAI/main/master-agreement.txt'
+  }
+];
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [userName, setUserName] = useState('');
   const [loading, setLoading] = useState(true);
-  const [contracts, setContracts] = useState([]);
+  const [contractsLoaded, setContractsLoaded] = useState(false);
+  const [contractText, setContractText] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
   const [classification, setClassification] = useState('');
   const [question, setQuestion] = useState('');
@@ -28,6 +40,8 @@ export default function Dashboard() {
     const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
+
+        // Load user profile from Firestore
         try {
           const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
           if (userDoc.exists()) {
@@ -41,12 +55,22 @@ export default function Dashboard() {
           setUserName(currentUser.email);
         }
 
+        // Load contracts directly from GitHub
         try {
-          const snapshot = await getDocs(collection(db, 'contracts'));
-          setContracts(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
+          const texts = await Promise.all(
+            CONTRACT_URLS.map(async (c) => {
+              const res = await fetch(c.url);
+              const text = await res.text();
+              return `=== ${c.name} ===\n${text}`;
+            })
+          );
+          setContractText(texts.join('\n\n'));
+          setContractsLoaded(true);
         } catch (err) {
-          console.error('Error loading contracts:', err);
+          console.error('Error loading contracts from GitHub:', err);
+          setError('Failed to load contracts. Please refresh the page.');
         }
+
       } else {
         router.push('/login');
       }
@@ -70,14 +94,10 @@ export default function Dashboard() {
     setResults(null);
 
     try {
-      const contractDump = contracts
-        .map(c => `=== ${c.name} ===\n${c.text}`)
-        .join('\n\n');
-
       const prompt = `You are a labor relations expert specializing in UPS Teamsters contracts.
 
 IMPORTANT RULES YOU MUST FOLLOW:
-1. The Supplemental Agreement (Local Agreement) has stronger and more specific language than the National Master Agreement. Always check the Supplement first. Both can apply at the same time — if both have relevant language, cite BOTH.
+1. The Supplemental Agreement (Atlantic Area Agreement) has stronger and more specific language than the National Master Agreement. Always check the Supplement first. Both can apply at the same time — if both have relevant language, cite BOTH.
 2. Always explain what the contract says regardless of whether there is a violation or not. Never just say "no violation" without explaining the relevant contract language.
 3. Always cite the specific Article and Section number when referencing contract language.
 4. Answer in plain language a worker can understand.
@@ -88,8 +108,8 @@ A worker has asked the following question:
 
 Their job classification is: ${classification}
 
-Here are the relevant contracts to analyze:
-${contractDump}
+Here are the relevant contracts to analyze (Supplement listed first as it takes precedence):
+${contractText}
 
 Based on the contract language above, answer whether there is a violation.
 
@@ -155,6 +175,9 @@ Then:
         <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8 mb-8">
           <h2 className="text-3xl font-bold text-ups-gold mb-2">Welcome, {userName}!</h2>
           <p className="text-gray-400">Check if contract violations apply to your position</p>
+          {contractsLoaded && (
+            <p className="text-green-400 text-sm mt-2">✅ Contracts loaded and ready</p>
+          )}
         </div>
 
         {error && <div className="bg-red-900 text-red-100 p-4 rounded mb-8">{error}</div>}
@@ -190,25 +213,21 @@ Then:
 
             <button
               onClick={handleAnalyze}
-              disabled={analyzing || contracts.length === 0}
+              disabled={analyzing || !contractsLoaded}
               className="w-full bg-ups-brown text-ups-gold py-3 rounded uppercase font-bold disabled:opacity-50"
             >
-              {analyzing ? 'Analyzing...' : contracts.length === 0 ? 'No Contracts Loaded' : 'Analyze'}
+              {analyzing ? 'Analyzing...' : !contractsLoaded ? 'Loading Contracts...' : 'Analyze'}
             </button>
-
-            {contracts.length === 0 && !analyzing && (
-              <p className="text-gray-500 text-sm text-center">No contracts have been uploaded yet. An admin needs to add contracts first.</p>
-            )}
           </div>
         </div>
 
         {results && (
-          <div className={`border-2 rounded-lg p-8 mb-8 ${results.includes('NO') ? 'bg-green-900 border-green-600 text-green-100' : 'bg-red-900 border-red-600 text-red-100'}`}>
+          <div className={`border-2 rounded-lg p-8 mb-8 ${results.includes('NO - NO VIOLATION') ? 'bg-green-900 border-green-600 text-green-100' : 'bg-red-900 border-red-600 text-red-100'}`}>
             <h3 className="text-2xl font-bold mb-4">
-              {results.includes('NO') ? '✅ No Violation Found' : '⚠️ Violation Found'}
+              {results.includes('NO - NO VIOLATION') ? '✅ No Violation Found' : '⚠️ Violation Found'}
             </h3>
             <p className="whitespace-pre-wrap mb-6">{results}</p>
-            {results.includes('YES') && (
+            {results.includes('YES - VIOLATION FOUND') && (
               <Link href={`/grievance?violation=${encodeURIComponent(results)}&classification=${classification}&question=${encodeURIComponent(question)}`}>
                 <button className="w-full bg-ups-gold text-ups-brown py-2 rounded uppercase font-bold">
                   📄 File Grievance
