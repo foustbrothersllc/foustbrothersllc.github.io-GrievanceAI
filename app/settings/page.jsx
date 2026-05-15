@@ -12,6 +12,8 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [employeeId, setEmployeeId] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const router = useRouter();
@@ -24,9 +26,10 @@ export default function SettingsPage() {
           const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
           if (userDoc.exists()) {
             setName(userDoc.data().name || '');
+            setPhone(userDoc.data().phone || '');
+            setEmployeeId(userDoc.data().employeeId || '');
           }
         } catch (err) {
-          console.error('Error fetching user data:', err);
           setError('Failed to load settings');
         }
       } else {
@@ -37,31 +40,31 @@ export default function SettingsPage() {
     return () => unsubscribe();
   }, [router]);
 
-  const handleSaveName = async (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    
-    if (!name.trim()) {
-      setError('Name cannot be empty');
-      return;
-    }
-
+    if (!name.trim()) { setError('Name cannot be empty'); return; }
     setSaving(true);
     setError('');
     setSuccess('');
-
     try {
       await updateDoc(doc(db, 'users', user.uid), {
-        name: name.trim()
+        name: name.trim(),
+        phone: phone.trim(),
+        employeeId: employeeId.trim()
       });
-      setSuccess('Display name updated successfully!');
+      setSuccess('Settings saved successfully!');
     } catch (err) {
-      setError('Failed to update name');
+      setError('Failed to save settings');
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) return <div className="min-h-screen bg-ups-black flex items-center justify-center"><p className="text-ups-gold">Loading...</p></div>;
+  if (loading) return (
+    <div className="min-h-screen bg-ups-black flex items-center justify-center">
+      <p className="text-ups-gold">Loading...</p>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-ups-black">
@@ -75,26 +78,49 @@ export default function SettingsPage() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto p-6">
+      <main className="max-w-2xl mx-auto p-6">
         <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8 mb-8">
-          <h2 className="text-3xl font-bold text-ups-gold mb-2">Settings</h2>
-          <p className="text-gray-400">Manage your account preferences</p>
+          <h2 className="text-3xl font-bold text-ups-gold mb-2">⚙️ Settings</h2>
+          <p className="text-gray-400">Your info is auto-filled on grievance forms</p>
         </div>
 
-        {error && <div className="bg-red-900 text-red-100 p-4 rounded mb-8">{error}</div>}
-        {success && <div className="bg-green-900 text-green-100 p-4 rounded mb-8">{success}</div>}
+        {error && <div className="bg-red-900 text-red-100 p-4 rounded mb-6">{error}</div>}
+        {success && <div className="bg-green-900 text-green-100 p-4 rounded mb-6">{success}</div>}
 
         <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8">
-          <h3 className="text-2xl font-bold text-ups-gold mb-6">Display Name</h3>
-          
-          <form onSubmit={handleSaveName} className="space-y-4">
+          <form onSubmit={handleSave} className="space-y-6">
             <div>
-              <label className="block text-ups-gold font-semibold mb-2">Your Name</label>
+              <label className="block text-ups-gold font-semibold mb-2">Full Name</label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your name"
+                placeholder="Your full name"
+                className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-2 text-white"
+                disabled={saving}
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-ups-gold font-semibold mb-2">Phone Number</label>
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="e.g., (555) 123-4567"
+                className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-2 text-white"
+                disabled={saving}
+              />
+            </div>
+
+            <div>
+              <label className="block text-ups-gold font-semibold mb-2">Employee ID</label>
+              <input
+                type="text"
+                value={employeeId}
+                onChange={(e) => setEmployeeId(e.target.value)}
+                placeholder="Your UPS Employee ID"
                 className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-2 text-white"
                 disabled={saving}
               />
@@ -103,9 +129,9 @@ export default function SettingsPage() {
             <button
               type="submit"
               disabled={saving}
-              className="w-full bg-ups-brown text-ups-gold py-2 rounded uppercase font-bold"
+              className="w-full bg-ups-brown text-ups-gold py-3 rounded uppercase font-bold"
             >
-              {saving ? 'Saving...' : 'Save Changes'}
+              {saving ? 'Saving...' : 'Save Settings'}
             </button>
           </form>
         </div>
