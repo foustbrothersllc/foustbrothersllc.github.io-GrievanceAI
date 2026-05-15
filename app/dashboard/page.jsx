@@ -76,6 +76,13 @@ export default function Dashboard() {
 
       const prompt = `You are a labor relations expert specializing in UPS Teamsters contracts.
 
+IMPORTANT RULES YOU MUST FOLLOW:
+1. The Supplemental Agreement (Local Agreement) has stronger and more specific language than the National Master Agreement. Always check the Supplement first. Both can apply at the same time — if both have relevant language, cite BOTH.
+2. Always explain what the contract says regardless of whether there is a violation or not. Never just say "no violation" without explaining the relevant contract language.
+3. Always cite the specific Article and Section number when referencing contract language.
+4. Answer in plain language a worker can understand.
+5. Base your answer ONLY on the contract language provided — do not use general labor law knowledge.
+
 A worker has asked the following question:
 "${question}"
 
@@ -84,13 +91,17 @@ Their job classification is: ${classification}
 Here are the relevant contracts to analyze:
 ${contractDump}
 
-Based ONLY on the contract language above, answer whether there is a violation.
+Based on the contract language above, answer whether there is a violation.
 
 Start your response with either:
 - "YES - VIOLATION FOUND:" if the contract supports their claim
 - "NO - NO VIOLATION:" if the contract does not support their claim
 
-Then explain clearly and specifically what the contract says about this situation, citing the relevant section or language if possible. Keep it concise and in plain language a worker can understand.`;
+Then:
+1. Cite the specific Article and Section from the Supplement and/or Master Agreement that applies
+2. Explain exactly what the contract language says about this situation in plain language
+3. If both the Supplement and Master Agreement apply, explain how they work together
+4. If no violation, still clearly explain what the worker's rights ARE under the contract`;
 
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
