@@ -90,6 +90,7 @@ export async function POST(request) {
       violation,
       question
     } = await request.json();
+    const supervisor = '';
 
     // Only use the articles the worker selected
     const articleList = selectedArticles && selectedArticles.length > 0
