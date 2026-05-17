@@ -189,8 +189,7 @@ export default function Dashboard() {
         </div>
 
 {results && (() => {
-          const overallVerdictLine = results.split('\n').find(line => line.trim().startsWith('OVERALL VERDICT:'));
-          const hasViolation = overallVerdictLine ? overallVerdictLine.includes('YES') : results.includes('YES - VIOLATION FOUND');
+          const hasViolation = results.includes('OVERALL VERDICT: YES') || results.includes('YES - VIOLATION FOUND');
           return (
             <div className={`border-2 rounded-lg p-6 mb-6 ${hasViolation ? 'bg-red-900 border-red-600 text-red-100' : 'bg-green-900 border-green-600 text-green-100'}`}>
               <h3 className="text-xl font-bold mb-3">
