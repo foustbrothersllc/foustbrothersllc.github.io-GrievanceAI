@@ -28,8 +28,15 @@ export default function Dashboard() {
         try {
           const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
           if (userDoc.exists()) {
-            setUserName(userDoc.data().name || currentUser.email);
-            setIsAdmin(userDoc.data().role === 'admin');
+            const data = userDoc.data();
+            // Check if account is blocked
+            if (data.status === 'disabled') {
+              await signOut(auth);
+              router.push('/blocked');
+              return;
+            }
+            setUserName(data.name || currentUser.email);
+            setIsAdmin(data.role === 'admin');
           } else {
             setUserName(currentUser.email);
           }
