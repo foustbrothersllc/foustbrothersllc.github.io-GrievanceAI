@@ -41,7 +41,21 @@ export default function AdminPanel() {
     }
   };
 
-  const isProtected = (u) => u.email?.toLowerCase() === PROTECTED_EMAIL.toLowerCase();
+  const isMasterAdmin = (u) => u.email?.toLowerCase() === PROTECTED_EMAIL.toLowerCase();
+  const isProtected = (u) => isMasterAdmin(u) || u.protected === true;
+  const canToggleProtected = user?.email?.toLowerCase() === PROTECTED_EMAIL.toLowerCase();
+
+  const handleToggleProtected = async (u) => {
+    if (isMasterAdmin(u)) { setError('Master admin protection cannot be changed.'); return; }
+    const newProtected = !u.protected;
+    try {
+      await updateDoc(doc(db, 'users', u.id), { protected: newProtected });
+      setSuccess(`Account ${newProtected ? 'protected' : 'unprotected'} successfully`);
+      loadUsers();
+    } catch (err) {
+      setError('Failed to update protection status');
+    }
+  };
 
   const handleRoleChange = async (u, newRole) => {
     if (isProtected(u)) { setError('This account is protected and cannot be modified.'); return; }
@@ -144,9 +158,10 @@ export default function AdminPanel() {
                   <div key={u.id} className={`bg-gray-800 border rounded-lg p-4 ${u.status === 'disabled' ? 'border-red-700 opacity-60' : isProtected(u) ? 'border-ups-gold' : 'border-ups-brown'}`}>
                     <div className="flex justify-between items-start mb-3">
                       <div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <p className="text-white font-bold">{u.name || 'No name'}</p>
-                          {isProtected(u) && <span className="text-xs bg-ups-gold text-ups-brown px-2 py-0.5 rounded font-bold">PROTECTED</span>}
+                          {isMasterAdmin(u) && <span className="text-xs bg-ups-gold text-ups-brown px-2 py-0.5 rounded font-bold">MASTER ADMIN</span>}
+                          {!isMasterAdmin(u) && u.protected && <span className="text-xs bg-purple-700 text-white px-2 py-0.5 rounded font-bold">🛡️ PROTECTED</span>}
                         </div>
                         <p className="text-gray-400 text-sm">{u.email}</p>
                         <p className="text-gray-500 text-xs">Joined: {formatDate(u.createdAt)}</p>
@@ -159,20 +174,37 @@ export default function AdminPanel() {
 
                     {!isProtected(u) && (
                       <div className="flex flex-wrap gap-2">
-                        {u.role === 'admin' ? (
+                        {canToggleProtected && u.role === 'admin' && (
                           <button onClick={() => handleRoleChange(u, 'user')} className="bg-gray-700 text-white px-3 py-1.5 rounded text-xs">Remove Admin</button>
-                        ) : (
+                        )}
+                        {canToggleProtected && u.role !== 'admin' && (
                           <button onClick={() => handleRoleChange(u, 'admin')} className="bg-ups-gold text-ups-brown px-3 py-1.5 rounded text-xs font-bold">Make Admin</button>
                         )}
                         <button onClick={() => handleDisable(u)} className={`px-3 py-1.5 rounded text-xs ${u.status === 'disabled' ? 'bg-green-700 text-white' : 'bg-yellow-700 text-white'}`}>
                           {u.status === 'disabled' ? '✅ Enable' : '⛔ Disable'}
                         </button>
                         <button onClick={() => handlePasswordReset(u.email)} className="bg-blue-700 text-white px-3 py-1.5 rounded text-xs">📧 Reset Password</button>
+                        {canToggleProtected && (
+                          <button onClick={() => handleToggleProtected(u)} className="bg-purple-700 text-white px-3 py-1.5 rounded text-xs">
+                            🛡️ Protect
+                          </button>
+                        )}
                         <button onClick={() => handleDeleteUser(u)} className="bg-red-700 text-white px-3 py-1.5 rounded text-xs">🗑️ Delete</button>
                       </div>
                     )}
 
-                    {isProtected(u) && (
+                    {isProtected(u) && !isMasterAdmin(u) && (
+                      <div className="flex flex-wrap gap-2">
+                        <button onClick={() => handlePasswordReset(u.email)} className="bg-blue-700 text-white px-3 py-1.5 rounded text-xs">📧 Reset Password</button>
+                        {canToggleProtected && (
+                          <button onClick={() => handleToggleProtected(u)} className="bg-purple-900 text-white px-3 py-1.5 rounded text-xs">
+                            🛡️ Remove Protection
+                          </button>
+                        )}
+                      </div>
+                    )}
+
+                    {isMasterAdmin(u) && (
                       <div className="flex flex-wrap gap-2">
                         <button onClick={() => handlePasswordReset(u.email)} className="bg-blue-700 text-white px-3 py-1.5 rounded text-xs">📧 Reset Password</button>
                       </div>
