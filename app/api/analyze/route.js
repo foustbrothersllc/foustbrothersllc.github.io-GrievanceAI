@@ -22,18 +22,18 @@ CRITICAL RULES:
 MANDATORY VIOLATION TRIGGERS - Before analyzing, scan the worker's complaint for these keywords and situations. If found, you MUST check the corresponding articles:
 
 HOURS & GUARANTEE VIOLATIONS:
-- If the worker is FULL-TIME and mentions being "sent home early", "cut short", "didn't get my 8", or worked less than 8 hours → ALWAYS check Article 60 (Daily 8-Hour Guarantee). Full-time employees are guaranteed 8 hours of pay when they report to work. If they worked less, the company owes them up to 8 hours.
-- If the worker is a FEEDER DRIVER and mentions working or driving more than 14 hours in a day → ALWAYS flag Article 18 AND FMCSA 14-Hour Rule violation. Driving or being on-duty past 14 consecutive hours is both a contract and federal safety violation. Remedy: cease and desist, review of driving logs.
-- If the worker is on the 9.5 LIST and mentions being dispatched over 9.5 hours THREE OR MORE times in a single workweek → ALWAYS flag Article 37 (Excessive Dispatch / 9.5 Violation). Remedy is TRIPLE TIME (3x their hourly rate) for all hours worked over 9.5 on those days.
+- If the worker is FULL-TIME and mentions being "sent home early", "cut short", "didn't get my 8", or worked less than 8 hours -> ALWAYS check Article 60 (Daily 8-Hour Guarantee). Full-time employees are guaranteed 8 hours of pay when they report to work. If they worked less, the company owes them up to 8 hours.
+- If the worker is a FEEDER DRIVER and mentions working or driving more than 14 hours in a day -> ALWAYS flag Article 18 AND FMCSA 14-Hour Rule violation. Driving or being on-duty past 14 consecutive hours is both a contract and federal safety violation. Remedy: cease and desist, review of driving logs.
+- If the worker is on the 9.5 LIST and mentions being dispatched over 9.5 hours THREE OR MORE times in a single workweek -> ALWAYS flag Article 37 (Excessive Dispatch / 9.5 Violation). Remedy is TRIPLE TIME (3x their hourly rate) for all hours worked over 9.5 on those days.
 
 KEYWORD TRIGGERS - If any of these words or phrases appear in the complaint, ALWAYS check the corresponding articles:
-- "Sleeper Team", "sleeper", "team run", "premium service" → Check Article 43 (Sleeper Team Operations - mileage minimums, rest rotation requirements, cab specifications, layover pay)
-- "foreign power", "vendor trailer", "outside truck", "non-UPS equipment", "contractor", "subcontract" → Check Article 26 AND Article 32 (Subcontracting and Outsourcing - work that belongs to bargaining unit employees being given to outside vendors)
-- "red tag", "DVIR", "vehicle inspection", "unsafe", "refused to drive", "mechanical issue", "breakdown" → Check Article 18 (Safety - right to refuse unsafe work, equipment standards, DVIR requirements)
-- "bypass", "bypassed", "skipped over", "passed over", "junior driver got the run", "less senior" → Check Article 48 (Seniority - employees must be offered work in seniority order; bypassing a senior employee is a violation)
-- "grievance retaliation", "punished for filing", "targeted after grievance" → Check Article 37 (Non-discrimination / Retaliation)
-- "worked through lunch", "no meal period", "skipped break" → Check Article 51 (Meal Period requirements)
-- "paid wrong rate", "short check", "missing pay" → Check Article 17 (Paid for Time / Wage violations)
+- "Sleeper Team", "sleeper", "team run", "premium service" -> Check Article 43 (Sleeper Team Operations - mileage minimums, rest rotation requirements, cab specifications, layover pay)
+- "foreign power", "vendor trailer", "outside truck", "non-UPS equipment", "contractor", "subcontract" -> Check Article 26 AND Article 32 (Subcontracting and Outsourcing - work that belongs to bargaining unit employees being given to outside vendors)
+- "red tag", "DVIR", "vehicle inspection", "unsafe", "refused to drive", "mechanical issue", "breakdown" -> Check Article 18 (Safety - right to refuse unsafe work, equipment standards, DVIR requirements)
+- "bypass", "bypassed", "skipped over", "passed over", "junior driver got the run", "less senior" -> Check Article 48 (Seniority - employees must be offered work in seniority order; bypassing a senior employee is a violation)
+- "grievance retaliation", "punished for filing", "targeted after grievance" -> Check Article 37 (Non-discrimination / Retaliation)
+- "worked through lunch", "no meal period", "skipped break" -> Check Article 51 (Meal Period requirements)
+- "paid wrong rate", "short check", "missing pay" -> Check Article 17 (Paid for Time / Wage violations)`;
 
 WORKER DETAILS:
 Classification: ${classification}
