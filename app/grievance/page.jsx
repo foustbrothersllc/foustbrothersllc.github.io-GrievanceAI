@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useState, useRef, useCallback } from 'react';
+import { Suspense, useEffect, useState, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { auth, db } from '@/lib/firebase';
 import { doc, getDoc, getDocs, collection } from 'firebase/firestore';
@@ -123,24 +123,21 @@ function GrievanceContent() {
     setGenerating(true);
     setError('');
     try {
-      const articleList = selectedArticles.map(a => a.text).join(', ');
       const response = await fetch('/api/grievance-generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           grievantName,
-          supervisor: form.supervisor,
           dateOfIncident: form.dateOfIncident,
           runLoad: form.runLoad,
           classification,
-          articleList,
+          selectedArticles: selectedArticles.map(a => a.text),
           violation,
           question
         })
       });
       const data = await response.json();
       if (data.error) throw new Error(data.error);
-
       if (data.nature) setForm(f => ({ ...f, natureOfGrievance: data.nature }));
       if (data.remedy) setForm(f => ({ ...f, remedy: data.remedy }));
     } catch (err) {
@@ -155,11 +152,12 @@ function GrievanceContent() {
     const currentName = form.useCustomName ? form.grievantNameCustom : form.grievantName;
     const currentPhone = form.phone || '';
     const currentEmployeeId = form.employeeId || '';
+
     const htmlContent = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Grievance Form - ${grievantName}</title>
+  <title>Grievance Form - ${currentName}</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { width: 8.5in; background: white; color: black; }
@@ -167,12 +165,12 @@ function GrievanceContent() {
     h1 { font-size: 16px; text-align: center; text-transform: uppercase; margin-bottom: 4px; }
     h2 { font-size: 14px; text-align: center; margin-bottom: 20px; }
     table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
-    td { border: 1px solid black; padding: 6px 8px; width: 50%; }
+    td { border: 1px solid black; padding: 6px 8px; width: 50%; vertical-align: top; }
     .section { border: 1px solid black; padding: 8px; margin-bottom: 12px; min-height: 80px; }
-    .section-title { font-weight: bold; margin-bottom: 6px; }
+    .section-title { font-weight: bold; margin-bottom: 6px; font-size: 11px; text-transform: uppercase; }
     .section-content { white-space: pre-wrap; line-height: 1.5; }
-    .signatures { display: flex; gap: 60px; margin-top: 30px; }
-    .sig-block { flex: 1; }
+    .signatures { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-top: 30px; }
+    .sig-block {}
     .sig-line { border-bottom: 1px solid black; margin-bottom: 4px; height: 40px; }
     .sig-label { font-size: 10px; }
     .note { font-size: 9px; font-style: italic; margin-top: 12px; }
@@ -180,14 +178,10 @@ function GrievanceContent() {
       html, body { width: 100%; }
       @page { size: letter; margin: 0.75in; }
       body { padding: 0; }
+      a { display: none; }
     }
     @media screen {
-      body { 
-        max-width: 8.5in;
-        margin: 0 auto;
-        box-shadow: 0 0 10px rgba(0,0,0,0.3);
-        min-height: 11in;
-      }
+      body { max-width: 8.5in; margin: 0 auto; box-shadow: 0 0 10px rgba(0,0,0,0.3); min-height: 11in; }
     }
   </style>
 </head>
@@ -200,12 +194,12 @@ function GrievanceContent() {
       <td><strong>Phone:</strong> ${currentPhone}</td>
     </tr>
     <tr>
+      <td><strong>Employee ID:</strong> ${currentEmployeeId}</td>
       <td><strong>Date Filed:</strong> ${form.dateFiled}</td>
-      <td><strong>Violation Date:</strong> ${form.dateOfIncident}</td>
     </tr>
     <tr>
-      <td><strong>Classification:</strong> ${classification} — Violation</td>
-      <td><strong>Employee ID:</strong> ${currentEmployeeId}</td>
+      <td><strong>Classification:</strong> ${classification} &mdash; Violation</td>
+      <td><strong>Violation Date:</strong> ${form.dateOfIncident}</td>
     </tr>
     <tr>
       <td><strong>Immediate Supervisor:</strong> ${form.supervisor}</td>
@@ -213,15 +207,15 @@ function GrievanceContent() {
     </tr>
   </table>
   <div class="section">
-    <div class="section-title">ARTICLES VIOLATED:</div>
+    <div class="section-title">Articles Violated:</div>
     <div class="section-content">${articlesText}</div>
   </div>
   <div class="section">
-    <div class="section-title">NATURE OF GRIEVANCE:</div>
+    <div class="section-title">Nature of Grievance:</div>
     <div class="section-content">${form.natureOfGrievance}</div>
   </div>
   <div class="section">
-    <div class="section-title">REMEDY REQUESTED:</div>
+    <div class="section-title">Remedy Requested:</div>
     <div class="section-content">${form.remedy}</div>
   </div>
   <div class="signatures">
@@ -236,9 +230,7 @@ function GrievanceContent() {
   </div>
   <div class="note">Note: Ensure all evidence (logs, DIAD messages, unit numbers) is attached or cited. Provide copies to your Steward and keep one for your personal records.</div>
   <script>
-    window.onload = function() {
-      window.print();
-    };
+    window.onload = function() { window.print(); };
   </script>
 </body>
 </html>`;
@@ -246,9 +238,7 @@ function GrievanceContent() {
     const blob = new Blob([htmlContent], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     const newWindow = window.open(url, '_blank');
-    if (!newWindow) {
-      alert('Please allow popups for this site to preview the PDF');
-    }
+    if (!newWindow) alert('Please allow popups for this site to preview the PDF');
   };
 
   if (loading) return (
@@ -257,14 +247,12 @@ function GrievanceContent() {
     </div>
   );
 
-
   return (
     <div className="min-h-screen bg-ups-black">
       <header className="border-b border-ups-brown bg-gray-900 p-4">
         <div className="max-w-2xl mx-auto">
           <div className="flex justify-between items-center mb-3">
             <Link href="/"><h1 className="text-xl font-bold text-ups-gold">GRIEVANCE AI</h1></Link>
-            <button onClick={() => { signOut(auth); router.push('/'); }} className="bg-ups-brown text-ups-gold px-4 py-2 rounded uppercase text-sm font-bold">Logout</button>
           </div>
           <Link href="/dashboard">
             <button className="w-full bg-ups-brown text-ups-gold px-3 py-2 rounded uppercase text-sm font-bold">← Back to Dashboard</button>
@@ -290,7 +278,7 @@ function GrievanceContent() {
         {articles.length > 0 && (
           <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-4 mb-4">
             <h3 className="text-base font-bold text-ups-gold mb-2">Articles Violated</h3>
-            <p className="text-gray-400 text-xs mb-3">Deselect any you don't want to include:</p>
+            <p className="text-gray-400 text-xs mb-3">Deselect any you don't want to include — only selected articles will be used:</p>
             <div className="space-y-2">
               {articles.map((a, i) => (
                 <div key={i} className="flex items-center space-x-3">
@@ -354,7 +342,7 @@ function GrievanceContent() {
               <input type="text" name="runLoad" value={form.runLoad} onChange={handleChange} className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base" />
             </div>
 
-            {/* Generate Button - inside form */}
+            {/* Generate Button */}
             <button
               onClick={handleGenerate}
               disabled={generating}
@@ -365,21 +353,18 @@ function GrievanceContent() {
 
             <div>
               <label className="block text-ups-gold font-semibold mb-2 text-sm">Nature of Grievance</label>
-              <textarea ref={natureRef} name="natureOfGrievance" value={form.natureOfGrievance} onChange={handleChange} placeholder="Click 'Generate' below or type manually..." className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base" style={{minHeight: '80px', overflow: 'hidden', resize: 'none'}} />
+              <textarea ref={natureRef} name="natureOfGrievance" value={form.natureOfGrievance} onChange={handleChange} placeholder="Click Generate above or type manually..." className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base" style={{minHeight: '80px', overflow: 'hidden', resize: 'none'}} />
             </div>
 
             <div>
               <label className="block text-ups-gold font-semibold mb-2 text-sm">Remedy Requested</label>
-              <textarea ref={remedyRef} name="remedy" value={form.remedy} onChange={handleChange} placeholder="Click 'Generate' below or type manually..." className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base" style={{minHeight: '80px', overflow: 'hidden', resize: 'none'}} />
+              <textarea ref={remedyRef} name="remedy" value={form.remedy} onChange={handleChange} placeholder="Click Generate above or type manually..." className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base" style={{minHeight: '80px', overflow: 'hidden', resize: 'none'}} />
             </div>
           </div>
         </div>
 
         {/* Save as PDF Button */}
-        <button
-          onClick={handleSaveAsPDF}
-          className="w-full bg-ups-gold text-ups-brown py-4 rounded uppercase font-bold text-base mb-8"
-        >
+        <button onClick={handleSaveAsPDF} className="w-full bg-ups-gold text-ups-brown py-4 rounded uppercase font-bold text-base mb-8">
           💾 Preview & Save as PDF
         </button>
       </main>
@@ -389,11 +374,7 @@ function GrievanceContent() {
 
 export default function GrievancePage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-ups-black flex items-center justify-center">
-        <p className="text-ups-gold">Loading...</p>
-      </div>
-    }>
+    <Suspense fallback={<div className="min-h-screen bg-ups-black flex items-center justify-center"><p className="text-ups-gold">Loading...</p></div>}>
       <GrievanceContent />
     </Suspense>
   );
