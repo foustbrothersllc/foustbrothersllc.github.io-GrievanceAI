@@ -43,6 +43,10 @@ function GrievanceContent() {
     remedy: ''
   });
 
+  // 10 day filing limit
+  const today = new Date().toISOString().split('T')[0];
+  const tenDaysAgo = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
   const autoResize = (ref) => {
     if (ref.current) {
       ref.current.style.height = 'auto';
@@ -324,7 +328,8 @@ function GrievanceContent() {
 
             <div>
               <label className="block text-ups-gold font-semibold mb-2 text-sm">Date of Incident *</label>
-              <input type="date" name="dateOfIncident" value={form.dateOfIncident} onChange={handleChange} className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base" />
+              <input type="date" name="dateOfIncident" value={form.dateOfIncident} onChange={handleChange} min={tenDaysAgo} max={today} className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base" />
+              <p className="text-gray-500 text-xs mt-1">⚠️ Grievances must be filed within 10 days of the incident</p>
             </div>
 
             <div>
