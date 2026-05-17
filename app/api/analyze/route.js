@@ -139,8 +139,8 @@ async function analyzeWithCohere(prompt) {
     })
   });
   const data = await response.json();
-  if (data.message) throw new Error(data.message);
-  const text = data.message?.content?.[0]?.text || data.text;
+  if (response.status !== 200) throw new Error(data.error?.message || 'Cohere error');
+  const text = data.message?.content?.[0]?.text;
   if (!text) throw new Error('Empty Cohere response');
   return text;
 }
