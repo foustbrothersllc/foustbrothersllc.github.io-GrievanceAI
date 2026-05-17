@@ -71,10 +71,10 @@ export default function AdminPanel() {
   const handleDisable = async (u) => {
     if (isProtected(u)) { setError('This account is protected and cannot be disabled.'); return; }
     const newStatus = u.status === 'disabled' ? 'active' : 'disabled';
-    if (!window.confirm(`Are you sure you want to ${newStatus === 'disabled' ? 'disable' : 'enable'} this account?`)) return;
+    if (!window.confirm(`Are you sure you want to ${newStatus === 'disabled' ? 'block access for' : 'restore access for'} this account?`)) return;
     try {
       await updateDoc(doc(db, 'users', u.id), { status: newStatus });
-      setSuccess(`Account ${newStatus === 'disabled' ? 'disabled' : 'enabled'} successfully`);
+      setSuccess(`Account access ${newStatus === 'disabled' ? 'blocked' : 'restored'} successfully`);
       loadUsers();
     } catch (err) {
       setError('Failed to update account status');
@@ -181,7 +181,7 @@ export default function AdminPanel() {
                           <button onClick={() => handleRoleChange(u, 'admin')} className="bg-ups-gold text-ups-brown px-3 py-1.5 rounded text-xs font-bold">Make Admin</button>
                         )}
                         <button onClick={() => handleDisable(u)} className={`px-3 py-1.5 rounded text-xs ${u.status === 'disabled' ? 'bg-green-700 text-white' : 'bg-yellow-700 text-white'}`}>
-                          {u.status === 'disabled' ? '✅ Enable' : '⛔ Disable'}
+                          {u.status === 'disabled' ? '✅ Restore Access' : '⛔ Block Access'}
                         </button>
                         <button onClick={() => handlePasswordReset(u.email)} className="bg-blue-700 text-white px-3 py-1.5 rounded text-xs">📧 Reset Password</button>
                         {canToggleProtected && (
