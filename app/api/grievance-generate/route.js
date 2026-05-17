@@ -101,9 +101,7 @@ export async function POST(request) {
     const violationSections = violation
       .split(/---+/)
       .filter(section => section.includes('YES - VIOLATION FOUND') || section.includes('VERDICT: YES'))
-      .join('
----
-')
+      .join('\n---\n')
       .trim();
 
     const relevantViolations = violationSections || violation;
