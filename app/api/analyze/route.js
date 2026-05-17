@@ -36,6 +36,12 @@ KEYWORD TRIGGERS - If any of these words or phrases appear in the complaint, ALW
 - "worked through lunch", "no meal period", "skipped break" -> Check Article 51 (Meal Period requirements)
 - "paid wrong rate", "short check", "missing pay" -> Check Article 17 (Paid for Time / Wage violations)
 
+CRITICAL COGNITIVE LAYER - READ THIS BEFORE ANALYZING:
+- THE DECONSTRUCTION MANDATE: Workers often write in short, compressed sentences (e.g., "My run was cut. A junior man took my trailer. Sent home before 8."). You MUST process every single action verb or noun clause as a potential independent violation.
+- Rule A: If the text mentions a "junior" person getting work, a trailer, or a run -> That is automatically a separate Seniority Bypass issue. Evaluate Article 48.
+- Rule B: If the text mentions a run being "cut" or being "sent home" early -> That is automatically a separate Daily Guarantee issue. Evaluate Article 60.
+- NEVER let one rule cancel out the other. If both conditions are met in a single paragraph, you MUST output TWO completely separate issue blocks.
+
 WORKER DETAILS:
 Classification: ${classification}
 Question/Complaint: "${question}"
@@ -44,7 +50,7 @@ CONTRACTS TO ANALYZE:
 ${contractText}
 
 INSTRUCTIONS:
-First, read the worker's complaint carefully and identify EVERY separate issue they mentioned. Based on the complaint, there appear to be approximately ${issueCount} or more separate issues. Find ALL of them - do not stop after the first one.
+First, deconstruct the worker's complaint into EVERY separate issue using the Cognitive Layer above. Find ALL issues - do not stop after the first one.
 
 Then for EACH issue found, provide a separate analysis block in this exact format:
 
@@ -52,14 +58,14 @@ Then for EACH issue found, provide a separate analysis block in this exact forma
 ISSUE #[number]: [Name of the issue]
 VERDICT: YES - VIOLATION FOUND or NO - NO VIOLATION
 ARTICLES: [Specific Article and Section from Supplement and/or Master]
-ANALYSIS: [What the contract says and whether it was violated, in plain language]
+ANALYSIS: [If VIOLATION FOUND: detailed explanation of how contract was violated. If NO VIOLATION: brief one sentence explanation only]
 WORKER RIGHTS: [What the worker is entitled to under the contract]
 ---
 
 After analyzing ALL issues, end with:
 
 OVERALL VERDICT: YES - VIOLATION FOUND (if any violations exist) or NO - NO VIOLATION
-SUMMARY: [Brief summary of all violations found and recommended next steps]`;
+SUMMARY: [Brief summary of violations found and recommended next steps]`;
 
 // 1. GROQ - Primary (14,400 req/day free)
 async function analyzeWithGroq(prompt) {
