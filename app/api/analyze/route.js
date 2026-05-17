@@ -23,7 +23,13 @@ CRITICAL RULES:
 MANDATORY VIOLATION TRIGGERS - Before analyzing, scan the worker's complaint for these keywords and situations. If found, you MUST check the corresponding articles:
 
 HOURS & GUARANTEE VIOLATIONS:
-- If the worker is FULL-TIME and worked LESS THAN 8 HOURS total for the day -> ALWAYS flag as Article 60 violation (Daily 8-Hour Guarantee). Full-time employees are guaranteed 8 hours of pay when they report to work. IMPORTANT: If the worker worked 8 or more hours (including any meal period time), Article 60 is NOT violated - they received their guarantee. Only flag this when total hours worked are clearly less than 8. Keywords that suggest under 8 hours: "sent home early", "cut short", "didn't get my 8", "only worked X hours" where X < 8, "wanted more work". Do NOT flag if worker mentions 8 or more hours worked.
+- Article 60 (Daily 8-Hour Guarantee) MATH RULE: Only flag if total hours worked is LESS THAN 8. 
+  * "sent home at 9 hours" = 9 > 8 = NO VIOLATION
+  * "sent home at 7 hours" = 7 < 8 = VIOLATION
+  * "sent home at 8 hours" = 8 = 8 = NO VIOLATION  
+  * "only worked 6 hours" = 6 < 8 = VIOLATION
+  * "worked 10 hours" = 10 > 8 = NO VIOLATION
+  Always extract the actual number of hours mentioned and compare to 8. If hours >= 8, Article 60 is NOT violated. If hours < 8 or no hours mentioned but worker says "sent home early/cut short/didn't get my 8", flag as violation.
 - If the worker is a FEEDER DRIVER and mentions working or driving more than 14 hours in a day -> ALWAYS flag Article 18 AND FMCSA 14-Hour Rule violation. Driving or being on-duty past 14 consecutive hours is both a contract and federal safety violation. Remedy: cease and desist, review of driving logs.
 - If the worker is a PACKAGE CAR DRIVER (NOT a Feeder Driver) and is on the 9.5 LIST and mentions being dispatched over 9.5 hours THREE OR MORE times in a single workweek -> ALWAYS flag Article 37 (Excessive Dispatch / 9.5 Violation). Remedy is TRIPLE TIME (3x their hourly rate) for all hours worked over 9.5 on those days. NOTE: The 9.5 list does NOT apply to Feeder Drivers - do not flag this for Feeder Drivers.
 - If the worker is a FEEDER DRIVER and mentions excessive hours, check the 14-hour FMCSA rule and Article 18 instead.
