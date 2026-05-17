@@ -7,6 +7,28 @@ import { auth, db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import Link from 'next/link';
 
+const translateDriverSlang = (userSpeech) => {
+  let cleanedText = userSpeech;
+  const slangMap = [
+    { regex: /worked me to death|killed me with hours|forced over/i, tag: "excessive dispatch over 9.5 hours" },
+    { regex: /cut me short|sent me home early|didn't get my time/i, tag: "sent home early before 8 hours" },
+    { regex: /brought in an outside guy|coyote truck|rail trailer/i, tag: "vendor trailer foreign power contractor" },
+    { regex: /truck is a piece of junk|broken down|bad brakes/i, tag: "red tag unsafe mechanical issue breakdown" },
+    { regex: /skipped me|let a junior guy go|gave my run away/i, tag: "bypassed senior driver less senior" },
+    { regex: /ate on the fly|no time to eat|supervisor rushed my break/i, tag: "worked through lunch no meal period" },
+    { regex: /short check|didn't pay me right|missing from my check/i, tag: "paid wrong rate short check missing pay" },
+    { regex: /pulled me off my run|took my load|gave my load away/i, tag: "bypassed less senior" },
+    { regex: /made me drive too long|too many hours driving|over my hours/i, tag: "feeder driver over 14 hours FMCSA" },
+    { regex: /retaliated|targeting me|out to get me after my grievance/i, tag: "grievance retaliation punished for filing" },
+  ];
+  slangMap.forEach(item => {
+    if (item.regex.test(userSpeech)) {
+      cleanedText += ' [System Tag: User describes an issue related to ' + item.tag + ']';
+    }
+  });
+  return cleanedText;
+};
+
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [userName, setUserName] = useState('');
@@ -51,6 +73,28 @@ export default function Dashboard() {
     return () => unsubscribe();
   }, [router]);
 
+  const translateDriverSlang = (userSpeech) => {
+    let cleanedText = userSpeech;
+    const slangMap = [
+      { regex: /worked me to death|killed me with hours|forced over/i, tag: "excessive dispatch over 9.5 hours" },
+      { regex: /cut me short|sent me home early|didn't get my time/i, tag: "sent home early before 8 hours" },
+      { regex: /brought in an outside guy|coyote truck|rail trailer/i, tag: "vendor trailer foreign power contractor" },
+      { regex: /truck is a piece of junk|broken down|bad brakes/i, tag: "red tag unsafe mechanical issue breakdown" },
+      { regex: /skipped me|let a junior guy go|gave my run away/i, tag: "bypassed senior driver less senior" },
+      { regex: /ate on the fly|no time to eat|supervisor rushed my break/i, tag: "worked through lunch no meal period" },
+      { regex: /short check|missing pay|didn't pay me right/i, tag: "paid wrong rate short check missing pay" },
+      { regex: /sleeper|team run|two man run/i, tag: "sleeper team premium service" },
+      { regex: /retaliation|targeting me|out to get me/i, tag: "grievance retaliation punished for filing" },
+      { regex: /14 hours|been out all day|driving forever/i, tag: "over 14 hours FMCSA violation" },
+    ];
+    slangMap.forEach(item => {
+      if (item.regex.test(userSpeech)) {
+        cleanedText += \` [System Tag: User describes an issue related to \${item.tag}]\`;
+      }
+    });
+    return cleanedText;
+  };
+
   const handleAnalyze = async () => {
     if (!classification.trim()) { setError('Please select a job classification'); return; }
     if (!question.trim()) { setError('Please ask a question'); return; }
@@ -60,10 +104,11 @@ export default function Dashboard() {
     setResults(null);
 
     try {
+      const translatedQuestion = translateDriverSlang(question);
       const response = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ classification, question })
+        body: JSON.stringify({ classification, question: translatedQuestion })
       });
 
       const data = await response.json();
