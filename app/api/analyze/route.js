@@ -165,6 +165,53 @@ async function analyzeWithHuggingFace(prompt) {
   return text.replace(prompt, '').trim();
 }
 
+// 6. CEREBRAS - Fifth backup (free, very fast)
+async function analyzeWithCerebras(prompt) {
+  const key = process.env.CEREBRAS_API_KEY;
+  if (!key) throw new Error('No Cerebras key');
+  const response = await fetch('https://api.cerebras.ai/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+    body: JSON.stringify({
+      model: 'llama-3.3-70b',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 4096,
+      temperature: 0.2
+    })
+  });
+  const data = await response.json();
+  if (data.error) throw new Error(data.error.message);
+  const text = data.choices?.[0]?.message?.content;
+  if (!text) throw new Error('Empty Cerebras response');
+  return text;
+}
+
+// 7. OPENROUTER - Sixth backup (free tier)
+async function analyzeWithOpenRouter(prompt) {
+  const key = process.env.OPENROUTER_API_KEY;
+  if (!key) throw new Error('No OpenRouter key');
+  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${key}`,
+      'HTTP-Referer': 'https://foustbrothersllc-github-io-grievanc.vercel.app',
+      'X-Title': 'Grievance AI'
+    },
+    body: JSON.stringify({
+      model: 'meta-llama/llama-3.3-70b-instruct:free',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 4096,
+      temperature: 0.2
+    })
+  });
+  const data = await response.json();
+  if (data.error) throw new Error(data.error.message);
+  const text = data.choices?.[0]?.message?.content;
+  if (!text) throw new Error('Empty OpenRouter response');
+  return text;
+}
+
 export async function POST(request) {
   try {
     const { classification, question } = await request.json();
@@ -191,6 +238,8 @@ export async function POST(request) {
     const providers = [
       { name: 'Groq', fn: analyzeWithGroq },
       { name: 'Gemini', fn: analyzeWithGemini },
+      { name: 'Cerebras', fn: analyzeWithCerebras },
+      { name: 'OpenRouter', fn: analyzeWithOpenRouter },
       { name: 'Mistral', fn: analyzeWithMistral },
       { name: 'Cohere', fn: analyzeWithCohere },
       { name: 'HuggingFace', fn: analyzeWithHuggingFace },
