@@ -204,10 +204,10 @@ function GrievanceContent() {
       <td><strong>Classification:</strong> ${classification} &mdash; Violation</td>
       <td><strong>Violation Date:</strong> ${form.dateOfIncident}</td>
     </tr>
-    <tr>
+    ${form.runLoad ? `<tr>
       <td><strong>Run/Load #:</strong> ${form.runLoad}</td>
       <td></td>
-    </tr>
+    </tr>` : ''}
   </table>
   <div class="section">
     <div class="section-title">Articles Violated:</div>
