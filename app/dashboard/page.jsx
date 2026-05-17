@@ -89,7 +89,7 @@ export default function Dashboard() {
     ];
     slangMap.forEach(item => {
       if (item.regex.test(userSpeech)) {
-        cleanedText += \` [System Tag: User describes an issue related to \${item.tag}]\`;
+        cleanedText += " [System Tag: User describes an issue related to " + item.tag + "]";
       }
     });
     return cleanedText;
