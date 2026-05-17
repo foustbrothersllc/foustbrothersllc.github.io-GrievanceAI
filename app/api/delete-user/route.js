@@ -4,7 +4,14 @@ import { getFirestore } from 'firebase-admin/firestore';
 
 function getAdminApp() {
   if (getApps().length > 0) return getApps()[0];
-  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+  const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
+  if (!raw) throw new Error('FIREBASE_SERVICE_ACCOUNT env var not set');
+  let serviceAccount;
+  try {
+    serviceAccount = JSON.parse(raw);
+  } catch(e) {
+    throw new Error('FIREBASE_SERVICE_ACCOUNT is not valid JSON: ' + e.message);
+  }
   return initializeApp({ credential: cert(serviceAccount) });
 }
 
