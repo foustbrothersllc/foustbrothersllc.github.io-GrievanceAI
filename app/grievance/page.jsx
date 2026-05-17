@@ -35,7 +35,6 @@ function GrievanceContent() {
     useCustomName: false,
     phone: '',
     employeeId: '',
-    supervisor: '',
     runLoad: '',
     dateOfIncident: '',
     dateFiled: new Date().toISOString().split('T')[0],
@@ -206,8 +205,8 @@ function GrievanceContent() {
       <td><strong>Violation Date:</strong> ${form.dateOfIncident}</td>
     </tr>
     <tr>
-      <td><strong>Immediate Supervisor:</strong> ${form.supervisor}</td>
       <td><strong>Run/Load #:</strong> ${form.runLoad}</td>
+      <td></td>
     </tr>
   </table>
   <div class="section">
@@ -335,11 +334,6 @@ function GrievanceContent() {
             <div>
               <label className="block text-ups-gold font-semibold mb-2 text-sm">Date Filed</label>
               <input type="date" name="dateFiled" value={form.dateFiled} onChange={handleChange} className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base" />
-            </div>
-
-            <div>
-              <label className="block text-ups-gold font-semibold mb-2 text-sm">Immediate Supervisor (who you report to)</label>
-              <input type="text" name="supervisor" value={form.supervisor} onChange={handleChange} className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base" />
             </div>
 
             <div>
