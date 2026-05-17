@@ -79,6 +79,51 @@ async function callCohere(prompt) {
   return text;
 }
 
+async function callCerebras(prompt) {
+  const key = process.env.CEREBRAS_API_KEY;
+  if (!key) throw new Error('No Cerebras key');
+  const response = await fetch('https://api.cerebras.ai/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+    body: JSON.stringify({
+      model: 'llama-3.3-70b',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 1024,
+      temperature: 0.2
+    })
+  });
+  const data = await response.json();
+  if (data.error) throw new Error(data.error.message);
+  const text = data.choices?.[0]?.message?.content;
+  if (!text) throw new Error('Empty Cerebras response');
+  return text;
+}
+
+async function callOpenRouter(prompt) {
+  const key = process.env.OPENROUTER_API_KEY;
+  if (!key) throw new Error('No OpenRouter key');
+  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${key}`,
+      'HTTP-Referer': 'https://foustbrothersllc-github-io-grievanc.vercel.app',
+      'X-Title': 'Grievance AI'
+    },
+    body: JSON.stringify({
+      model: 'meta-llama/llama-3.3-70b-instruct:free',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 1024,
+      temperature: 0.2
+    })
+  });
+  const data = await response.json();
+  if (data.error) throw new Error(data.error.message);
+  const text = data.choices?.[0]?.message?.content;
+  if (!text) throw new Error('Empty OpenRouter response');
+  return text;
+}
+
 export async function POST(request) {
   try {
     const {
@@ -137,6 +182,8 @@ REMEDY: [2-3 sentences with specific remedy for ONLY the confirmed violations - 
     const providers = [
       { name: 'Groq', fn: callGroq },
       { name: 'Gemini', fn: callGemini },
+      { name: 'Cerebras', fn: callCerebras },
+      { name: 'OpenRouter', fn: callOpenRouter },
       { name: 'Mistral', fn: callMistral },
       { name: 'Cohere', fn: callCohere },
     ];
