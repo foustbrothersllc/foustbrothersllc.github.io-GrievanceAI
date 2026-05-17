@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { auth } from '@/lib/firebase';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 import Link from 'next/link';
 
 const PROTECTED_EMAIL = 'Jakef91@gmail.com';
@@ -92,13 +92,19 @@ export default function AdminPanel() {
 
   const handleDeleteUser = async (u) => {
     if (isProtected(u)) { setError('This account is protected and cannot be deleted.'); return; }
-    if (!window.confirm('Delete this user? This cannot be undone.')) return;
+    if (!window.confirm('Delete this user from the app completely? This removes their login and profile and cannot be undone.')) return;
     try {
-      await deleteDoc(doc(db, 'users', u.id));
-      setSuccess('User deleted');
+      const response = await fetch('/api/delete-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: u.id })
+      });
+      const data = await response.json();
+      if (data.error) throw new Error(data.error);
+      setSuccess('User fully deleted from auth and database.');
       loadUsers();
     } catch (err) {
-      setError('Failed to delete user');
+      setError('Failed to delete user: ' + err.message);
     }
   };
 
