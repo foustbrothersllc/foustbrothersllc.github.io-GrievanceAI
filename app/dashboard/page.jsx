@@ -188,21 +188,29 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {results && (
-          <div className={`border-2 rounded-lg p-6 mb-6 ${results.includes('NO - NO VIOLATION') ? 'bg-green-900 border-green-600 text-green-100' : 'bg-red-900 border-red-600 text-red-100'}`}>
-            <h3 className="text-xl font-bold mb-3">
-              {results.includes('NO - NO VIOLATION') ? '✅ No Violation Found' : '⚠️ Violation Found'}
-            </h3>
-            <p className="whitespace-pre-wrap mb-6 text-sm leading-relaxed">{results}</p>
-            {results.includes('YES - VIOLATION FOUND') && (
-              <Link href={`/grievance?violation=${encodeURIComponent(results)}&classification=${classification}&question=${encodeURIComponent(question)}`}>
-                <button className="w-full bg-ups-gold text-ups-brown py-4 rounded uppercase font-bold text-base">
-                  📄 File Grievance
-                </button>
-              </Link>
-            )}
-          </div>
-        )}
+{results && (() => {
+          const overallVerdictLine = results.split('\n').find(line => line.trim().startsWith('OVERALL VERDICT:'));
+          const hasViolation = overallVerdictLine ? overallVerdictLine.includes('YES') : results.includes('YES - VIOLATION FOUND');
+          return (
+            <div className={`border-2 rounded-lg p-6 mb-6 ${hasViolation ? 'bg-red-900 border-red-600 text-red-100' : 'bg-green-900 border-green-600 text-green-100'}`}>
+              <h3 className="text-xl font-bold mb-3">
+                {hasViolation ? '⚠️ Violation(s) Found' : '✅ No Violations Found'}
+              </h3>
+              <p className="whitespace-pre-wrap mb-6 text-sm leading-relaxed">{results}</p>
+              {hasViolation && (
+                <Link href={`/grievance?violation=${encodeURIComponent(results)}&classification=${classification}&question=${encodeURIComponent(question)}`}>
+                  <button className="w-full bg-ups-gold text-ups-brown py-4 rounded uppercase font-bold text-base">
+                    📄 File Grievance
+                  </button>
+                </Link>
+              )}
+            </div>
+          );
+        })()}
+      </main>
+    </div>
+  );
+}
       </main>
     </div>
   );
