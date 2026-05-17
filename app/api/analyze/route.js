@@ -33,7 +33,7 @@ KEYWORD TRIGGERS - If any of these words or phrases appear in the complaint, ALW
 - "bypass", "bypassed", "skipped over", "passed over", "junior driver got the run", "less senior" -> Check Article 48 (Seniority - employees must be offered work in seniority order; bypassing a senior employee is a violation)
 - "grievance retaliation", "punished for filing", "targeted after grievance" -> Check Article 37 (Non-discrimination / Retaliation)
 - "worked through lunch", "no meal period", "skipped break" -> Check Article 51 (Meal Period requirements)
-- "paid wrong rate", "short check", "missing pay" -> Check Article 17 (Paid for Time / Wage violations)`;
+- "paid wrong rate", "short check", "missing pay" -> Check Article 17 (Paid for Time / Wage violations)
 
 WORKER DETAILS:
 Classification: ${classification}
