@@ -96,32 +96,44 @@ export async function POST(request) {
       ? selectedArticles.join(', ')
       : 'See violation analysis';
 
+    // Extract only the violation sections from the full analysis
+    // Filter out any ISSUE blocks that say NO - NO VIOLATION
+    const violationSections = violation
+      .split(/---+/)
+      .filter(section => section.includes('YES - VIOLATION FOUND') || section.includes('VERDICT: YES'))
+      .join('
+---
+')
+      .trim();
+
+    const relevantViolations = violationSections || violation;
+
     const prompt = `You are a Teamsters union representative writing a formal grievance form for Teamsters Local 391.
 
-Using the following information, write the Nature of Grievance and Remedy Requested sections.
+Using the following information, write ONLY the Nature of Grievance and Remedy Requested sections.
 
 GRIEVANT: ${grievantName}
 DATE OF INCIDENT: ${dateOfIncident || 'the date of incident'}
 RUN/LOAD: ${runLoad || 'N/A'}
 CLASSIFICATION: ${classification}
-ARTICLES VIOLATED (only use these specific articles - no others): ${articleList}
+ARTICLES VIOLATED (use ONLY these articles - no others): ${articleList}
 
-VIOLATION ANALYSIS FROM CONTRACT:
-${violation}
+VIOLATIONS TO INCLUDE (IGNORE any issues marked as NO VIOLATION - only write about these confirmed violations):
+${relevantViolations}
 
 WORKER'S ORIGINAL COMPLAINT:
 ${question}
 
-IMPORTANT INSTRUCTIONS:
-- Use ONLY the articles listed above in ARTICLES VIOLATED - do not reference any other articles
+CRITICAL INSTRUCTIONS:
+- Write ONLY about the confirmed violations above - do NOT mention any issues that were not violations
+- Use ONLY the articles listed in ARTICLES VIOLATED above
 - Use the grievant's name naturally in the nature of grievance
-- Do NOT mention or reference any supervisor unless the supervisor was specifically mentioned in the worker's original complaint
+- Do NOT mention the supervisor unless they were specifically named in the worker's original complaint
 - Be professional, specific, and factual
-- Reference the specific articles and what they guarantee
 
 Respond in this EXACT format with no other text before or after:
-NATURE: [3-4 sentences in first person describing what happened on the date of incident, how the contract was violated, and which specific articles were violated]
-REMEDY: [2-3 sentences with specific remedy requested - make whole pay, cease and desist, back pay, or other appropriate remedies based on the violation]`;
+NATURE: [3-4 sentences in first person describing ONLY the confirmed violations, naming the grievant, the date, and which specific articles were violated]
+REMEDY: [2-3 sentences with specific remedy for ONLY the confirmed violations - make whole pay, cease and desist, back pay, or other appropriate remedies]`;
 
     const providers = [
       { name: 'Groq', fn: callGroq },
