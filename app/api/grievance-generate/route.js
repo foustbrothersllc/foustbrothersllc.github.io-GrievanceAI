@@ -81,31 +81,47 @@ async function callCohere(prompt) {
 
 export async function POST(request) {
   try {
-    const { grievantName, supervisor, dateOfIncident, runLoad, classification, articleList, violation, question } = await request.json();
+    const {
+      grievantName,
+      dateOfIncident,
+      runLoad,
+      classification,
+      selectedArticles,
+      violation,
+      question
+    } = await request.json();
 
-    const prompt = `You are a Teamsters union representative writing a formal grievance form.
+    // Only use the articles the worker selected
+    const articleList = selectedArticles && selectedArticles.length > 0
+      ? selectedArticles.join(', ')
+      : 'See violation analysis';
+
+    const prompt = `You are a Teamsters union representative writing a formal grievance form for Teamsters Local 391.
 
 Using the following information, write the Nature of Grievance and Remedy Requested sections.
 
 GRIEVANT: ${grievantName}
-IMMEDIATE SUPERVISOR (who grievant reports to, not necessarily who committed the act): ${supervisor || 'unknown'}
 DATE OF INCIDENT: ${dateOfIncident || 'the date of incident'}
 RUN/LOAD: ${runLoad || 'N/A'}
 CLASSIFICATION: ${classification}
-ARTICLES VIOLATED: ${articleList}
+ARTICLES VIOLATED (only use these specific articles - no others): ${articleList}
 
-VIOLATION ANALYSIS:
+VIOLATION ANALYSIS FROM CONTRACT:
 ${violation}
 
 WORKER'S ORIGINAL COMPLAINT:
 ${question}
 
-Write professional, specific grievance language. Use the grievant's name. Reference the specific articles. Be concise and factual.
-NOTE: The supervisor field is the grievant's immediate supervisor they report to - do NOT describe them as the person who committed the act.
+IMPORTANT INSTRUCTIONS:
+- Use ONLY the articles listed above in ARTICLES VIOLATED - do not reference any other articles
+- Use the grievant's name naturally in the nature of grievance
+- Do NOT mention or reference any supervisor unless the supervisor was specifically mentioned in the worker's original complaint
+- Be professional, specific, and factual
+- Reference the specific articles and what they guarantee
 
-Respond in this EXACT format with no other text:
-NATURE: [3-4 sentences describing what happened, naming the grievant, the date, and how the contract was violated. Reference the supervisor as the immediate supervisor, not as the wrongdoer]
-REMEDY: [2-3 sentences with specific remedy - make whole pay, cease and desist, etc.]`;
+Respond in this EXACT format with no other text before or after:
+NATURE: [3-4 sentences in first person describing what happened on the date of incident, how the contract was violated, and which specific articles were violated]
+REMEDY: [2-3 sentences with specific remedy requested - make whole pay, cease and desist, back pay, or other appropriate remedies based on the violation]`;
 
     const providers = [
       { name: 'Groq', fn: callGroq },
@@ -118,37 +134,26 @@ REMEDY: [2-3 sentences with specific remedy - make whole pay, cease and desist, 
     for (const provider of providers) {
       try {
         const text = await provider.fn(prompt);
+
         // Try multiple parsing strategies
         let nature = '';
         let remedy = '';
 
-        // Strategy 1: NATURE:/REMEDY: labels
-        const natureMatch = text.match(/NATURE:\s*([\s\S]+?)(?=
-REMEDY:|
-REMEDY |$)/i);
+        const natureMatch = text.match(/NATURE:\s*([\s\S]+?)(?=\nREMEDY:|\nREMEDY |$)/i);
         const remedyMatch = text.match(/REMEDY(?:\s+REQUESTED)?:\s*([\s\S]+?)$/i);
         if (natureMatch) nature = natureMatch[1].trim();
         if (remedyMatch) remedy = remedyMatch[1].trim();
 
-        // Strategy 2: if no labels found, split in half
         if (!nature && !remedy) {
-          const lines = text.split('
-').filter(l => l.trim());
+          const lines = text.split('\n').filter(l => l.trim());
           const mid = Math.floor(lines.length / 2);
-          nature = lines.slice(0, mid).join('
-').trim();
-          remedy = lines.slice(mid).join('
-').trim();
+          nature = lines.slice(0, mid).join('\n').trim();
+          remedy = lines.slice(mid).join('\n').trim();
         }
 
-        // Strategy 3: if still empty, put everything in nature
         if (!nature) nature = text.trim();
 
-        return Response.json({
-          nature,
-          remedy,
-          provider: provider.name
-        });
+        return Response.json({ nature, remedy, provider: provider.name });
       } catch (err) {
         errors.push(`${provider.name}: ${err.message}`);
       }
