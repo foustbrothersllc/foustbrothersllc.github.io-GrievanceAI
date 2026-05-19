@@ -8,7 +8,7 @@ async function callGroq(prompt) {
       model: 'llama-3.3-70b-versatile',
       messages: [{ role: 'user', content: prompt }],
       max_tokens: 1024,
-      temperature: 0.2
+      temperature: 0
     })
   });
   const data = await response.json();
@@ -28,7 +28,7 @@ async function callGemini(prompt) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { maxOutputTokens: 1024, temperature: 0.2 }
+        generationConfig: { maxOutputTokens: 1024, temperature: 0 }
       })
     }
   );
@@ -49,7 +49,7 @@ async function callMistral(prompt) {
       model: 'mistral-small-latest',
       messages: [{ role: 'user', content: prompt }],
       max_tokens: 1024,
-      temperature: 0.2
+      temperature: 0
     })
   });
   const data = await response.json();
@@ -69,7 +69,7 @@ async function callCohere(prompt) {
       model: 'command-r',
       messages: [{ role: 'user', content: prompt }],
       max_tokens: 1024,
-      temperature: 0.2
+      temperature: 0
     })
   });
   const data = await response.json();
@@ -89,7 +89,7 @@ async function callCerebras(prompt) {
       model: 'llama-3.3-70b',
       messages: [{ role: 'user', content: prompt }],
       max_tokens: 1024,
-      temperature: 0.2
+      temperature: 0
     })
   });
   const data = await response.json();
@@ -114,7 +114,7 @@ async function callOpenRouter(prompt) {
       model: 'meta-llama/llama-3.3-70b-instruct:free',
       messages: [{ role: 'user', content: prompt }],
       max_tokens: 1024,
-      temperature: 0.2
+      temperature: 0
     })
   });
   const data = await response.json();
