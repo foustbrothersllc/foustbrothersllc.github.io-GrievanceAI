@@ -155,7 +155,7 @@ Article 34 (Health/Pension): pension, health insurance, medical benefits, welfar
 Article 35 (Non-Discrimination/Substance): discrimination, SAP program, drug testing, DOT physical
 Article 37 Section 1 (Dignity/Respect): harassment, harassed, intimidated, coerced, over-supervised, hostile, screaming, yelling, cursing, threatened, talked down to, retaliation
 Article 37 Section 1(b) (9.5 Over-Dispatch): 9.5 list, excessive dispatch, over 9.5 hours, triple time - PACKAGE CAR ONLY
-Article 43 (Sleeper Teams): sleeper team, team run, premium service, mileage rate, layover pay
+Article 43 (Sleeper Teams): sleeper team, team run, premium service, mileage rate, layover pay, Miles less than 550
 Article 48 (Seniority/Dispatch) [ATLANTIC AREA SUPPLEMENT]: bypass, bypassed, junior driver, less senior, seniority list, run given away
 Article 51 (Meal/Breaks) [ATLANTIC AREA SUPPLEMENT]: worked through lunch, no meal period, skipped break, forced break
 Article 60 (Daily Guarantee - Full-Time) [ATLANTIC AREA SUPPLEMENT]: sent home early, cut short, 8 hours, minimum hours, reported for work, daily guarantee - FOR FEEDER DRIVERS AND PACKAGE CAR DRIVERS
