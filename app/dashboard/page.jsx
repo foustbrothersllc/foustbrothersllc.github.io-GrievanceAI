@@ -153,7 +153,7 @@ export default function Dashboard() {
       <main className="max-w-6xl mx-auto p-4">
         <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-6 mb-6">
           <h2 className="text-2xl font-bold text-ups-gold mb-1">Welcome, {userName}!</h2>
-          <p className="text-gray-400 text-sm">Check if contract violations apply to your position</p>
+          <p className="text-gray-400 text-sm">Check if contract violations apply to your situation</p>
         </div>
 
         {error && <div className="bg-red-900 text-red-100 p-4 rounded mb-6 text-sm">{error}</div>}
