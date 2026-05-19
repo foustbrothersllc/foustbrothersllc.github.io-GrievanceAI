@@ -177,7 +177,7 @@ CRITICAL INSTRUCTIONS:
 
 Respond in this EXACT format with no other text before or after:
 NATURE: [3-4 sentences in first person describing ONLY the confirmed violations, naming the grievant, the date, and which specific articles were violated]
-REMEDY: [2-3 sentences with specific remedy for ONLY the confirmed violations - make whole pay, cease and desist, back pay, or other appropriate remedies]`;
+REMEDY: [2-3 sentences that sounds like it is being addressed by the union, with specific remedy for ONLY the confirmed violations - make whole pay, cease and desist, back pay, or other appropriate remedies]`;
 
     const providers = [
       { name: 'Groq', fn: callGroq },
