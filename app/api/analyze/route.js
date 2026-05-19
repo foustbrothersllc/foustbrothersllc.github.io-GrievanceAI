@@ -85,7 +85,7 @@ async function analyzeWithGroq(prompt) {
       model: 'llama-3.3-70b-versatile',
       messages: [{ role: 'user', content: prompt }],
       max_tokens: 4096,
-      temperature: 0.2
+      temperature: 0
     })
   });
   const data = await response.json();
@@ -106,7 +106,7 @@ async function analyzeWithGemini(prompt) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { maxOutputTokens: 4096, temperature: 0.2 }
+        generationConfig: { maxOutputTokens: 4096, temperature: 0 }
       })
     }
   );
@@ -128,7 +128,7 @@ async function analyzeWithMistral(prompt) {
       model: 'open-mistral-7b',
       messages: [{ role: 'user', content: prompt }],
       max_tokens: 4096,
-      temperature: 0.2
+      temperature: 0
     })
   });
   const data = await response.json();
@@ -149,7 +149,7 @@ async function analyzeWithCohere(prompt) {
       model: 'command-r',
       messages: [{ role: 'user', content: prompt }],
       max_tokens: 4096,
-      temperature: 0.2
+      temperature: 0
     })
   });
   const data = await response.json();
@@ -168,7 +168,7 @@ async function analyzeWithHuggingFace(prompt) {
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
     body: JSON.stringify({
       inputs: prompt,
-      parameters: { max_new_tokens: 1024, temperature: 0.2 }
+      parameters: { max_new_tokens: 1024, temperature: 0 }
     })
   });
   const data = await response.json();
@@ -190,7 +190,7 @@ async function analyzeWithCerebras(prompt) {
       model: 'llama-3.3-70b',
       messages: [{ role: 'user', content: prompt }],
       max_tokens: 4096,
-      temperature: 0.2
+      temperature: 0
     })
   });
   const data = await response.json();
@@ -216,7 +216,7 @@ async function analyzeWithOpenRouter(prompt) {
       model: 'meta-llama/llama-3.3-70b-instruct:free',
       messages: [{ role: 'user', content: prompt }],
       max_tokens: 4096,
-      temperature: 0.2
+      temperature: 0
     })
   });
   const data = await response.json();
