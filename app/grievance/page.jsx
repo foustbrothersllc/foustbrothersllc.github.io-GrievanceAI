@@ -23,8 +23,22 @@ function GrievanceContent() {
   const question = searchParams.get('question') || '';
 
   const extractArticles = (text) => {
-    const matches = text.match(/Article\s+\d+[\w,.\s-]*/gi) || [];
-    const unique = [...new Set(matches.map(a => a.trim()))];
+    // Only extract articles from VIOLATION FOUND sections, not NO VIOLATION sections
+    const violationBlocks = text.split('---').filter(block => 
+      block.includes('VERDICT: YES - VIOLATION FOUND')
+    );
+    
+    const matches = [];
+    violationBlocks.forEach(block => {
+      // Only grab the ARTICLES: line from each violation block
+      const articlesLine = block.split('\n').find(line => line.trim().startsWith('ARTICLES:'));
+      if (articlesLine) {
+        const articleMatches = articlesLine.match(/Article\s+\d+[\w,.\s-]*/gi) || [];
+        articleMatches.forEach(a => matches.push(a.trim()));
+      }
+    });
+    
+    const unique = [...new Set(matches)];
     return unique.map(a => ({ text: a, selected: true }));
   };
 
