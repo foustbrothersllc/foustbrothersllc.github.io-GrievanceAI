@@ -31,7 +31,7 @@ const KEYWORD_ARTICLE_MAP = [
   // Sleeper team / mileage triggers — Article 43 fires on classification, team language, OR any under-550 mileage mention
   { keywords: ['sleeper team','sleeper','team run','two man run','premium service','mileage rate','layover pay','miles less than 550','under 550','550 miles','short miles','short run','short trip','mileage short','paid wrong mileage','mileage dispute','not enough miles','run was short'], articles: ['master:43'] },
   { keywords: ['bypass','bypassed','skipped over','passed over','junior driver','less senior','seniority list','run given away','weekend call','junior driver got the run','junior got the run','skipped me','let a junior guy go','gave my run away'], articles: ['local:48'] },
-  { keywords: ['worked through lunch','no meal period','skipped break','forced break','meal period','ate on the fly','no time to eat','supervisor rushed my break'], articles: ['local:51'] },
+  { keywords: ['worked through lunch','no meal period','skipped break','forced break','meal period','ate on the fly','no time to eat','supervisor rushed my break','lunch hour','worked 6 hours straight','worked 7 hours straight',"didn't eat until my 6th hour",'ate late','no lunch until','late break','worked 6 hours without a break','worked 7 hours without a break','no food','missed lunch','straight through'], articles: ['local:51', 'master:17'] },
   { keywords: ['sent home early','cut short','guarantee','8 hours','minimum hours','reported for work','daily guarantee','didnt get my 8','sent home','forced home','wanted more work','forced to go home','they made me leave',"didn't get my 8","didn't get my time",'cut me short'], articles: ['local:60', 'master:22'] },
   { keywords: ['3.5 hours','part time guarantee','hub guarantee'], articles: ['master:22'] },
   { keywords: ['air conditioning','ac heat in cab'], articles: ['local:60'] },
@@ -174,7 +174,7 @@ Article 37 Section 1 (Dignity/Respect): harassment, harassed, intimidated, coerc
 Article 37 Section 1(b) (9.5 Over-Dispatch): 9.5 list, excessive dispatch, over 9.5 hours, triple time - PACKAGE CAR ONLY
 Article 43 (Sleeper Teams): sleeper team, team run, premium service, mileage rate, layover pay - FLAG if any run is under 550 miles; under 550 miles, less than 550 miles, short miles, short run, mileage dispute, not enough miles, run was short, paid wrong mileage
 Article 48 (Seniority/Dispatch) [ATLANTIC AREA SUPPLEMENT]: bypass, bypassed, junior driver, less senior, seniority list, run given away
-Article 51 (Meal/Breaks) [ATLANTIC AREA SUPPLEMENT]: worked through lunch, no meal period, skipped break, forced break
+Article 51 (Meal/Breaks) [ATLANTIC AREA SUPPLEMENT]: worked through lunch, no meal period, skipped break, forced break, lunch hour, missed lunch, late break, no food, straight through, worked 6 hours straight, worked 7 hours straight - VIOLATION if meal period not taken between end of 4th hour and start of 6th hour of work. Cross-reference Article 17 for penalty pay.
 Article 60 (Daily Guarantee - Full-Time) [ATLANTIC AREA SUPPLEMENT]: sent home early, cut short, 8 hours, minimum hours, reported for work, daily guarantee - FOR FEEDER DRIVERS AND PACKAGE CAR DRIVERS
 Article 22 (Daily Guarantee - Part-Time) [NATIONAL MASTER]: part-time guarantee, 3.5 hours, hub worker, sent home early - FOR PART-TIME EMPLOYEES
 
