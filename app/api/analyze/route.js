@@ -1,80 +1,205 @@
-const CONTRACT_URLS = [
-  {
-    name: 'Atlantic Area Supplemental Agreement 2023-2028',
-    url: 'https://raw.githubusercontent.com/foustbrothersllc/foustbrothersllc.github.io-GrievanceAI/main/local-agreement.txt'
-  },
-  {
-    name: 'National Master UPS Agreement 2023-2028',
-    url: 'https://raw.githubusercontent.com/foustbrothersllc/foustbrothersllc.github.io-GrievanceAI/main/master-agreement.txt'
-  }
+const CONTRACT_URLS = {
+  master: 'https://raw.githubusercontent.com/foustbrothersllc/foustbrothersllc.github.io-GrievanceAI/main/master-agreement.txt',
+  local: 'https://raw.githubusercontent.com/foustbrothersllc/foustbrothersllc.github.io-GrievanceAI/main/local-agreement.txt'
+};
+
+// Article location map - which contract each article lives in
+const ARTICLE_LOCATIONS = {
+  master: ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45'],
+  local: ['46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64','65','66','67','68','69']
+};
+
+// Keyword to article mapping for smart routing
+const KEYWORD_ARTICLE_MAP = [
+  { keywords: ['bargaining unit','union work','scope','jurisdiction'], articles: ['master:1'] },
+  { keywords: ['union membership','dues','check-off','union security'], articles: ['master:3'] },
+  { keywords: ['steward','grievance processing','union business'], articles: ['master:4'] },
+  { keywords: ['past practice','maintenance of standards','local conditions'], articles: ['master:6'] },
+  { keywords: ['grievance procedure','panel','arbitration','timelines'], articles: ['master:7'] },
+  { keywords: ['picket line','sympathy strike','struck goods'], articles: ['master:9'] },
+  { keywords: ['polygraph','lie detector','interrogation'], articles: ['master:12'] },
+  { keywords: ['workers comp','injury on duty','light duty','tast'], articles: ['master:14'] },
+  { keywords: ['leave of absence','fmla','personal leave','military leave'], articles: ['master:16'] },
+  { keywords: ['missing check','short pay','payroll shortage','48 hours','penalty pay','green check','short check','missing pay','paid wrong rate'], articles: ['master:17'] },
+  { keywords: ['red tag','dvir','unsafe','bad brakes','fmcsa','refused to drive','heat stress','ac unit','forced to pull','ordered me to drive','threatened over a red tag','mechanical issue','breakdown'], articles: ['master:18', 'master:37'] },
+  { keywords: ['foreign power','vendor trailer','outside truck','contractor','coyote','rail trailer'], articles: ['master:26','master:32'] },
+  { keywords: ['subcontract','outsourcing','third party','peak season contractor'], articles: ['master:32'] },
+  { keywords: ['pension','health insurance','medical benefits','welfare fund'], articles: ['master:34'] },
+  { keywords: ['drug testing','dot physical','random test','sap program','discrimination'], articles: ['master:35'] },
+  { keywords: ['harassment','harassed','intimidated','coerced','over-supervised','hostile','screaming','yelling','cursing','threatened','talked down to','dignity','retaliation','punished for filing','targeted'], articles: ['master:37'] },
+  { keywords: ['9.5 list','9.5 violation','excessive dispatch','over 9.5','triple time','3x pay'], articles: ['master:37'] },
+  { keywords: ['sleeper team','sleeper','team run','premium service','mileage rate','layover pay'], articles: ['master:43'] },
+  { keywords: ['bypass','bypassed','skipped over','junior driver','less senior','seniority list','run given away','weekend call'], articles: ['local:48'] },
+  { keywords: ['worked through lunch','no meal period','skipped break','forced break','meal period'], articles: ['local:51'] },
+  { keywords: ['sent home early','cut short','guarantee','8 hours','minimum hours','reported for work','daily guarantee','didnt get my 8','sent home','forced home'], articles: ['local:60', 'master:22'] },
+  { keywords: ['3.5 hours','part time guarantee','hub guarantee'], articles: ['master:22'] },
+  { keywords: ['air conditioning','ac heat in cab'], articles: ['local:60'] },
 ];
 
-const buildPrompt = (question, classification, contractText, issueCount = 1) => `You are a labor relations expert specializing in UPS Teamsters contracts and FMCSA regulations.
+// Extract a specific article section from contract text
+function extractArticleSection(text, articleNum, maxChars = 8000) {
+  const patterns = [
+    new RegExp(`ARTICLE\\s+${articleNum}[—\\-\\.\\s]`, 'i'),
+    new RegExp(`Article\\s+${articleNum}[—\\-\\.\\s]`, 'i'),
+  ];
+  
+  let start = -1;
+  for (const pattern of patterns) {
+    const match = text.search(pattern);
+    if (match !== -1) { start = match; break; }
+  }
+  
+  if (start === -1) return null;
+  
+  // Find the next article header to determine end
+  const nextArticlePattern = /ARTICLE\s+\d+[—\-\.\s]/gi;
+  nextArticlePattern.lastIndex = start + 10;
+  let end = text.length;
+  let nextMatch;
+  while ((nextMatch = nextArticlePattern.exec(text)) !== null) {
+    if (nextMatch.index > start + 50) {
+      end = nextMatch.index;
+      break;
+    }
+  }
+  
+  const section = text.slice(start, Math.min(end, start + maxChars));
+  return section.trim();
+}
 
-CRITICAL RULES:
-1. The Supplemental Agreement (Atlantic Area Agreement) ALWAYS takes precedence over the National Master Agreement. Check Supplement first. Both can apply simultaneously - cite BOTH when relevant.
-2. The worker may describe MULTIPLE separate issues. You MUST find and report on EVERY single issue separately. Never combine issues or skip any.
-3. Always cite the specific Article and Section number.
-4. Always explain what the contract says even if no violation exists.
-5. Use only the contract language provided - no general labor law.
-6. Be thorough - missing a violation helps the company, not the worker.
-7. Focus ONLY on what the company did WRONG. Do not praise or validate company actions. If no violation exists on an issue, state it briefly and move on.
+// Smart contract extraction - only pull relevant article sections
+function extractRelevantSections(masterText, localText, question, classification) {
+  const questionLower = question.toLowerCase();
+  const triggeredArticles = new Set();
+  
+  // Always include core articles based on classification
+  const isFullTime = ['Feeder Driver', 'Package Car Driver', 'Sleeper Team', 'Specialist', 'Mechanic', 'Combo Worker'].some(
+    ft => classification.toLowerCase().includes(ft.toLowerCase())
+  );
+  
+  if (isFullTime) {
+    triggeredArticles.add('local:60'); // Full-time Daily Guarantee (Atlantic Area Supplement)
+  } else {
+    triggeredArticles.add('master:22'); // Part-time guarantee (National Master)
+  }
+  triggeredArticles.add('local:48'); // Seniority
+  
+  // Check keyword triggers
+  for (const mapping of KEYWORD_ARTICLE_MAP) {
+    if (mapping.keywords.some(kw => questionLower.includes(kw.toLowerCase()))) {
+      mapping.articles.forEach(a => triggeredArticles.add(a));
+    }
+  }
+  
+  // Check for explicit article mentions in question
+  const explicitArticles = question.match(/article\s+(\d+)/gi) || [];
+  explicitArticles.forEach(match => {
+    const num = match.match(/\d+/)[0];
+    const inMaster = ARTICLE_LOCATIONS.master.includes(num);
+    const inLocal = ARTICLE_LOCATIONS.local.includes(num);
+    if (inMaster) triggeredArticles.add(`master:${num}`);
+    if (inLocal) triggeredArticles.add(`local:${num}`);
+  });
 
-MANDATORY VIOLATION TRIGGERS - Before analyzing, scan the worker's complaint for these keywords and situations. If found, you MUST check the corresponding articles:
+  // Classification-specific triggers
+  if (classification.toLowerCase().includes('feeder')) {
+    triggeredArticles.add('master:43'); // Sleeper teams
+    triggeredArticles.add('master:18'); // FMCSA/Safety
+  }
+  if (classification.toLowerCase().includes('package')) {
+    triggeredArticles.add('master:37'); // 9.5 list
+  }
 
-HOURS & GUARANTEE VIOLATIONS:
-- Article 60 (Daily 8-Hour Guarantee) MATH RULE: Only flag if total hours worked is LESS THAN 8. 
-  * "sent home at 9 hours" = 9 > 8 = NO VIOLATION
-  * "sent home at 7 hours" = 7 < 8 = VIOLATION
-  * "sent home at 8 hours" = 8 = 8 = NO VIOLATION  
-  * "only worked 6 hours" = 6 < 8 = VIOLATION
-  * "worked 10 hours" = 10 > 8 = NO VIOLATION
-  Always extract the actual number of hours mentioned and compare to 8. If hours >= 8, Article 60 is NOT violated. If hours < 8 or no hours mentioned but worker says "sent home early/cut short/didn't get my 8", flag as violation.
-- If the worker is a FEEDER DRIVER and mentions working or driving more than 14 hours in a day -> ALWAYS flag Article 18 AND FMCSA 14-Hour Rule violation. Driving or being on-duty past 14 consecutive hours is both a contract and federal safety violation. Remedy: cease and desist, review of driving logs.
-- If the worker is a PACKAGE CAR DRIVER (NOT a Feeder Driver) and is on the 9.5 LIST and mentions being dispatched over 9.5 hours THREE OR MORE times in a single workweek -> ALWAYS flag Article 37 (Excessive Dispatch / 9.5 Violation). Remedy is TRIPLE TIME (3x their hourly rate) for all hours worked over 9.5 on those days. NOTE: The 9.5 list does NOT apply to Feeder Drivers - do not flag this for Feeder Drivers.
-- If the worker is a FEEDER DRIVER and mentions excessive hours, check the 14-hour FMCSA rule and Article 18 instead.
+  // Build the relevant text
+  const sections = [];
+  
+  for (const articleRef of triggeredArticles) {
+    const [contract, artNum] = articleRef.split(':');
+    const text = contract === 'master' ? masterText : localText;
+    const contractName = contract === 'master' ? 'National Master UPS Agreement' : 'Atlantic Area Supplemental Agreement';
+    
+    const section = extractArticleSection(text, artNum);
+    if (section) {
+      sections.push(`=== ${contractName} — Article ${artNum} ===\n${section}`);
+    }
+  }
+  
+  return sections.join('\n\n');
+}
 
-KEYWORD TRIGGERS - If any of these words or phrases appear in the complaint, ALWAYS check the corresponding articles:
-- "Sleeper Team", "sleeper", "team run", "premium service" -> Check Article 43 (Sleeper Team Operations - mileage minimums, rest rotation requirements, cab specifications, layover pay)
-- "foreign power", "vendor trailer", "outside truck", "non-UPS equipment", "contractor", "subcontract" -> Check Article 26 AND Article 32 (Subcontracting and Outsourcing - work that belongs to bargaining unit employees being given to outside vendors)
-- "red tag", "DVIR", "vehicle inspection", "unsafe", "refused to drive", "mechanical issue", "breakdown" -> Check Article 18 (Safety - right to refuse unsafe work, equipment standards, DVIR requirements)
-- "bypass", "bypassed", "skipped over", "passed over", "junior driver got the run", "less senior" -> Check Article 48 (Seniority - employees must be offered work in seniority order; bypassing a senior employee is a violation)
-- "grievance retaliation", "punished for filing", "targeted after grievance" -> Check Article 37 (Non-discrimination / Retaliation)
-- "worked through lunch", "no meal period", "skipped break" -> Check Article 51 (Meal Period requirements)
-- "paid wrong rate", "short check", "missing pay" -> Check Article 17 (Paid for Time / Wage violations)
+const buildPrompt = (question, classification, contractText) => `You are a strict, highly analytical Labor Relations Expert and Teamster Shop Steward. Your sole purpose is to protect the worker by identifying contract and safety violations. You do not compromise, you do not make assumptions for the employer, and you do not let minor details slide.
 
-CRITICAL COGNITIVE LAYER - READ THIS BEFORE ANALYZING:
-- THE DECONSTRUCTION MANDATE: Workers often write in short, compressed sentences (e.g., "My run was cut. A junior man took my trailer. Sent home before 8."). You MUST process every single action verb or noun clause as a potential independent violation.
-- Rule A: If the text mentions a "junior" person getting work, a trailer, or a run -> That is automatically a separate Seniority Bypass issue. Evaluate Article 48.
-- Rule B: If the text mentions a run being "cut" or being "sent home" early -> That is automatically a separate Daily Guarantee issue. Evaluate Article 60.
-- NEVER let one rule cancel out the other. If both conditions are met in a single paragraph, you MUST output TWO completely separate issue blocks.
+The Atlantic Area Supplemental Agreement ALWAYS takes precedence over the National Master Agreement. Check Supplement first. Both can apply simultaneously - cite BOTH when relevant.
+
+CONTRACT KEYWORD MAP - Use this as your primary routing index:
+Article 1 (Bargaining Unit): bargaining unit, union work, scope, covered employees, jurisdiction
+Article 3 (Union Shop): union membership, dues, check-off, union security
+Article 4 (Stewards): steward rights, grievance processing, union business
+Article 6 (Maintenance of Standards): past practice, local conditions, protection of conditions
+Article 7 (Grievance Machinery): grievance procedure, panel, arbitration, timelines
+Article 9 (Protection of Rights): picket line, sympathy strike, struck goods
+Article 12 (Polygraph): polygraph, lie detector, interrogation
+Article 14 (Compensation Claims): workers comp, injury on duty, light duty, TAST
+Article 16 (Leave of Absence): leave of absence, FMLA, personal leave, military leave
+Article 17 (Paid for Time): missing check, short pay, payroll shortage, 48 hours, penalty pay, green check
+Article 18 (Safety/Equipment): red tag, DVIR, unsafe, bad brakes, FMCSA, refused to drive, heat stress, forced to pull, ordered to drive, threatened over red tag
+Article 26 (Subcontracting/Feeder): foreign power, vendor trailer, outside truck, contractor, coyote, rail trailer
+Article 32 (Subcontracting): outsourcing, third party logistics, peak season contractors
+Article 34 (Health/Pension): pension, health insurance, medical benefits, welfare fund
+Article 35 (Non-Discrimination/Substance): discrimination, SAP program, drug testing, DOT physical
+Article 37 Section 1 (Dignity/Respect): harassment, harassed, intimidated, coerced, over-supervised, hostile, screaming, yelling, cursing, threatened, talked down to, retaliation
+Article 37 Section 1(b) (9.5 Over-Dispatch): 9.5 list, excessive dispatch, over 9.5 hours, triple time - PACKAGE CAR ONLY
+Article 43 (Sleeper Teams): sleeper team, team run, premium service, mileage rate, layover pay
+Article 48 (Seniority/Dispatch) [ATLANTIC AREA SUPPLEMENT]: bypass, bypassed, junior driver, less senior, seniority list, run given away
+Article 51 (Meal/Breaks) [ATLANTIC AREA SUPPLEMENT]: worked through lunch, no meal period, skipped break, forced break
+Article 60 (Daily Guarantee - Full-Time) [ATLANTIC AREA SUPPLEMENT]: sent home early, cut short, 8 hours, minimum hours, reported for work, daily guarantee - FOR FEEDER DRIVERS AND PACKAGE CAR DRIVERS
+Article 22 (Daily Guarantee - Part-Time) [NATIONAL MASTER]: part-time guarantee, 3.5 hours, hub worker, sent home early - FOR PART-TIME EMPLOYEES
+
+SAFETY NET ROUTER: If the worker explicitly names ANY article number, audit it regardless of keywords.
+
+CRITICAL ENFORCEMENT RULES:
+- ARTICLE 37 ENFORCEMENT: Yelling, cursing, screaming, or threatening a worker ANYWHERE is an immediate Article 37 violation. Flip verdict to YES immediately.
+- ORIGIN BOOK ACCURACY: Article 48 and Article 52 (Daily Guarantee) are ATLANTIC AREA SUPPLEMENT articles. NEVER label them as National Master Agreement provisions.
+- ARTICLE 18 CROSS-REFERENCE: If management threatened or coerced a worker to operate unsafe equipment, flag BOTH Article 18 AND Article 37 as separate violations.
+- DAILY GUARANTEE MATH RULE: For full-time employees (Feeder Driver, Package Car Driver) use Article 60 Atlantic Area Supplement - only flag if hours worked < 8. For part-time employees use Article 22 National Master - only flag if hours worked < 3.5. Always extract the actual number of hours and compare to the correct threshold for that classification.
+- 9.5 LIST: Only applies to PACKAGE CAR DRIVERS. NEVER apply to Feeder Drivers.
+- FEEDER DRIVERS over 14 hours on-duty: Flag Article 18 AND FMCSA 14-Hour Rule.
 
 WORKER DETAILS:
 Classification: ${classification}
 Question/Complaint: "${question}"
 
-CONTRACTS TO ANALYZE:
+RELEVANT CONTRACT SECTIONS (extracted for this specific complaint):
 ${contractText}
 
-INSTRUCTIONS:
-First, deconstruct the worker's complaint into EVERY separate issue using the Cognitive Layer above. Find ALL issues - do not stop after the first one.
+Follow this exact 3-Step Audit Protocol:
 
-Then for EACH issue found, provide a separate analysis block in this exact format:
+STEP 1 - COMPRESSED SENTENCE DECONSTRUCTION:
+Treat EVERY clause, action verb, or noun as a separate potential legal claim.
+- Junior employee getting work/equipment -> Seniority Bypass (Article 48)
+- Worker cut short/sent home/denied hours -> Daily Guarantee (Article 52)
+- Yelling, cursing, threatening -> Dignity and Respect (Article 37)
+NEVER combine distinct issues. Output separate numbered blocks for each.
+
+STEP 2 - LOGIC OVER TEXT:
+Treat complaints about different days as independent events. Never let math from one day erase a claim from another day.
+
+STEP 3 - RIGID OUTPUT (no pleasantries, no filler, start immediately):
+
+For EACH issue found output EXACTLY:
 
 ---
-ISSUE #[number]: [Name of the issue]
+ISSUE #[number]: [Precise Name of the Contractual Infraction]
 VERDICT: YES - VIOLATION FOUND or NO - NO VIOLATION
-ARTICLES: [Specific Article and Section from Supplement and/or Master]
-ANALYSIS: [If VIOLATION FOUND: detailed explanation of how contract was violated and what the company did wrong. If NO VIOLATION: one brief sentence only - do NOT elaborate or explain what the company did correctly]
-WORKER RIGHTS: [If VIOLATION FOUND: what the worker is entitled to. If NO VIOLATION: omit this field entirely]
+ARTICLES: [Cite specific Article and Section - correctly label National Master or Atlantic Area Supplement]
+ANALYSIS: [Quote the exact contract language verbatim in quotation marks first. Then state what management did. Then explain why it is a violation. If NO VIOLATION: one brief sentence only.]
+WORKER RIGHTS: [If VIOLATION FOUND: specific remedy, back-pay, premium rates owed. If NO VIOLATION: omit entirely.]
 ---
 
-After analyzing ALL issues, end with:
+OVERALL VERDICT: YES - VIOLATION FOUND (if any single issue was a violation) or NO - NO VIOLATION
+SUMMARY: [Two sentences: all violations found and immediate proof/evidence the steward needs to collect.]`;
 
-OVERALL VERDICT: YES - VIOLATION FOUND (if any violations exist) or NO - NO VIOLATION
-SUMMARY: [Brief summary of violations found and recommended next steps]`;
-
-// 1. GROQ - Primary (14,400 req/day free)
+// AI provider functions
 async function analyzeWithGroq(prompt) {
   const key = process.env.GROQ_API_KEY;
   if (!key) throw new Error('No Groq key');
@@ -95,7 +220,6 @@ async function analyzeWithGroq(prompt) {
   return text;
 }
 
-// 2. GEMINI - First backup (20 req/day free)
 async function analyzeWithGemini(prompt) {
   const key = process.env.GEMINI_API_KEY;
   if (!key) throw new Error('No Gemini key');
@@ -117,69 +241,6 @@ async function analyzeWithGemini(prompt) {
   return text;
 }
 
-// 3. MISTRAL - Second backup (free tier)
-async function analyzeWithMistral(prompt) {
-  const key = process.env.MISTRAL_API_KEY;
-  if (!key) throw new Error('No Mistral key');
-  const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
-    body: JSON.stringify({
-      model: 'open-mistral-7b',
-      messages: [{ role: 'user', content: prompt }],
-      max_tokens: 4096,
-      temperature: 0
-    })
-  });
-  const data = await response.json();
-  if (data.error) throw new Error(JSON.stringify(data.error));
-  const text = data.choices?.[0]?.message?.content;
-  if (!text) throw new Error('Empty Mistral response');
-  return text;
-}
-
-// 4. COHERE - Third backup (free tier)
-async function analyzeWithCohere(prompt) {
-  const key = process.env.COHERE_API_KEY;
-  if (!key) throw new Error('No Cohere key');
-  const response = await fetch('https://api.cohere.com/v2/chat', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
-    body: JSON.stringify({
-      model: 'command-r',
-      messages: [{ role: 'user', content: prompt }],
-      max_tokens: 4096,
-      temperature: 0
-    })
-  });
-  const data = await response.json();
-  if (response.status !== 200) throw new Error(data.error?.message || 'Cohere error');
-  const text = data.message?.content?.[0]?.text;
-  if (!text) throw new Error('Empty Cohere response');
-  return text;
-}
-
-// 5. HUGGING FACE - Fourth backup (free)
-async function analyzeWithHuggingFace(prompt) {
-  const key = process.env.HUGGINGFACE_API_KEY;
-  if (!key) throw new Error('No HuggingFace key');
-  const response = await fetch('https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
-    body: JSON.stringify({
-      inputs: prompt,
-      parameters: { max_new_tokens: 1024, temperature: 0 }
-    })
-  });
-  const data = await response.json();
-  if (data.error) throw new Error(data.error);
-  const text = Array.isArray(data) ? data[0]?.generated_text : data?.generated_text;
-  if (!text) throw new Error('Empty HuggingFace response');
-  // HF returns the full prompt + response, strip the prompt
-  return text.replace(prompt, '').trim();
-}
-
-// 6. CEREBRAS - Fifth backup (free, very fast)
 async function analyzeWithCerebras(prompt) {
   const key = process.env.CEREBRAS_API_KEY;
   if (!key) throw new Error('No Cerebras key');
@@ -200,7 +261,6 @@ async function analyzeWithCerebras(prompt) {
   return text;
 }
 
-// 7. OPENROUTER - Sixth backup (free tier)
 async function analyzeWithOpenRouter(prompt) {
   const key = process.env.OPENROUTER_API_KEY;
   if (!key) throw new Error('No OpenRouter key');
@@ -226,6 +286,64 @@ async function analyzeWithOpenRouter(prompt) {
   return text;
 }
 
+async function analyzeWithMistral(prompt) {
+  const key = process.env.MISTRAL_API_KEY;
+  if (!key) throw new Error('No Mistral key');
+  const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+    body: JSON.stringify({
+      model: 'mistral-small-latest',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 4096,
+      temperature: 0
+    })
+  });
+  const data = await response.json();
+  if (data.error) throw new Error(JSON.stringify(data.error));
+  const text = data.choices?.[0]?.message?.content;
+  if (!text) throw new Error('Empty Mistral response');
+  return text;
+}
+
+async function analyzeWithCohere(prompt) {
+  const key = process.env.COHERE_API_KEY;
+  if (!key) throw new Error('No Cohere key');
+  const response = await fetch('https://api.cohere.com/v2/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+    body: JSON.stringify({
+      model: 'command-r',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 4096,
+      temperature: 0
+    })
+  });
+  const data = await response.json();
+  if (response.status !== 200) throw new Error(data.error?.message || 'Cohere error');
+  const text = data.message?.content?.[0]?.text;
+  if (!text) throw new Error('Empty Cohere response');
+  return text;
+}
+
+async function analyzeWithHuggingFace(prompt) {
+  const key = process.env.HUGGINGFACE_API_KEY;
+  if (!key) throw new Error('No HuggingFace key');
+  const response = await fetch('https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+    body: JSON.stringify({
+      inputs: prompt,
+      parameters: { max_new_tokens: 2048, temperature: 0.1 }
+    })
+  });
+  const data = await response.json();
+  if (data.error) throw new Error(data.error);
+  const text = Array.isArray(data) ? data[0]?.generated_text : data?.generated_text;
+  if (!text) throw new Error('Empty HuggingFace response');
+  return text.replace(prompt, '').trim();
+}
+
 export async function POST(request) {
   try {
     const { classification, question } = await request.json();
@@ -233,21 +351,14 @@ export async function POST(request) {
       return Response.json({ error: 'Missing classification or question' }, { status: 400 });
     }
 
-    // Fetch contracts server-side
-    const texts = await Promise.all(
-      CONTRACT_URLS.map(async (c) => {
-        const res = await fetch(c.url);
-        const text = await res.text();
-        // Truncate each contract to 60,000 chars to stay within token limits
-        const truncated = text.length > 45000 ? text.slice(0, 45000) + '\n...[contract continues]' : text;
-        return `=== ${c.name} ===\n${truncated}`;
-      })
-    );
-    const contractText = texts.join('\n\n');
+    // Fetch both contracts
+    const [masterText, localText] = await Promise.all([
+      fetch(CONTRACT_URLS.master).then(r => r.text()),
+      fetch(CONTRACT_URLS.local).then(r => r.text())
+    ]);
 
-    // Count issues in the question to add to prompt
-    const issueCount = (question.match(/and|also|plus|additionally|furthermore|second|third|another/gi) || []).length + 1;
-    const prompt = buildPrompt(question, classification, contractText, issueCount);
+    // Smart extraction - only pull relevant article sections
+    const contractText = extractRelevantSections(masterText, localText, question, classification);
 
     const providers = [
       { name: 'Groq', fn: analyzeWithGroq },
@@ -259,7 +370,9 @@ export async function POST(request) {
       { name: 'HuggingFace', fn: analyzeWithHuggingFace },
     ];
 
+    const prompt = buildPrompt(question, classification, contractText);
     const errors = [];
+
     for (const provider of providers) {
       try {
         console.log(`Trying ${provider.name}...`);
