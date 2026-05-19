@@ -177,8 +177,10 @@ CRITICAL INSTRUCTIONS:
 
 Respond in this EXACT format with no other text before or after:
 NATURE: [3-4 sentences in first person describing ONLY the confirmed violations, naming the grievant, the date, and which specific articles were violated]
-REMEDY: Output strictly in this format: * **Contractual Demand:** [Cease & Desist action] * **Financial Remedy:** [Back-pay/penalty calculation to make whole] * **Operational Correction:** [Schedule/seniority fix]`;
-    const providers = [
+REMEDY: * **Contractual Demand:** [Cease & Desist action]
+* **Financial Remedy:** [Back-pay/penalty calculation to make whole]
+* **Operational Correction:** [Schedule/seniority fix]`;
+    
       { name: 'Groq', fn: callGroq },
       { name: 'Gemini', fn: callGemini },
       { name: 'Cerebras', fn: callCerebras },
