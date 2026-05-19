@@ -239,7 +239,7 @@ export async function POST(request) {
         const res = await fetch(c.url);
         const text = await res.text();
         // Truncate each contract to 60,000 chars to stay within token limits
-        const truncated = text.length > 60000 ? text.slice(0, 60000) + '\n...[contract continues]' : text;
+        const truncated = text.length > 100000 ? text.slice(0, 100000) + '\n...[contract continues]' : text;
         return `=== ${c.name} ===\n${truncated}`;
       })
     );
