@@ -21,17 +21,17 @@ const KEYWORD_ARTICLE_MAP = [
   { keywords: ['workers comp','injury on duty','light duty','tast'], articles: ['master:14'] },
   { keywords: ['leave of absence','fmla','personal leave','military leave'], articles: ['master:16'] },
   { keywords: ['missing check','short pay','payroll shortage','48 hours','penalty pay','green check','short check','missing pay','paid wrong rate'], articles: ['master:17'] },
-  { keywords: ['red tag','dvir','unsafe','bad brakes','fmcsa','refused to drive','heat stress','ac unit','forced to pull','ordered me to drive','threatened over a red tag','mechanical issue','breakdown'], articles: ['master:18', 'master:37'] },
-  { keywords: ['foreign power','vendor trailer','outside truck','contractor','coyote','rail trailer'], articles: ['master:26','master:32'] },
+  { keywords: ['red tag','dvir','unsafe','bad brakes','fmcsa','refused to drive','heat stress','ac unit','forced to pull','ordered me to drive','threatened over a red tag','mechanical issue','breakdown','truck is a piece of junk','broken down'], articles: ['master:18', 'master:37'] },
+  { keywords: ['foreign power','vendor trailer','outside truck','contractor','coyote','rail trailer','brought in an outside guy','coyote truck'], articles: ['master:26','master:32'] },
   { keywords: ['subcontract','outsourcing','third party','peak season contractor'], articles: ['master:32'] },
   { keywords: ['pension','health insurance','medical benefits','welfare fund'], articles: ['master:34'] },
   { keywords: ['drug testing','dot physical','random test','sap program','discrimination'], articles: ['master:35'] },
-  { keywords: ['harassment','harassed','intimidated','coerced','over-supervised','hostile','screaming','yelling','cursing','threatened','talked down to','dignity','retaliation','punished for filing','targeted'], articles: ['master:37'] },
+  { keywords: ['harassment','harassed','intimidated','coerced','over-supervised','hostile','screaming','yelling','cursing','threatened','talked down to','dignity','retaliation','punished for filing','targeted','grievance retaliation','targeting me','out to get me'], articles: ['master:37'] },
   { keywords: ['9.5 list','9.5 violation','excessive dispatch','over 9.5','triple time','3x pay'], articles: ['master:37'] },
-  { keywords: ['sleeper team','sleeper','team run','premium service','mileage rate','layover pay'], articles: ['master:43'] },
-  { keywords: ['bypass','bypassed','skipped over','junior driver','less senior','seniority list','run given away','weekend call'], articles: ['local:48'] },
-  { keywords: ['worked through lunch','no meal period','skipped break','forced break','meal period'], articles: ['local:51'] },
-  { keywords: ['sent home early','cut short','guarantee','8 hours','minimum hours','reported for work','daily guarantee','didnt get my 8','sent home','forced home'], articles: ['local:60', 'master:22'] },
+  { keywords: ['sleeper team','sleeper','team run','two man run','premium service','mileage rate','layover pay'], articles: ['master:43'] },
+  { keywords: ['bypass','bypassed','skipped over','passed over','junior driver','less senior','seniority list','run given away','weekend call','junior driver got the run','junior got the run','skipped me','let a junior guy go','gave my run away'], articles: ['local:48'] },
+  { keywords: ['worked through lunch','no meal period','skipped break','forced break','meal period','ate on the fly','no time to eat','supervisor rushed my break'], articles: ['local:51'] },
+  { keywords: ['sent home early','cut short','guarantee','8 hours','minimum hours','reported for work','daily guarantee','didnt get my 8','sent home','forced home','wanted more work','forced to go home','they made me leave',"didn't get my 8","didn't get my time",'cut me short'], articles: ['local:60', 'master:22'] },
   { keywords: ['3.5 hours','part time guarantee','hub guarantee'], articles: ['master:22'] },
   { keywords: ['air conditioning','ac heat in cab'], articles: ['local:60'] },
 ];
@@ -105,6 +105,12 @@ function extractRelevantSections(masterText, localText, question, classification
   if (classification.toLowerCase().includes('feeder')) {
     triggeredArticles.add('master:43'); // Sleeper teams
     triggeredArticles.add('master:18'); // FMCSA/Safety
+  }
+  
+  // Extra FMCSA keyword triggers
+  const fmcsaKeywords = ['14 hours','been out all day','driving forever','worked me to death','killed me with hours','forced over'];
+  if (fmcsaKeywords.some(kw => questionLower.includes(kw))) {
+    triggeredArticles.add('master:18');
   }
   if (classification.toLowerCase().includes('package')) {
     triggeredArticles.add('master:37'); // 9.5 list
