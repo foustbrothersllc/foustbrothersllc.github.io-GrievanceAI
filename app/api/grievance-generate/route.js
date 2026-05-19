@@ -177,9 +177,7 @@ CRITICAL INSTRUCTIONS:
 
 Respond in this EXACT format with no other text before or after:
 NATURE: [3-4 sentences in first person describing ONLY the confirmed violations, naming the grievant, the date, and which specific articles were violated]
-REMEDY: * **Contractual Demand:** [Cease & Desist action]
-* **Financial Remedy:** [Back-pay/penalty calculation to make whole]
-* **Operational Correction:** [Schedule/seniority fix]`;
+REMEDY: [2-3 sentences that sounds like it is being addressed by the union - make whole pay, cease and desist, back pay, or other appropriate remedies]`;
     
       { name: 'Groq', fn: callGroq },
       { name: 'Gemini', fn: callGemini },
