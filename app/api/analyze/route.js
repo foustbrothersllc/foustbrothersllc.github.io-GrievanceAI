@@ -28,7 +28,8 @@ const KEYWORD_ARTICLE_MAP = [
   { keywords: ['drug testing','dot physical','random test','sap program','discrimination'], articles: ['master:35'] },
   { keywords: ['harassment','harassed','intimidated','coerced','over-supervised','hostile','screaming','yelling','cursing','threatened','talked down to','dignity','retaliation','punished for filing','targeted','grievance retaliation','targeting me','out to get me'], articles: ['master:37'] },
   { keywords: ['9.5 list','9.5 violation','excessive dispatch','over 9.5','triple time','3x pay'], articles: ['master:37'] },
-  { keywords: ['sleeper team','sleeper','team run','two man run','premium service','mileage rate','layover pay'], articles: ['master:43'] },
+  // Sleeper team / mileage triggers — Article 43 fires on classification, team language, OR any under-550 mileage mention
+  { keywords: ['sleeper team','sleeper','team run','two man run','premium service','mileage rate','layover pay','miles less than 550','under 550','550 miles','short miles','short run','short trip','mileage short','paid wrong mileage','mileage dispute','not enough miles','run was short'], articles: ['master:43'] },
   { keywords: ['bypass','bypassed','skipped over','passed over','junior driver','less senior','seniority list','run given away','weekend call','junior driver got the run','junior got the run','skipped me','let a junior guy go','gave my run away'], articles: ['local:48'] },
   { keywords: ['worked through lunch','no meal period','skipped break','forced break','meal period','ate on the fly','no time to eat','supervisor rushed my break'], articles: ['local:51'] },
   { keywords: ['sent home early','cut short','guarantee','8 hours','minimum hours','reported for work','daily guarantee','didnt get my 8','sent home','forced home','wanted more work','forced to go home','they made me leave',"didn't get my 8","didn't get my time",'cut me short'], articles: ['local:60', 'master:22'] },
@@ -70,11 +71,12 @@ function extractArticleSection(text, articleNum, maxChars = 8000) {
 // Smart contract extraction - only pull relevant article sections
 function extractRelevantSections(masterText, localText, question, classification) {
   const questionLower = question.toLowerCase();
+  const classificationLower = classification.toLowerCase();
   const triggeredArticles = new Set();
   
   // Always include core articles based on classification
   const isFullTime = ['Feeder Driver', 'Package Car Driver', 'Sleeper Team', 'Specialist', 'Mechanic', 'Combo Worker'].some(
-    ft => classification.toLowerCase().includes(ft.toLowerCase())
+    ft => classificationLower.includes(ft.toLowerCase())
   );
   
   if (isFullTime) {
@@ -102,17 +104,32 @@ function extractRelevantSections(masterText, localText, question, classification
   });
 
   // Classification-specific triggers
-  if (classification.toLowerCase().includes('feeder')) {
-    triggeredArticles.add('master:43'); // Sleeper teams
+  if (classificationLower.includes('feeder')) {
+    triggeredArticles.add('master:43'); // Sleeper teams / mileage
     triggeredArticles.add('master:18'); // FMCSA/Safety
   }
-  
+
+  // Sleeper Team classification always pulls Article 43
+  if (classificationLower.includes('sleeper')) {
+    triggeredArticles.add('master:43');
+  }
+
+  // Mileage under 550 — pull Article 43 regardless of how classification is entered
+  const mileageKeywords = [
+    'under 550', 'less than 550', '550 miles', 'short miles', 'short run',
+    'mileage short', 'mileage dispute', 'not enough miles', 'run was short',
+    'short trip', 'paid wrong mileage', 'miles less than 550'
+  ];
+  if (mileageKeywords.some(kw => questionLower.includes(kw))) {
+    triggeredArticles.add('master:43');
+  }
+
   // Extra FMCSA keyword triggers
   const fmcsaKeywords = ['14 hours','been out all day','driving forever','worked me to death','killed me with hours','forced over'];
   if (fmcsaKeywords.some(kw => questionLower.includes(kw))) {
     triggeredArticles.add('master:18');
   }
-  if (classification.toLowerCase().includes('package')) {
+  if (classificationLower.includes('package')) {
     triggeredArticles.add('master:37'); // 9.5 list
   }
 
@@ -155,7 +172,7 @@ Article 34 (Health/Pension): pension, health insurance, medical benefits, welfar
 Article 35 (Non-Discrimination/Substance): discrimination, SAP program, drug testing, DOT physical
 Article 37 Section 1 (Dignity/Respect): harassment, harassed, intimidated, coerced, over-supervised, hostile, screaming, yelling, cursing, threatened, talked down to, retaliation
 Article 37 Section 1(b) (9.5 Over-Dispatch): 9.5 list, excessive dispatch, over 9.5 hours, triple time - PACKAGE CAR ONLY
-Article 43 (Sleeper Teams): sleeper team, team run, premium service, mileage rate, layover pay, Miles less than 550
+Article 43 (Sleeper Teams): sleeper team, team run, premium service, mileage rate, layover pay - FLAG if any run is under 550 miles; under 550 miles, less than 550 miles, short miles, short run, mileage dispute, not enough miles, run was short, paid wrong mileage
 Article 48 (Seniority/Dispatch) [ATLANTIC AREA SUPPLEMENT]: bypass, bypassed, junior driver, less senior, seniority list, run given away
 Article 51 (Meal/Breaks) [ATLANTIC AREA SUPPLEMENT]: worked through lunch, no meal period, skipped break, forced break
 Article 60 (Daily Guarantee - Full-Time) [ATLANTIC AREA SUPPLEMENT]: sent home early, cut short, 8 hours, minimum hours, reported for work, daily guarantee - FOR FEEDER DRIVERS AND PACKAGE CAR DRIVERS
@@ -170,6 +187,7 @@ CRITICAL ENFORCEMENT RULES:
 - DAILY GUARANTEE MATH RULE: For full-time employees (Feeder Driver, Package Car Driver) use Article 60 Atlantic Area Supplement - only flag if hours worked < 8. For part-time employees use Article 22 National Master - only flag if hours worked < 3.5. Always extract the actual number of hours and compare to the correct threshold for that classification.
 - 9.5 LIST: Only applies to PACKAGE CAR DRIVERS. NEVER apply to Feeder Drivers.
 - FEEDER DRIVERS over 14 hours on-duty: Flag Article 18 AND FMCSA 14-Hour Rule.
+- ARTICLE 43 MILEAGE RULE: For Sleeper Team runs, if ANY run described is under 550 miles, immediately audit Article 43 for premium pay, mileage rate violations, and layover pay. Flag if the worker was not compensated at the correct rate for a sub-550-mile run.
 
 WORKER DETAILS:
 Classification: ${classification}
@@ -185,6 +203,7 @@ Treat EVERY clause, action verb, or noun as a separate potential legal claim.
 - Junior employee getting work/equipment -> Seniority Bypass (Article 48)
 - Worker cut short/sent home/denied hours -> Daily Guarantee (Article 52)
 - Yelling, cursing, threatening -> Dignity and Respect (Article 37)
+- Sleeper run under 550 miles -> Mileage/Premium Pay (Article 43)
 NEVER combine distinct issues. Output separate numbered blocks for each.
 
 STEP 2 - LOGIC OVER TEXT:
