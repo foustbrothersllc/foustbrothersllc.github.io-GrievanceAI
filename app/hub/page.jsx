@@ -49,12 +49,17 @@ export default function Hub() {
         <div className="max-w-6xl mx-auto">
           <div className="flex justify-between items-center mb-3">
             <h1 className="text-2xl font-bold text-ups-gold">GRIEVANCE AI</h1>
-            <button
-              onClick={() => { signOut(auth); router.push('/'); }}
-              className="bg-ups-brown text-ups-gold px-4 py-2 rounded uppercase text-sm font-bold"
-            >
-              Logout
-            </button>
+            <div className="flex gap-2">
+              <Link href="/hub">
+                <button className="bg-ups-brown text-ups-gold px-4 py-2 rounded uppercase text-sm font-bold">🏠 Home</button>
+              </Link>
+              <button
+                onClick={() => { signOut(auth); router.push('/'); }}
+                className="bg-ups-brown text-ups-gold px-4 py-2 rounded uppercase text-sm font-bold"
+              >
+                Logout
+              </button>
+            </div>
           </div>
           <div className="flex gap-2">
             {isAdmin && (
