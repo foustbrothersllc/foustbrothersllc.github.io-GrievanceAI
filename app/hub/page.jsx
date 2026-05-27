@@ -83,14 +83,14 @@ export default function Hub() {
         <div className="space-y-4">
 
           {/* Contract Q&A */}
-          <Link href="/dashboard">
+          <Link href="/contract-qa">
             <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-6 cursor-pointer hover:border-ups-gold hover:bg-gray-800 transition-all duration-200 active:scale-95">
               <div className="flex items-center gap-4">
                 <div className="text-4xl">📋</div>
                 <div className="flex-1">
                   <h3 className="text-xl font-bold text-ups-gold mb-1">Contract Q&amp;A</h3>
                   <p className="text-gray-400 text-sm">
-                    Ask questions about your contract. Find out if your rights were violated and which articles apply to your situation.
+                    Ask questions about your contract. Get clear answers about your rights and what the contract says.
                   </p>
                 </div>
                 <div className="text-ups-gold text-2xl">›</div>
@@ -99,14 +99,14 @@ export default function Hub() {
           </Link>
 
           {/* File a Grievance */}
-          <Link href="/grievance">
+          <Link href="/dashboard">
             <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-6 cursor-pointer hover:border-ups-gold hover:bg-gray-800 transition-all duration-200 active:scale-95">
               <div className="flex items-center gap-4">
-                <div className="text-4xl">📄</div>
+                <div className="text-4xl">⚖️</div>
                 <div className="flex-1">
                   <h3 className="text-xl font-bold text-ups-gold mb-1">File a Grievance</h3>
                   <p className="text-gray-400 text-sm">
-                    Fill out and generate a formal Teamsters Local 391 grievance form, ready to print and submit.
+                    Search for contract violations and generate a formal Teamsters Local 391 grievance form.
                   </p>
                 </div>
                 <div className="text-ups-gold text-2xl">›</div>
