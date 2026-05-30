@@ -7,28 +7,6 @@ import { auth, db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import Link from 'next/link';
 
-const translateDriverSlang = (userSpeech) => {
-  let cleanedText = userSpeech;
-  const slangMap = [
-    { regex: /worked me to death|killed me with hours|forced over/i, tag: "excessive dispatch over 9.5 hours" },
-    { regex: /cut me short|sent me home early|didn't get my time/i, tag: "sent home early before 8 hours" },
-    { regex: /brought in an outside guy|coyote truck|rail trailer/i, tag: "vendor trailer foreign power contractor" },
-    { regex: /truck is a piece of junk|broken down|bad brakes/i, tag: "red tag unsafe mechanical issue breakdown" },
-    { regex: /skipped me|let a junior guy go|gave my run away/i, tag: "bypassed senior driver less senior" },
-    { regex: /ate on the fly|no time to eat|supervisor rushed my break/i, tag: "worked through lunch no meal period" },
-    { regex: /short check|didn't pay me right|missing from my check/i, tag: "paid wrong rate short check missing pay" },
-    { regex: /pulled me off my run|took my load|gave my load away/i, tag: "bypassed less senior" },
-    { regex: /made me drive too long|too many hours driving|over my hours/i, tag: "feeder driver over 14 hours FMCSA" },
-    { regex: /retaliated|targeting me|out to get me after my grievance/i, tag: "grievance retaliation punished for filing" },
-  ];
-  slangMap.forEach(item => {
-    if (item.regex.test(userSpeech)) {
-      cleanedText += ' [System Tag: User describes an issue related to ' + item.tag + ']';
-    }
-  });
-  return cleanedText;
-};
-
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [userName, setUserName] = useState('');
@@ -51,7 +29,6 @@ export default function Dashboard() {
           const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
           if (userDoc.exists()) {
             const data = userDoc.data();
-            // Check if account is blocked
             if (data.status === 'disabled') {
               await signOut(auth);
               router.push('/blocked');
@@ -131,18 +108,16 @@ export default function Dashboard() {
     <div className="min-h-screen bg-ups-black">
       <header className="border-b border-ups-brown bg-gray-900 p-4">
         <div className="max-w-6xl mx-auto">
-          {/* Top row - logo and logout */}
           <div className="flex justify-between items-center mb-3">
-            <Link href="/"><h1 className="text-2xl font-bold text-ups-gold">GRIEVANCE AI</h1></Link>
-            <button onClick={() => { signOut(auth); router.push('/'); }} className="bg-ups-brown text-ups-gold px-4 py-2 rounded uppercase text-sm font-bold">Logout</button>
-          </div>
-          {/* Bottom row - nav buttons */}
-          <div className="flex gap-2">
-            {isAdmin && (
-              <Link href="/admin" className="flex-1">
-                <button className="w-full bg-ups-brown text-ups-gold px-3 py-2 rounded uppercase text-xs font-bold">🔑 Admin</button>
+            <Link href="/hub"><h1 className="text-2xl font-bold text-ups-gold">GRIEVANCE AI</h1></Link>
+            <div className="flex gap-2">
+              <Link href="/hub">
+                <button className="bg-ups-brown text-ups-gold px-4 py-2 rounded uppercase text-sm font-bold">🏠 Home</button>
               </Link>
-            )}
+              <button onClick={() => { signOut(auth); router.push('/'); }} className="bg-ups-brown text-ups-gold px-4 py-2 rounded uppercase text-sm font-bold">Logout</button>
+            </div>
+          </div>
+          <div className="flex gap-2">
             <Link href="/settings" className="flex-1">
               <button className="w-full bg-ups-brown text-ups-gold px-3 py-2 rounded uppercase text-xs font-bold">⚙️ Settings</button>
             </Link>
@@ -188,7 +163,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-{results && (() => {
+        {results && (() => {
           const hasViolation = results.includes('OVERALL VERDICT: YES') || results.includes('YES - VIOLATION FOUND');
           return (
             <div className={`border-2 rounded-lg p-6 mb-6 ${hasViolation ? 'bg-red-900 border-red-600 text-red-100' : 'bg-green-900 border-green-600 text-green-100'}`}>
