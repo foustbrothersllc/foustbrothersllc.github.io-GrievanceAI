@@ -16,7 +16,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) router.push('/dashboard');
+      if (user) router.push('/hub');
     });
     return () => unsubscribe();
   }, [router]);
@@ -37,7 +37,7 @@ export default function LoginPage() {
         return;
       }
 
-      router.push('/dashboard');
+      router.push('/hub');
     } catch (err) {
       setError(err.message);
     } finally {
