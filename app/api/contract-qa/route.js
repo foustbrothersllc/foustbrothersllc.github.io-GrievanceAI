@@ -504,6 +504,49 @@ function getFeederBidContext(question) {
   return `\nVERIFIED FEEDER BID PROTECTION RULES (${f.source}):\n  Rule: ${f.rule}\n  Prohibited: ${f.prohibited}\n  Extra Work Rule: ${f.extra_work_rule}\n  Violation Classification: ${f.violation_classification}\n`;
 }
 
+// Hard-coded 9.5 overtime protection facts (Article 37, Section 1, National Master)
+const NINE_FIVE_FACTS = {
+  source: 'Article 37, Section 1, National Master UPS Agreement',
+  core_principle: 'The Employer must make every reasonable effort to keep an opted-in driver's daily schedule below 9.5 hours. A violation occurs when an eligible, opted-in driver works more than 9.5 hours on THREE (3) separate days in a single workweek.',
+  eligibility: [
+    '(a) The employee covers a route for a full week.',
+    '(b) The employee bids/is assigned a route for the full week but management disrupts it by reassigning them.',
+    '(c) The employee has four (4) or more years of seniority as a full-time RPCD.',
+  ],
+  opt_in: 'The Union collects the 9.5 opt-in list once per year. It must be submitted to the Company by January 5th. Reclassified drivers (former 22.4s) are automatically covered upon becoming RPCDs.',
+  blackout: 'The 9.5 protections are SUSPENDED from November 15th through January 15th (peak season). No standard 9.5 grievances can be filed for weeks falling in this window.',
+  penalty: 'TRIPLE TIME (3x) the driver's regular straight-time hourly rate for all hours worked over 9.5 on each violating day.',
+  retaliation_rule: 'Management CANNOT deliberately overload a driver with massive overtime on the remaining two days of the week to avoid the 3-day threshold. If found guilty, the Co-Chairs may impose Triple Time (3x) on those retaliatory days as well.',
+  how_to_file: 'File a grievance under Article 37, Section 1. Document the exact hours worked each day. Your steward submits it within the contractual timeline.',
+};
+
+function getNineFiveContext(question) {
+  const q = question.toLowerCase();
+  const keywords = ['9.5','9 5','nine five','over 9','excessive dispatch','triple time','3x','dispatch too much','too many hours','over dispatched','worked too long','opt in list','9.5 list','rpcd','peak blackout','nov 15','jan 15'];
+  if (!keywords.some(k => q.includes(k))) return '';
+
+  const today = new Date();
+  const month = today.getMonth() + 1;
+  const day = today.getDate();
+  const inBlackout = (month === 11 && day >= 15) || month === 12 || (month === 1 && day <= 15);
+
+  const eligibilityList = NINE_FIVE_FACTS.eligibility.map(e => `  - ${e}`).join('\n');
+  const blackoutWarning = inBlackout
+    ? `\n  ⚠️ CURRENT STATUS: TODAY FALLS WITHIN THE PEAK BLACKOUT (Nov 15 – Jan 15). Standard 9.5 grievances CANNOT be filed for this period.`
+    : `\n  ✅ CURRENT STATUS: Today is outside the peak blackout window. 9.5 protections are ACTIVE.`;
+
+  return `\nVERIFIED 9.5 OVERTIME PROTECTION RULES (${NINE_FIVE_FACTS.source}) — use these exact facts only:
+  Core Rule: ${NINE_FIVE_FACTS.core_principle}
+  Eligibility (must meet ANY one of these):
+${eligibilityList}
+  Opt-In Requirement: ${NINE_FIVE_FACTS.opt_in}
+  Blackout Period: ${NINE_FIVE_FACTS.blackout}${blackoutWarning}
+  Penalty: ${NINE_FIVE_FACTS.penalty}
+  Retaliation Rule: ${NINE_FIVE_FACTS.retaliation_rule}
+  How to File: ${NINE_FIVE_FACTS.how_to_file}\n`;
+}
+
+
 // Hard-coded personal floating holiday facts (Article 55, Atlantic Area Supplement)
 const PERSONAL_HOLIDAY_FACTS = {
   source: 'Article 55, Atlantic Area Supplemental Agreement',
@@ -601,10 +644,11 @@ function buildQAPrompt(question, classification, contractText, todayContext) {
   const telematicsContext = getTelematicsContext(question);
   const feederBidContext = getFeederBidContext(question);
   const personalHolidayContext = getPersonalHolidayContext(question);
+  const nineFiveContext = getNineFiveContext(question);
   return `You are a knowledgeable Teamsters contract expert helping a UPS worker understand their rights. Answer clearly and directly — lead with the answer, then add only essential detail. Do not pad responses with unnecessary sections or filler.
 
 ${todayContext}
-${topRateContext}${guaranteeContext}${holidayContext}${seniorityTiebreakerContext}${supervisorsWorkingContext}${telematicsContext}${feederBidContext}${personalHolidayContext}
+${topRateContext}${guaranteeContext}${holidayContext}${seniorityTiebreakerContext}${supervisorsWorkingContext}${telematicsContext}${feederBidContext}${personalHolidayContext}${nineFiveContext}
 WORKER'S JOB CLASSIFICATION: ${classification || 'Not specified'}
 
 CONTRACT LANGUAGE (relevant sections only):
