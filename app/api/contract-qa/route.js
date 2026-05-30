@@ -120,30 +120,32 @@ IMPORTANT: Always answer as of today's date (${todayStr}). When discussing raise
 }
 
 function extractArticleSection(text, articleNum, maxChars = 10000) {
-  // Contract uses format: ARTICLE 51-MEAL PERIOD (hyphen, no space)
-  const patterns = [
-    new RegExp(`ARTICLE\\s+${articleNum}[^0-9]`, 'i'),
-    new RegExp(`ARTICLE\\s+${articleNum}$`, 'im'),
-  ];
+  // Contract headers use em dash: "ARTICLE 51—MEAL PERIOD"
+  // Match article number followed by anything that is not another digit
+  const searchStr = `ARTICLE ${articleNum}`;
+  const idx = text.toUpperCase().indexOf(searchStr);
+  
+  if (idx === -1) return null;
+  
+  // Make sure the character after the number is not another digit (avoid matching 51 in 510)
+  const charAfter = text[idx + searchStr.length];
+  if (charAfter && /\d/.test(charAfter)) return null;
 
-  let start = -1;
-  for (const pattern of patterns) {
-    const match = text.search(pattern);
-    if (match !== -1) { start = match; break; }
-  }
+  const start = idx;
 
-  if (start === -1) return null;
-
-  // Find the next article header
-  const nextArticlePattern = /ARTICLE\s+\d+[^0-9]/gi;
-  nextArticlePattern.lastIndex = start + 10;
+  // Find the next ARTICLE header
   let end = text.length;
-  let nextMatch;
-  while ((nextMatch = nextArticlePattern.exec(text)) !== null) {
-    if (nextMatch.index > start + 50) {
-      end = nextMatch.index;
+  let searchFrom = start + searchStr.length + 1;
+  while (searchFrom < text.length) {
+    const nextIdx = text.toUpperCase().indexOf('ARTICLE ', searchFrom);
+    if (nextIdx === -1) break;
+    // Make sure it's actually a new article (followed by a digit)
+    const afterArticle = text[nextIdx + 8];
+    if (afterArticle && /\d/.test(afterArticle) && nextIdx > start + 50) {
+      end = nextIdx;
       break;
     }
+    searchFrom = nextIdx + 1;
   }
 
   return text.slice(start, Math.min(end, start + maxChars)).trim();
@@ -419,17 +421,9 @@ export async function POST(request) {
     }
 
     // Fetch both contracts
-    const [masterRes, localRes] = await Promise.all([
-      fetch(CONTRACT_URLS.master),
-      fetch(CONTRACT_URLS.local)
-    ]);
-
-    if (!masterRes.ok) return Response.json({ error: `Failed to fetch master agreement: ${masterRes.status}` }, { status: 500 });
-    if (!localRes.ok) return Response.json({ error: `Failed to fetch local agreement: ${localRes.status}` }, { status: 500 });
-
     const [masterText, localText] = await Promise.all([
-      masterRes.text(),
-      localRes.text()
+      fetch(CONTRACT_URLS.master).then(r => r.text()),
+      fetch(CONTRACT_URLS.local).then(r => r.text())
     ]);
 
     // PRE-FLIGHT: Is the user asking to VIEW an article?
