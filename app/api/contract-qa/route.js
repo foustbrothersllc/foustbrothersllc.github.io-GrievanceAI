@@ -474,7 +474,7 @@ const TELEMATICS_FACTS = {
   source: 'Article 3, Section 7, National Master UPS Agreement',
   rule: 'Management CANNOT discharge or discipline an employee based SOLELY on information gathered from GPS, telematics, IVIS, DIAD, or any sensor system.',
   exception: 'The only exception is clear, proven, intentional dishonesty with intent to defraud. Failing to perfectly recall events shown on telemetry does NOT constitute dishonesty.',
-  corroboration_requirement: 'Any infraction spotted via technology must be: (1) confirmed by a supervisor's direct, physical, eye-witness observation, AND (2) preceded by an in-person verbal counseling session before any discipline is issued.',
+  corroboration_requirement: "Any infraction spotted via technology must be: (1) confirmed by a supervisor's direct, physical, eye-witness observation, AND (2) preceded by an in-person verbal counseling session before any discipline is issued.",
   violation_classification: 'Improper Technology-Based Discipline.',
 };
 
@@ -489,7 +489,7 @@ function getTelematicsContext(question) {
 const FEEDER_BID_FACTS = {
   source: 'Articles 50 & 51, Atlantic Area Supplemental Agreement',
   rule: 'A contractually bid feeder run belongs entirely to the seniority driver who won the bid. Management CANNOT arbitrarily remove a regular driver from their scheduled bid run.',
-  prohibited: 'Saving a driver's regular bid route to be covered by an on-call/casual driver later while forcing the bid-holder onto an unscheduled regional or extra run is strictly prohibited.',
+  prohibited: "Saving a driver's regular bid route to be covered by an on-call/casual driver later while forcing the bid-holder onto an unscheduled regional or extra run is strictly prohibited.",
   extra_work_rule: 'Extra work assignments must follow the seniority board in order. Management cannot jump the board to assign an open run to a junior driver when a senior driver is present and available.',
   violation_classification: 'Immediate Work Preservation and Bid Protection Violation.',
 };
