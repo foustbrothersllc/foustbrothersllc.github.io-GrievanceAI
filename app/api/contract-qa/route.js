@@ -513,9 +513,9 @@ const NINE_FIVE_FACTS = {
     '(b) The employee bids/is assigned a route for the full week but management disrupts it by reassigning them.',
     '(c) The employee has four (4) or more years of seniority as a full-time RPCD.',
   ],
-  opt_in: 'The Union collects the 9.5 opt-in list once per year. It must be submitted to the Company by January 5th. Reclassified drivers (former 22.4s) are automatically covered upon becoming RPCDs.',
+  opt_in: "The Union collects the 9.5 opt-in list once per year. It must be submitted to the Company by January 5th. Reclassified drivers (former 22.4s) are automatically covered upon becoming RPCDs.",
   blackout: 'The 9.5 protections are SUSPENDED from November 15th through January 15th (peak season). No standard 9.5 grievances can be filed for weeks falling in this window.',
-  penalty: 'TRIPLE TIME (3x) the driver's regular straight-time hourly rate for all hours worked over 9.5 on each violating day.',
+  penalty: "TRIPLE TIME (3x) the driver's regular straight-time hourly rate for all hours worked over 9.5 on each violating day.",
   retaliation_rule: 'Management CANNOT deliberately overload a driver with massive overtime on the remaining two days of the week to avoid the 3-day threshold. If found guilty, the Co-Chairs may impose Triple Time (3x) on those retaliatory days as well.',
   how_to_file: 'File a grievance under Article 37, Section 1. Document the exact hours worked each day. Your steward submits it within the contractual timeline.',
 };
