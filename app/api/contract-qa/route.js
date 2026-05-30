@@ -186,7 +186,7 @@ ${raiseContext}
 IMPORTANT: Always answer as of today's date (${todayStr}). When discussing raises, benefits, or timelines, tell the member what applies RIGHT NOW and what's coming next — not what was true at the start of the contract. If they ask "when is my next raise," calculate from today.`;
 }
 
-function extractArticleSection(text, articleNum, maxChars = 10000) {
+function extractArticleSection(text, articleNum, maxChars = 25000) {
   // Contract headers use em dash: "ARTICLE 51—MEAL PERIOD"
   // Match article number followed by anything that is not another digit
   const searchStr = `ARTICLE ${articleNum}`;
@@ -526,7 +526,9 @@ RULES:
 5. Quote key contract language only when it genuinely adds clarity — keep quotes short.
 6. Never give legal advice — explain the contract only.
 7. Keep answers concise. For simple factual questions (pay, dates, guarantees), answer in 2–4 short paragraphs. Do not force the full section format on simple questions.
-8. NEVER guess, estimate, or fill in missing information. If the contract language provided does not explicitly state a specific fact, say "the contract language provided does not specify that — check with your steward." Do not use phrases like "typically," "generally," "usually," "approximately," or "for example" to introduce numbers or facts not found in the contract text.
+8. NEVER guess, estimate, or fill in missing information. Do not use phrases like "typically," "generally," "usually," "approximately," or "for example" to introduce numbers or facts not found in the contract text.
+9. CRITICAL — THE ANSWER IS IN THE CONTRACT: The contract language provided above is the authoritative source. You MUST read every word of it before responding. If the question is about a topic covered by the provided articles, the answer is there — find it and quote it directly. Do NOT say "the contract does not specify" or "check with your steward" unless you have read the full provided text and confirmed the specific fact is genuinely absent. Do not rely on your general training knowledge — use only the contract text provided.
+10. If after reading all provided contract text the answer is truly not present, say: "This specific detail isn't in the sections I was given — your steward can pull the full article for you." Never fabricate an answer.
 
 For complex situations involving violations, discipline, or multi-step processes, use only the sections that apply:
   📋 WHAT THE CONTRACT SAYS
