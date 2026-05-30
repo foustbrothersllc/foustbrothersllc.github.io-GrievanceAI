@@ -8,8 +8,8 @@ import { doc, getDoc } from 'firebase/firestore';
 import Link from 'next/link';
 
 const jobTypes = [
-  'Package Car Driver',
   'Feeder Driver',
+  'Package Car Driver',
   'Sleeper Team',
   'Part-Time Hub/Preload',
   'Air Driver',
