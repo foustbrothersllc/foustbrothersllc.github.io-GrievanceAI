@@ -320,6 +320,64 @@ const TOP_RATE_SCHEDULES = {
   },
 };
 
+// Hard-coded guarantee facts by classification
+const GUARANTEE_FACTS = {
+  'feeder driver': {
+    label: 'Feeder Driver',
+    guarantee: '8 consecutive hours (excluding unpaid meal period) per day, per Article 60 of the Atlantic Area Supplemental Agreement.',
+    rules: [
+      'You must report to your scheduled shift on time.',
+      'If management tells you before you punch in that volume is light and tries to send you home, you can refuse and demand your 8 hours.',
+      'The 8 hours must be consecutive — management cannot force a split shift without your consent.',
+      'If you finish your assignment early, management must either find additional work or pay the remaining hours as guaranteed time.',
+    ]
+  },
+  'package car driver': {
+    label: 'Package Car Driver',
+    guarantee: '8 consecutive hours (excluding unpaid meal period) per day, per Article 60 of the Atlantic Area Supplemental Agreement.',
+    rules: [
+      'You must report to your scheduled shift on time.',
+      'If management tells you before you punch in that volume is light and tries to send you home, you can refuse and demand your 8 hours.',
+      'The 8 hours must be consecutive — management cannot force a split shift without your consent.',
+      'If you finish your assignment early, management must either find additional work or pay the remaining hours as guaranteed time.',
+    ]
+  },
+  'part-time': {
+    label: 'Part-Time Employee',
+    guarantee: '3.5 hours per day, per Article 22 of the National Master UPS Agreement.',
+    rules: [
+      'If you report to work and are sent home early, you are guaranteed a minimum of 3.5 hours of work or pay.',
+    ]
+  },
+  'part-time air driver': {
+    label: 'Part-Time Air Driver',
+    guarantee: '3.5 hours per day.',
+    rules: [
+      'If you report to work and are sent home early, you are guaranteed a minimum of 3.5 hours of work or pay.',
+    ]
+  },
+  'full-time air driver': {
+    label: 'Full-Time Air Driver',
+    guarantee: '8 hours per day and 40 hours per week.',
+    rules: []
+  },
+  'combo': {
+    label: 'Full-Time Combination Employee (Article 22.4)',
+    guarantee: '8 hours per day.',
+    rules: []
+  },
+};
+
+function getGuaranteeContext(classification) {
+  if (!classification) return '';
+  const key = classification.toLowerCase();
+  const match = Object.keys(GUARANTEE_FACTS).find(k => key.includes(k));
+  if (!match) return '';
+  const g = GUARANTEE_FACTS[match];
+  const rules = g.rules.length ? '\n' + g.rules.map(r => `  - ${r}`).join('\n') : '';
+  return `\nVERIFIED DAILY GUARANTEE FOR ${g.label.toUpperCase()} (use these exact facts — do not guess or estimate):\n  Guarantee: ${g.guarantee}${rules}\n`;
+}
+
 function getTopRateContext(classification) {
   if (!classification) return '';
   const key = classification.toLowerCase();
@@ -333,10 +391,11 @@ function getTopRateContext(classification) {
 
 function buildQAPrompt(question, classification, contractText, todayContext) {
   const topRateContext = getTopRateContext(classification);
+  const guaranteeContext = getGuaranteeContext(classification);
   return `You are a knowledgeable Teamsters contract expert helping a UPS worker understand their rights. Answer clearly and directly — lead with the answer, then add only essential detail. Do not pad responses with unnecessary sections or filler.
 
 ${todayContext}
-${topRateContext}
+${topRateContext}${guaranteeContext}
 WORKER'S JOB CLASSIFICATION: ${classification || 'Not specified'}
 
 CONTRACT LANGUAGE (relevant sections only):
