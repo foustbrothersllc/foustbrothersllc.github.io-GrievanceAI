@@ -39,32 +39,97 @@ const TOPIC_ARTICLE_MAP = [
   { topics: ['holiday','holidays','paid holiday','holiday pay','working holiday','time and a half holiday','christmas','thanksgiving','labor day','memorial day','new years','fourth of july','independence day'], articles: ['local:54'] },
 ];
 
-// Keyword to article map for Q&A smart routing (same logic as analyze route)
+// Keyword to article map for Q&A smart routing
 const KEYWORD_ARTICLE_MAP = [
-  { keywords: ['bargaining unit','union work','scope','jurisdiction'], articles: ['master:1'] },
-  { keywords: ['union membership','dues','check-off','union security'], articles: ['master:3'] },
-  { keywords: ['steward','grievance processing','union business'], articles: ['master:4'] },
-  { keywords: ['past practice','maintenance of standards','local conditions'], articles: ['master:6'] },
-  { keywords: ['grievance procedure','panel','arbitration','timelines'], articles: ['master:7'] },
-  { keywords: ['picket line','sympathy strike','struck goods'], articles: ['master:9'] },
-  { keywords: ['polygraph','lie detector','interrogation'], articles: ['master:12'] },
-  { keywords: ['workers comp','injury on duty','light duty','tast'], articles: ['master:14'] },
+  // Master Article 1 — Bargaining Unit, Scope, Work Preservation
+  { keywords: ['bargaining unit','union work','scope','jurisdiction','subcontracting','bad address','rewrap','successors','transfer of company','clerical classification','operations covered'], articles: ['master:1'] },
+
+  // Master Article 3 — Union Shop, Dues, Supervisors Working
+  { keywords: ['union membership','dues','check-off','union security','supervisor working','supervisors working','double shift','early call-in','overtime exhaustion','double time penalty','quadruple time','drive contributions','part-time coverage list','supervisor sorting','supervisor loading','supervisor driving'], articles: ['master:3'] },
+
+  // Master Article 4 — Stewards & Weingarten Rights
+  { keywords: ['steward','grievance processing','union business','weingarten','investigatory interview','disciplinary meeting','disciplinary representation','warning copy','denying steward','refusing steward'], articles: ['master:4'] },
+
+  // Master Article 6 — Workweek, New Equipment, Technology
+  { keywords: ['past practice','maintenance of standards','local conditions','new equipment','technological change','routing software','computerized operations','de-skilling'], articles: ['master:6'] },
+
+  // Master Articles 7 & 8 — Grievance Machinery & Arbitration
+  { keywords: ['grievance procedure','panel','arbitration','timelines','national grievance','bench decision','deadlock','binding arbitration','interpretation of master'], articles: ['master:7'] },
+
+  // Master Article 14 — Health & Safety / Heat
+  { keywords: ['overweight package','over 70 pounds','heat illness','acclimatization','in-cab ventilation','building fans','water fountain','heat protection','safety violation','workers comp','injury on duty','light duty','tast','broken ac','refused assistance'], articles: ['master:14'] },
+
+  // Master Article 16 — Leave of Absence
   { keywords: ['leave of absence','fmla','personal leave','military leave'], articles: ['master:16'] },
+
+  // Master Article 17 — Pay Shortage / Penalty Pay
   { keywords: ['missing check','short pay','payroll shortage','48 hours','penalty pay','green check','short check','missing pay','paid wrong rate'], articles: ['master:17'] },
-  { keywords: ['red tag','dvir','unsafe','bad brakes','fmcsa','refused to drive','heat stress','forced to pull','ordered me to drive','threatened over a red tag','mechanical issue','breakdown'], articles: ['master:18'] },
-  { keywords: ['9.5 list','9.5 violation','excessive dispatch','over 9.5','triple time','3x pay'], articles: ['master:37'] },
-  { keywords: ['harassment','harassed','intimidated','coerced','over-supervised','hostile','screaming','yelling','cursing','threatened','dignity','retaliation'], articles: ['master:37'] },
-  { keywords: ['foreign power','vendor trailer','outside truck','contractor','coyote','rail trailer'], articles: ['master:26','master:32'] },
-  { keywords: ['pension','health insurance','medical benefits','welfare fund'], articles: ['master:34'] },
-  { keywords: ['drug testing','dot physical','random test','sap program','discrimination'], articles: ['master:35'] },
-  { keywords: ['sleeper team','sleeper','team run','mileage rate','layover pay','under 550','550 miles'], articles: ['master:43'] },
-  { keywords: ['bypass','bypassed','junior driver','less senior','seniority list','run given away'], articles: ['local:48'] },
-  { keywords: ['worked through lunch','no meal period','skipped break','forced break','meal period','missed lunch'], articles: ['local:51','master:17'] },
-  { keywords: ['sent home early','cut short','guarantee','8 hours','minimum hours','reported for work','daily guarantee'], articles: ['local:60','master:22'] },
-  { keywords: ['raise','wage increase','pay increase','gwi','general wage','next raise','when do i get paid more'], articles: ['master:41','local:60'] },
-  { keywords: ['part time','part-time','hub pay','preload pay'], articles: ['master:22'] },
+
+  // Master Article 18 — Safety / Equipment / Air Cargo
+  { keywords: ['red tag','dvir','unsafe','bad brakes','fmcsa','refused to drive','forced to pull','ordered me to drive','threatened over a red tag','mechanical issue','breakdown','air hub','gateway operations','air sorter','flight delay'], articles: ['master:18'] },
+
+  // Master Article 22 — Inside & Part-Time Employees
+  { keywords: ['part time','part-time','hub pay','preload pay','22.3','inside combo','full-time inside','part-time inside','work preservation inside'], articles: ['master:22'] },
+
+  // Master Article 26 — Competition, Rail, SurePost
+  { keywords: ['foreign power','vendor trailer','outside truck','contractor','coyote','rail trailer','surepost','rail usage','feeder displacement','substitute transportation','average daily volume','adv','usps competition'], articles: ['master:26'] },
+
+  // Master Article 31 — Garnishments
+  { keywords: ['garnishment','wage garnishment','child support','alimony','multiple debts','terminated for garnishment'], articles: ['master:31'] },
+
+  // Master Article 36 — Nondiscrimination
+  { keywords: ['discrimination','gender identity','sexual orientation','ada','disability accommodation','civil rights'], articles: ['master:36'] },
+
+  // Master Article 37 — Management Relations, Harassment, 9.5
+  { keywords: ['9.5 list','9.5 violation','excessive dispatch','over 9.5','triple time','3x pay','harassment','harassed','intimidated','coerced','over-supervised','hostile','screaming','yelling','cursing','threatened','dignity','retaliation','ride-along','video surveillance','telemetry discipline','fair days work'], articles: ['master:37'] },
+
+  // Master Article 38 — Change of Operations
+  { keywords: ['closing building','lane realignment','moving expenses','dovetail seniority','change of operations','pension trust transfer','facility move','structural change'], articles: ['master:38'] },
+
+  // Master Article 39 — Trailer Repair Shops
+  { keywords: ['trailer mechanic','shop trainee','tool replacement','tool allowance','trailer repair'], articles: ['master:39'] },
+
+  // Master Articles 40 & 41 — Air & Full-Time Driver Pay / Progression
+  { keywords: ['raise','wage increase','pay increase','gwi','general wage','next raise','when do i get paid more','4-year progression','red circled','top rate','break-in rate','step increase','anniversary date','progression scale'], articles: ['master:41','local:60'] },
+
+  // Master Article 43 — Sleeper Teams / Premium Services
+  { keywords: ['sleeper team','sleeper','team run','mileage rate','layover pay','under 550','550 miles','took my load','premium service','100 miles','120 miles regional','point-to-point','local feeder displacement'], articles: ['master:43'] },
+
+  // Master Article 33 — COLA
   { keywords: ['cola','cost of living','cost-of-living'], articles: ['master:33'] },
-  { keywords: ['holiday','paid holiday','holiday pay','working on holiday','time and a half holiday','holiday qualifier','christmas','thanksgiving','labor day','memorial day','new years','fourth of july','independence day','holiday schedule'], articles: ['local:54'] },
+
+  // Master Article 34 — Pension & Health
+  { keywords: ['pension','health insurance','medical benefits','welfare fund','teamcare'], articles: ['master:34'] },
+
+  // Master Article 35 — Drug Testing
+  { keywords: ['drug testing','dot physical','random test','sap program'], articles: ['master:35'] },
+
+  // Local Article 46 — Seniority Acquisition
+  { keywords: ['30 working days','90 consecutive days','40 days','100 consecutive days','free period','nov 1','dec 31','seniority tie','tie-breaker','coin toss','application date','same seniority date','start time tie','same day hire','seniority number'], articles: ['local:46'] },
+
+  // Local Article 48 — Seniority, Layoff & Recall
+  { keywords: ['bypass','bypassed','junior driver','less senior','seniority list','run given away','layoff notice','7 calendar days','emergency notice','displace inside','bump part-time','quarterly posting','updated seniority list','layout sequencing'], articles: ['local:48'] },
+
+  // Local Article 49 — Package Car Job Bids
+  { keywords: ['bid center','route vacancy','5-day posting','training period','30-day training','disqualification','route bid','package car bid','senior bidder bypassed'], articles: ['local:49'] },
+
+  // Local Articles 50 & 51 — Feeder Bid Protections
+  { keywords: ['tractor-trailer qualified','bid run','super qualified','extra work','present and available','run discontinuance','50-mile rule','yanked off run','dispatch reassigned','on-call took run','extra work bypass','open hot run','dispatch jumping','feeder board','worked through lunch','no meal period','skipped break','forced break','meal period','missed lunch'], articles: ['local:51','master:17'] },
+
+  // Local Article 54 — Holidays
+  { keywords: ['holiday','paid holiday','holiday pay','working on holiday','time and a half holiday','holiday qualifier','christmas','thanksgiving','labor day','memorial day','new years','fourth of july','independence day','holiday schedule','90 hours straight-time','attendance gate','day after thanksgiving'], articles: ['local:54'] },
+
+  // Local Article 55 — Vacations & Personal Days
+  { keywords: ['vacation','vacation selection','personal day','floating holiday','sick day option','nov 1','nov 30','seniority selection','8 days notice','unused floating','december 31','vacation pay'], articles: ['local:55'] },
+
+  // Local Articles 58 & 59 — Hours, Overtime, Meal Periods
+  { keywords: ['sent home early','cut short','guarantee','8 hours','minimum hours','reported for work','daily guarantee','40-hour weekly','unscheduled start time','start time changed','delayed run','time and a half overtime','split shift','8-hour daily guarantee'], articles: ['local:58','local:59','master:22'] },
+
+  // Local Article 60 — Health & Welfare / Pension Contributions
+  { keywords: ['health and welfare contribution','pension contribution','monthly contribution','5 days per month','coverage threshold','laid off driver','joint supplemental'], articles: ['local:60'] },
+
+  // Local Article 62 — Maintenance & Fleet Shop
+  { keywords: ['automotive mechanic','fleet mechanic','building maintenance','apprenticeship','journeyman ratio','foreman premium','shift differential','mechanic apprentice','trade premium'], articles: ['local:62'] },
 ];
 
 // Compute today's date context for the AI
