@@ -26,7 +26,7 @@ export default function Hub() {
         if (snap.exists()) {
           const data = snap.data();
           setUserName(data.name || '');
-          setIsAdmin(data.isAdmin === true);
+          setIsAdmin(data.role === 'admin');
         }
       } catch (e) {
         // ignore
