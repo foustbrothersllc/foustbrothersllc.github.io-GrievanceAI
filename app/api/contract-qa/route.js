@@ -417,6 +417,24 @@ function getHolidayContext(question) {
   return `\nVERIFIED HOLIDAY FACTS (${HOLIDAY_FACTS.source}) — use these exact facts only:\nPAID HOLIDAYS:\n${holidayList}\nRULES:\n${ruleList}\n`;
 }
 
+// Hard-coded seniority tiebreaker facts (Article 46, Atlantic Area Supplemental Agreement)
+const SENIORITY_TIEBREAKER_FACTS = {
+  source: 'Article 46, Section 1, Atlantic Area Supplemental Agreement',
+  rules: [
+    'Step 1 — 30th Workday Completion: Check center records to see who completed their 30th working day of qualification first. The driver who hit their 30th day first goes higher on the seniority list.',
+    'Step 2 — Application Date: If both completed their 30th working day on the exact same shift, the date on their original employment application governs. The earlier application date goes higher.',
+    'Step 3 — Coin Toss: If both share the same application date, the tie is broken by a formal coin toss. A shop steward must be present to witness and sign off on the result.',
+  ]
+};
+
+function getSeniorityTiebreakerContext(question) {
+  const q = question.toLowerCase();
+  const keywords = ['same day','same date','same seniority','tie','tiebreaker','tie-breaker','coin toss','application date','30th day','30 working days','same hire date','seniority tie','who goes first','higher on the list','seniority order'];
+  if (!keywords.some(k => q.includes(k))) return '';
+  const ruleList = SENIORITY_TIEBREAKER_FACTS.rules.map((r, i) => `  ${i + 1}. ${r}`).join('\n');
+  return `\nVERIFIED SENIORITY TIE-BREAKER RULES (${SENIORITY_TIEBREAKER_FACTS.source}) — use these exact facts only:\n${ruleList}\n`;
+}
+
 // Hard-coded guarantee facts by classification
 const GUARANTEE_FACTS = {
   'feeder driver': {
@@ -490,10 +508,11 @@ function buildQAPrompt(question, classification, contractText, todayContext) {
   const topRateContext = getTopRateContext(classification);
   const guaranteeContext = getGuaranteeContext(classification);
   const holidayContext = getHolidayContext(question);
+  const seniorityTiebreakerContext = getSeniorityTiebreakerContext(question);
   return `You are a knowledgeable Teamsters contract expert helping a UPS worker understand their rights. Answer clearly and directly — lead with the answer, then add only essential detail. Do not pad responses with unnecessary sections or filler.
 
 ${todayContext}
-${topRateContext}${guaranteeContext}${holidayContext}
+${topRateContext}${guaranteeContext}${holidayContext}${seniorityTiebreakerContext}
 WORKER'S JOB CLASSIFICATION: ${classification || 'Not specified'}
 
 CONTRACT LANGUAGE (relevant sections only):
