@@ -36,6 +36,7 @@ const TOPIC_ARTICLE_MAP = [
   { topics: ['bargaining unit','jurisdiction','scope','covered employee'], articles: ['master:1'] },
   { topics: ['probationary','new employee','seasonal','trial period'], articles: ['local:46'] },
   { topics: ['overtime','double time','premium pay'], articles: ['local:60'] },
+  { topics: ['holiday','holidays','paid holiday','holiday pay','working holiday','time and a half holiday','christmas','thanksgiving','labor day','memorial day','new years','fourth of july','independence day'], articles: ['local:54'] },
 ];
 
 // Keyword to article map for Q&A smart routing (same logic as analyze route)
@@ -63,6 +64,7 @@ const KEYWORD_ARTICLE_MAP = [
   { keywords: ['raise','wage increase','pay increase','gwi','general wage','next raise','when do i get paid more'], articles: ['master:41','local:60'] },
   { keywords: ['part time','part-time','hub pay','preload pay'], articles: ['master:22'] },
   { keywords: ['cola','cost of living','cost-of-living'], articles: ['master:33'] },
+  { keywords: ['holiday','paid holiday','holiday pay','working on holiday','time and a half holiday','holiday qualifier','christmas','thanksgiving','labor day','memorial day','new years','fourth of july','independence day','holiday schedule'], articles: ['local:54'] },
 ];
 
 // Compute today's date context for the AI
@@ -320,6 +322,36 @@ const TOP_RATE_SCHEDULES = {
   },
 };
 
+// Hard-coded holiday facts (Article 54, Atlantic Area Supplemental Agreement)
+const HOLIDAY_FACTS = {
+  source: 'Article 54, Atlantic Area Supplemental Agreement',
+  holidays: [
+    'New Year's Day',
+    'Memorial Day',
+    'Independence Day (4th of July)',
+    'Labor Day',
+    'Thanksgiving Day',
+    'Christmas Day',
+    'The day after Thanksgiving',
+    'The day before or after Christmas (as designated)',
+  ],
+  rules: [
+    'Full-time employees receive 8 hours of straight-time holiday pay for each named holiday (Article 54, Section 1).',
+    'To qualify, you must work your scheduled day immediately before AND your scheduled day immediately after the holiday (Article 54, Section 1(b)).',
+    'If you work on a holiday, you receive time-and-one-half (1.5x) for all hours worked IN ADDITION to your standard 8-hour holiday pay (Article 54, Section 1(c)).',
+    'If you call in sick on the day before or after a holiday without an approved excuse, you forfeit your holiday pay.',
+  ]
+};
+
+function getHolidayContext(question) {
+  const q = question.toLowerCase();
+  const holidayKeywords = ['holiday','paid holiday','holiday pay','working on holiday','christmas','thanksgiving','labor day','memorial day','new years','fourth of july','independence day','holiday schedule','holiday qualifier'];
+  if (!holidayKeywords.some(k => q.includes(k))) return '';
+  const holidayList = HOLIDAY_FACTS.holidays.map(h => `  - ${h}`).join('\n');
+  const ruleList = HOLIDAY_FACTS.rules.map(r => `  - ${r}`).join('\n');
+  return `\nVERIFIED HOLIDAY FACTS (${HOLIDAY_FACTS.source}) — use these exact facts only:\nPAID HOLIDAYS:\n${holidayList}\nRULES:\n${ruleList}\n`;
+}
+
 // Hard-coded guarantee facts by classification
 const GUARANTEE_FACTS = {
   'feeder driver': {
@@ -392,10 +424,11 @@ function getTopRateContext(classification) {
 function buildQAPrompt(question, classification, contractText, todayContext) {
   const topRateContext = getTopRateContext(classification);
   const guaranteeContext = getGuaranteeContext(classification);
+  const holidayContext = getHolidayContext(question);
   return `You are a knowledgeable Teamsters contract expert helping a UPS worker understand their rights. Answer clearly and directly — lead with the answer, then add only essential detail. Do not pad responses with unnecessary sections or filler.
 
 ${todayContext}
-${topRateContext}${guaranteeContext}
+${topRateContext}${guaranteeContext}${holidayContext}
 WORKER'S JOB CLASSIFICATION: ${classification || 'Not specified'}
 
 CONTRACT LANGUAGE (relevant sections only):
