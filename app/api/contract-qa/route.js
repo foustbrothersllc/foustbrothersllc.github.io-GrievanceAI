@@ -120,11 +120,10 @@ IMPORTANT: Always answer as of today's date (${todayStr}). When discussing raise
 }
 
 function extractArticleSection(text, articleNum, maxChars = 10000) {
-  // Match ARTICLE 51 or ARTICLE 51— or ARTICLE 51. or ARTICLE 51 (space after)
-  // Using a lookahead so we don't require a specific character after the number
+  // Contract uses format: ARTICLE 51-MEAL PERIOD (hyphen, no space)
   const patterns = [
-    new RegExp(`ARTICLE\\s+${articleNum}(?=[^0-9])`, 'i'),
-    new RegExp(`Article\\s+${articleNum}(?=[^0-9])`, 'i'),
+    new RegExp(`ARTICLE\\s+${articleNum}[^0-9]`, 'i'),
+    new RegExp(`ARTICLE\\s+${articleNum}$`, 'im'),
   ];
 
   let start = -1;
@@ -136,7 +135,7 @@ function extractArticleSection(text, articleNum, maxChars = 10000) {
   if (start === -1) return null;
 
   // Find the next article header
-  const nextArticlePattern = /ARTICLE\s+\d+(?=[^0-9])/gi;
+  const nextArticlePattern = /ARTICLE\s+\d+[^0-9]/gi;
   nextArticlePattern.lastIndex = start + 10;
   let end = text.length;
   let nextMatch;
@@ -420,9 +419,17 @@ export async function POST(request) {
     }
 
     // Fetch both contracts
+    const [masterRes, localRes] = await Promise.all([
+      fetch(CONTRACT_URLS.master),
+      fetch(CONTRACT_URLS.local)
+    ]);
+
+    if (!masterRes.ok) return Response.json({ error: `Failed to fetch master agreement: ${masterRes.status}` }, { status: 500 });
+    if (!localRes.ok) return Response.json({ error: `Failed to fetch local agreement: ${localRes.status}` }, { status: 500 });
+
     const [masterText, localText] = await Promise.all([
-      fetch(CONTRACT_URLS.master).then(r => r.text()),
-      fetch(CONTRACT_URLS.local).then(r => r.text())
+      masterRes.text(),
+      localRes.text()
     ]);
 
     // PRE-FLIGHT: Is the user asking to VIEW an article?
