@@ -250,11 +250,37 @@ function extractRelevantSections(masterText, localText, question, classification
   return sections.join('\n\n');
 }
 
+// Hard-coded top rate schedules by classification
+const TOP_RATE_SCHEDULES = {
+  'feeder driver': {
+    label: 'Feeder Driver',
+    rates: [
+      { period: 'August 1, 2023 – July 31, 2024', rate: '$43.24/hr' },
+      { period: 'August 1, 2024 – July 31, 2025', rate: '$43.99/hr' },
+      { period: 'August 1, 2025 – July 31, 2026', rate: '$45.74/hr' },
+      { period: 'August 1, 2026 – July 31, 2027', rate: '$46.74/hr' },
+      { period: 'August 1, 2027 – July 31, 2028', rate: '$48.99/hr' },
+    ]
+  },
+  // Add more classifications here as needed
+};
+
+function getTopRateContext(classification) {
+  if (!classification) return '';
+  const key = classification.toLowerCase();
+  const match = Object.keys(TOP_RATE_SCHEDULES).find(k => key.includes(k));
+  if (!match) return '';
+  const schedule = TOP_RATE_SCHEDULES[match];
+  const lines = schedule.rates.map(r => `  - ${r.period}: ${r.rate}`).join('\n');
+  return `\nVERIFIED TOP RATE SCHEDULE FOR ${schedule.label.toUpperCase()} (use these exact figures — do not use contract text tables for pay rates):\n${lines}\n`;
+}
+
 function buildQAPrompt(question, classification, contractText, todayContext) {
+  const topRateContext = getTopRateContext(classification);
   return `You are a knowledgeable Teamsters contract expert helping a UPS worker understand their rights. Answer clearly and directly — lead with the answer, then add only essential detail. Do not pad responses with unnecessary sections or filler.
 
 ${todayContext}
-
+${topRateContext}
 WORKER'S JOB CLASSIFICATION: ${classification || 'Not specified'}
 
 CONTRACT LANGUAGE (relevant sections only):
@@ -263,7 +289,7 @@ ${contractText}
 RULES:
 1. Answer as of TODAY's date — never describe raise schedules or timelines as if it's the beginning of the contract.
 2. If asked about raises or pay: lead with exactly what they have NOW and precisely when/what the next increase is, including the number of days away.
-3. The contract language above contains pay rate tables for each classification. Use those tables to state the worker's CURRENT top rate and their NEW rate after the next raise. Do the math and give them the actual dollar figures — do not ask them for their current rate.
+3. For pay rates: use ONLY the VERIFIED TOP RATE SCHEDULE above — never calculate rates from the contract text tables, which may be misformatted.
 4. Cite the Article and Section (National Master or Atlantic Area Supplement) briefly.
 5. Quote key contract language only when it genuinely adds clarity — keep quotes short.
 6. Never give legal advice — explain the contract only.
