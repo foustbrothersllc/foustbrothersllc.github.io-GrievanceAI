@@ -151,7 +151,7 @@ function extractArticleSection(text, articleNum, maxChars = 10000) {
 function detectArticleLookup(question) {
   const q = question.toLowerCase().trim();
 
-  const lookupTriggers = ['show me','pull up','what does','read me','give me','display','show','what is in','what's in','whats in','let me see','can i see','can you show','can you pull'];
+  const lookupTriggers = ['show me','pull up','what does','read me','give me','display','show','what is in','whats in','let me see','can i see','can you show','can you pull'];
   const hasTrigger = lookupTriggers.some(t => q.includes(t));
 
   // Check for explicit article number mention
