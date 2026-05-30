@@ -37,6 +37,13 @@ const TOPIC_ARTICLE_MAP = [
   { topics: ['probationary','new employee','seasonal','trial period'], articles: ['local:46'] },
   { topics: ['overtime','double time','premium pay'], articles: ['local:60'] },
   { topics: ['holiday','holidays','paid holiday','holiday pay','working holiday','time and a half holiday','christmas','thanksgiving','labor day','memorial day','new years','fourth of july','independence day'], articles: ['local:54'] },
+  { topics: ['telematics','gps discipline','diad discipline','camera discipline','technology discipline','orion discipline','ivis','tracking discipline'], articles: ['master:3'] },
+  { topics: ['feeder bid','bid run','yanked off run','off my run','extra work assignment','open run','feeder board','jumped the board'], articles: ['local:50','local:51'] },
+  { topics: ['personal holiday','floating holiday','personal day','8 day notice','day off denied','cash out holiday'], articles: ['local:55'] },
+  { topics: ['start time change','unscheduled start','delayed run','8 hour guarantee','sent home early','split shift'], articles: ['local:58','local:59'] },
+  { topics: ['weingarten','investigatory interview','steward in meeting','disciplinary meeting','right to representation'], articles: ['master:4'] },
+  { topics: ['change of operations','closing building','lane realignment','facility move','dovetail'], articles: ['master:38'] },
+  { topics: ['garnishment','wage garnishment','child support','terminated for debt'], articles: ['master:31'] },
 ];
 
 // Keyword to article map for Q&A smart routing
@@ -419,15 +426,18 @@ function getHolidayContext(question) {
 
 // Hard-coded supervisors working facts (Article 3, National Master UPS Agreement)
 const SUPERVISORS_WORKING_FACTS = {
-  source: 'Article 3, National Master UPS Agreement',
-  rules: [
-    'Supervisors are prohibited from performing bargaining unit work — loading, unloading, sorting, driving, or any other work covered by the contract.',
-    'If a supervisor performs bargaining unit work, the senior qualified employee who was available and not working shall be called in and paid a minimum of 4 hours at the applicable rate.',
-    'If the violation occurs and no bargaining unit employee was available, the penalty is paid to the most senior employee who was on the overtime list.',
-    'Supervisors working penalty: the aggrieved employee is entitled to double-time (2x) pay for all hours the supervisor worked in the bargaining unit.',
-    'If management fails to exhaust the overtime list before having a supervisor work, the penalty escalates to quadruple-time (4x) pay.',
-    'A 3-times-in-9-months rolling period rule applies: if management is caught having supervisors perform bargaining unit work 3 times within any 9-month rolling period, additional remedies apply.',
-    'The part-time employee coverage list must be exhausted before a supervisor may perform any inside bargaining unit work.',
+  source: 'Article 3, Section 7, National Master UPS Agreement',
+  prohibited_work: 'Supervisors are strictly prohibited from performing ANY bargaining unit work: sorting, loading, unloading, driving, pulling mis-sorts, moving equipment, or performing set-up work before a shift.',
+  allowed_exceptions: [
+    'Training employees on proper methods.',
+    'Demonstrating safety procedures.',
+    'Direct Acts of God emergencies — only until an hourly worker can be found.',
+  ],
+  call_in_sequence: 'Before a supervisor may work, management MUST exhaust in order: (1) double-shift list, (2) early call-ins, (3) overtime offers, (4) monthly coverage lists.',
+  penalty_calculations: [
+    '2 hours or less worked by supervisor: Pay the affected hourly worker Double Time (2x) for the exact minutes worked.',
+    'More than 2 hours worked by supervisor: Pay 4 hours straight time OR actual hours worked at 2x — whichever is greater.',
+    '3-Strikes Escalation: If ONE specific supervisor is found guilty of 3 infractions within a rolling 9-month window, the penalty escalates to Quadruple Time (4x) for all hours worked on that 3rd strike and all subsequent infractions.',
   ]
 };
 
@@ -442,10 +452,12 @@ function getSupervisorsWorkingContext(question) {
 // Hard-coded seniority tiebreaker facts (Article 46, Atlantic Area Supplemental Agreement)
 const SENIORITY_TIEBREAKER_FACTS = {
   source: 'Article 46, Section 1, Atlantic Area Supplemental Agreement',
-  rules: [
-    'Step 1 — 30th Workday Completion: Check center records to see who completed their 30th working day of qualification first. The driver who hit their 30th day first goes higher on the seniority list.',
-    'Step 2 — Application Date: If both completed their 30th working day on the exact same shift, the date on their original employment application governs. The earlier application date goes higher.',
-    'Step 3 — Coin Toss: If both share the same application date, the tie is broken by a formal coin toss. A shop steward must be present to witness and sign off on the result.',
+  prohibited: 'Management CANNOT assign work based on preference, arrival time, or who asked first when two employees share the exact same seniority start date.',
+  violation_classification: 'Seniority Bypass / Improper Extra Work Assignment.',
+  steps: [
+    'Step A — 30th Workday Completion: Check center records to see who completed their 30th working day of qualification first. The driver who hit their 30th day first goes higher on the seniority list.',
+    'Step B — Application Date: If both completed their 30th working day on the exact same shift, the date on their original employment application governs. The earlier application date goes higher.',
+    'Step C — Coin Toss: If both share the same application date, the tie is broken by a formal coin toss witnessed by a shop steward who must sign off on the result.',
   ]
 };
 
@@ -455,6 +467,58 @@ function getSeniorityTiebreakerContext(question) {
   if (!keywords.some(k => q.includes(k))) return '';
   const ruleList = SENIORITY_TIEBREAKER_FACTS.rules.map((r, i) => `  ${i + 1}. ${r}`).join('\n');
   return `\nVERIFIED SENIORITY TIE-BREAKER RULES (${SENIORITY_TIEBREAKER_FACTS.source}) — use these exact facts only:\n${ruleList}\n`;
+}
+
+// Hard-coded telematics discipline facts (Article 3, Section 7, National Master)
+const TELEMATICS_FACTS = {
+  source: 'Article 3, Section 7, National Master UPS Agreement',
+  rule: 'Management CANNOT discharge or discipline an employee based SOLELY on information gathered from GPS, telematics, IVIS, DIAD, or any sensor system.',
+  exception: 'The only exception is clear, proven, intentional dishonesty with intent to defraud. Failing to perfectly recall events shown on telemetry does NOT constitute dishonesty.',
+  corroboration_requirement: 'Any infraction spotted via technology must be: (1) confirmed by a supervisor's direct, physical, eye-witness observation, AND (2) preceded by an in-person verbal counseling session before any discipline is issued.',
+  violation_classification: 'Improper Technology-Based Discipline.',
+};
+
+function getTelematicsContext(question) {
+  const q = question.toLowerCase();
+  const keywords = ['telematics','gps','diad','ivis','camera','sensor','tracking','telemetry','disciplined for gps','fired for gps','write up from camera','technology discipline','orion','surveillance','dishonesty','intentional dishonesty'];
+  if (!keywords.some(k => q.includes(k))) return '';
+  return `\nVERIFIED TELEMATICS DISCIPLINE RULES (${TELEMATICS_FACTS.source}):\n  Rule: ${TELEMATICS_FACTS.rule}\n  Exception: ${TELEMATICS_FACTS.exception}\n  Corroboration Required: ${TELEMATICS_FACTS.corroboration_requirement}\n  Violation Classification: ${TELEMATICS_FACTS.violation_classification}\n`;
+}
+
+// Hard-coded feeder bid protection facts (Articles 50 & 51, Atlantic Area Supplement)
+const FEEDER_BID_FACTS = {
+  source: 'Articles 50 & 51, Atlantic Area Supplemental Agreement',
+  rule: 'A contractually bid feeder run belongs entirely to the seniority driver who won the bid. Management CANNOT arbitrarily remove a regular driver from their scheduled bid run.',
+  prohibited: 'Saving a driver's regular bid route to be covered by an on-call/casual driver later while forcing the bid-holder onto an unscheduled regional or extra run is strictly prohibited.',
+  extra_work_rule: 'Extra work assignments must follow the seniority board in order. Management cannot jump the board to assign an open run to a junior driver when a senior driver is present and available.',
+  violation_classification: 'Immediate Work Preservation and Bid Protection Violation.',
+};
+
+function getFeederBidContext(question) {
+  const q = question.toLowerCase();
+  const keywords = ['yanked off run','off my run','removed from my run','dispatch reassigned','cover driver took','on-call took','extra work','open run','bid run','took my run','bumped off','pulled off my run','forced onto','extra board','feeder board','jumped the board'];
+  if (!keywords.some(k => q.includes(k))) return '';
+  const f = FEEDER_BID_FACTS;
+  return `\nVERIFIED FEEDER BID PROTECTION RULES (${f.source}):\n  Rule: ${f.rule}\n  Prohibited: ${f.prohibited}\n  Extra Work Rule: ${f.extra_work_rule}\n  Violation Classification: ${f.violation_classification}\n`;
+}
+
+// Hard-coded personal floating holiday facts (Article 55, Atlantic Area Supplement)
+const PERSONAL_HOLIDAY_FACTS = {
+  source: 'Article 55, Atlantic Area Supplemental Agreement',
+  eligibility: 'Employees with 24 or more months of seniority receive five (5) personal holidays per year.',
+  request_rule: 'Must be requested in writing at least eight (8) calendar days in advance.',
+  approval_rule: 'Management must approve or deny the request by the end of the next working day.',
+  quota: 'The center must allow a daily quota of at least 1 person OR 5% of the total workforce off — whichever is greater.',
+  blackout: 'Personal holidays are strictly blocked from the Saturday after Thanksgiving through December 25th.',
+  cash_out: 'Any unused personal holidays remaining on December 31st must be automatically cashed out.',
+};
+
+function getPersonalHolidayContext(question) {
+  const q = question.toLowerCase();
+  const keywords = ['personal holiday','floating holiday','personal day','5 personal','8 days notice','8-day notice','day off request','denied day off','vacation request','cash out holiday','december 31','unused holiday','quota','5 percent'];
+  if (!keywords.some(k => q.includes(k))) return '';
+  const p = PERSONAL_HOLIDAY_FACTS;
+  return `\nVERIFIED PERSONAL FLOATING HOLIDAY RULES (${p.source}):\n  Eligibility: ${p.eligibility}\n  Request Rule: ${p.request_rule}\n  Approval Rule: ${p.approval_rule}\n  Quota: ${p.quota}\n  Blackout Period: ${p.blackout}\n  Cash-Out Rule: ${p.cash_out}\n`;
 }
 
 // Hard-coded guarantee facts by classification
@@ -532,10 +596,13 @@ function buildQAPrompt(question, classification, contractText, todayContext) {
   const holidayContext = getHolidayContext(question);
   const seniorityTiebreakerContext = getSeniorityTiebreakerContext(question);
   const supervisorsWorkingContext = getSupervisorsWorkingContext(question);
+  const telematicsContext = getTelematicsContext(question);
+  const feederBidContext = getFeederBidContext(question);
+  const personalHolidayContext = getPersonalHolidayContext(question);
   return `You are a knowledgeable Teamsters contract expert helping a UPS worker understand their rights. Answer clearly and directly — lead with the answer, then add only essential detail. Do not pad responses with unnecessary sections or filler.
 
 ${todayContext}
-${topRateContext}${guaranteeContext}${holidayContext}${seniorityTiebreakerContext}${supervisorsWorkingContext}
+${topRateContext}${guaranteeContext}${holidayContext}${seniorityTiebreakerContext}${supervisorsWorkingContext}${telematicsContext}${feederBidContext}${personalHolidayContext}
 WORKER'S JOB CLASSIFICATION: ${classification || 'Not specified'}
 
 CONTRACT LANGUAGE (relevant sections only):
@@ -554,12 +621,13 @@ RULES:
 10. If after reading all provided contract text the answer is truly not present, say: "This specific detail isn't in the sections I was given — your steward can pull the full article for you." Never fabricate an answer.
 
 For complex situations involving violations, discipline, or multi-step processes, use only the sections that apply:
-  📋 WHAT THE CONTRACT SAYS
-  📖 WHAT IT MEANS
-  ⏱️ TIMING / DEADLINES
-  💰 PAY / REMEDY
-  ✅ WHAT YOU SHOULD DO
-  ⚠️ WATCH OUT FOR
+  ⚖️ VERDICT: State clearly — VIOLATION or NO VIOLATION — and which Article/Section governs.
+  📋 WHAT THE CONTRACT SAYS: Cite the exact Article and Section. Quote the key language directly.
+  📖 WHAT IT MEANS: Plain-English explanation of what the contract requires day-to-day.
+  ⏱️ TIMING / DEADLINES: Any time limits, windows, or deadlines the worker needs to know.
+  💰 PAY / REMEDY: Exact pay calculations — 1.5x, 2x, 4x — or other remedies that apply.
+  ✅ WHAT YOU SHOULD DO: Practical next steps — what to say, who to contact, what to document.
+  ⚠️ WATCH OUT FOR: Common ways management pushes back or tries to avoid this.
 
 WORKER'S QUESTION: ${question}
 
