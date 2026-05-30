@@ -326,7 +326,7 @@ const TOP_RATE_SCHEDULES = {
 const HOLIDAY_FACTS = {
   source: 'Article 54, Atlantic Area Supplemental Agreement',
   holidays: [
-    'New Year's Day',
+    "New Year's Day",
     'Memorial Day',
     'Independence Day (4th of July)',
     'Labor Day',
