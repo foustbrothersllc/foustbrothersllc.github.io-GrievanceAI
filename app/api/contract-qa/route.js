@@ -417,6 +417,28 @@ function getHolidayContext(question) {
   return `\nVERIFIED HOLIDAY FACTS (${HOLIDAY_FACTS.source}) — use these exact facts only:\nPAID HOLIDAYS:\n${holidayList}\nRULES:\n${ruleList}\n`;
 }
 
+// Hard-coded supervisors working facts (Article 3, National Master UPS Agreement)
+const SUPERVISORS_WORKING_FACTS = {
+  source: 'Article 3, National Master UPS Agreement',
+  rules: [
+    'Supervisors are prohibited from performing bargaining unit work — loading, unloading, sorting, driving, or any other work covered by the contract.',
+    'If a supervisor performs bargaining unit work, the senior qualified employee who was available and not working shall be called in and paid a minimum of 4 hours at the applicable rate.',
+    'If the violation occurs and no bargaining unit employee was available, the penalty is paid to the most senior employee who was on the overtime list.',
+    'Supervisors working penalty: the aggrieved employee is entitled to double-time (2x) pay for all hours the supervisor worked in the bargaining unit.',
+    'If management fails to exhaust the overtime list before having a supervisor work, the penalty escalates to quadruple-time (4x) pay.',
+    'A 3-times-in-9-months rolling period rule applies: if management is caught having supervisors perform bargaining unit work 3 times within any 9-month rolling period, additional remedies apply.',
+    'The part-time employee coverage list must be exhausted before a supervisor may perform any inside bargaining unit work.',
+  ]
+};
+
+function getSupervisorsWorkingContext(question) {
+  const q = question.toLowerCase();
+  const keywords = ['supervisor working','supervisors working','supervisor sorting','supervisor loading','supervisor driving','supervisor unloading','management working','supe working','sup working','supervisor doing','manager working','double time penalty','quadruple time','4x pay','2x pay','coverage list'];
+  if (!keywords.some(k => q.includes(k))) return '';
+  const ruleList = SUPERVISORS_WORKING_FACTS.rules.map(r => `  - ${r}`).join('\n');
+  return `\nVERIFIED SUPERVISORS WORKING RULES (${SUPERVISORS_WORKING_FACTS.source}) — use these exact facts only:\n${ruleList}\n`;
+}
+
 // Hard-coded seniority tiebreaker facts (Article 46, Atlantic Area Supplemental Agreement)
 const SENIORITY_TIEBREAKER_FACTS = {
   source: 'Article 46, Section 1, Atlantic Area Supplemental Agreement',
@@ -509,10 +531,11 @@ function buildQAPrompt(question, classification, contractText, todayContext) {
   const guaranteeContext = getGuaranteeContext(classification);
   const holidayContext = getHolidayContext(question);
   const seniorityTiebreakerContext = getSeniorityTiebreakerContext(question);
+  const supervisorsWorkingContext = getSupervisorsWorkingContext(question);
   return `You are a knowledgeable Teamsters contract expert helping a UPS worker understand their rights. Answer clearly and directly — lead with the answer, then add only essential detail. Do not pad responses with unnecessary sections or filler.
 
 ${todayContext}
-${topRateContext}${guaranteeContext}${holidayContext}${seniorityTiebreakerContext}
+${topRateContext}${guaranteeContext}${holidayContext}${seniorityTiebreakerContext}${supervisorsWorkingContext}
 WORKER'S JOB CLASSIFICATION: ${classification || 'Not specified'}
 
 CONTRACT LANGUAGE (relevant sections only):
