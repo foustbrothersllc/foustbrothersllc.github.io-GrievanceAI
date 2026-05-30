@@ -262,7 +262,62 @@ const TOP_RATE_SCHEDULES = {
       { period: 'August 1, 2027 – July 31, 2028', rate: '$48.99/hr' },
     ]
   },
-  // Add more classifications here as needed
+  'package car driver': {
+    label: 'Package Car Driver',
+    rates: [
+      { period: 'August 1, 2023 – July 31, 2024', rate: '$43.24/hr' },
+      { period: 'August 1, 2024 – July 31, 2025', rate: '$43.99/hr' },
+      { period: 'August 1, 2025 – July 31, 2026', rate: '$45.74/hr' },
+      { period: 'August 1, 2026 – July 31, 2027', rate: '$46.74/hr' },
+      { period: 'August 1, 2027 – July 31, 2028', rate: '$48.99/hr' },
+    ]
+  },
+  'part-time': {
+    label: 'Part-Time Employee (Preloader, Sorter, Loader, Unloader, Clerk)',
+    rates: [
+      { period: 'August 1, 2025 – July 31, 2026', rate: '$22.50/hr (top rate, hired on/after July 2, 1982)' },
+      { period: 'August 1, 2026 – July 31, 2027', rate: '$23.50/hr' },
+      { period: 'August 1, 2027 – July 31, 2028', rate: '$25.75/hr' },
+    ],
+    notes: 'Legacy employees hired BEFORE July 2, 1982 follow the Feeder/Package top rate schedule ($45.74 current, $46.74 in 2026, $48.99 in 2027).'
+  },
+  'combo': {
+    label: 'Full-Time Combination Employee (Article 22.4)',
+    rates: [
+      { period: 'August 1, 2025 – July 31, 2026', rate: '$37.38/hr' },
+      { period: 'August 1, 2026 – July 31, 2027', rate: '$38.38/hr' },
+      { period: 'August 1, 2027 – July 31, 2028', rate: '$40.63/hr' },
+    ]
+  },
+  'mechanic': {
+    label: 'Mechanic (Journeyman)',
+    rates: [
+      { period: 'August 1, 2023 – July 31, 2024', rate: '$45.33/hr' },
+      { period: 'August 1, 2024 – July 31, 2025', rate: '$46.08/hr' },
+      { period: 'August 1, 2025 – July 31, 2026', rate: '$46.83/hr' },
+      { period: 'August 1, 2026 – July 31, 2027', rate: '$47.83/hr' },
+      { period: 'August 1, 2027 – July 31, 2028', rate: '$50.08/hr' },
+    ],
+    notes: 'Sub-classifications: Automotive Helper = 70% of Journeyman rate (currently $32.78/hr, $33.48 in 2026). Maintenance Handyman = 55% of Journeyman rate (currently $25.76/hr, $26.31 in 2026).'
+  },
+  'part-time air driver': {
+    label: 'Part-Time Air Driver',
+    rates: [
+      { period: 'August 1, 2025 – July 31, 2026', rate: '$35.14/hr (top/out-of-progression rate)' },
+      { period: 'August 1, 2026 – July 31, 2027', rate: '$36.14/hr' },
+      { period: 'August 1, 2027 – July 31, 2028', rate: '$38.39/hr' },
+    ],
+    notes: 'New hire progression: Start $21.00 → 12mo $21.50 → 24mo $22.00 → 36mo $23.00 → 48mo top rate. Daily guarantee: 3.5 hours.'
+  },
+  'full-time air driver': {
+    label: 'Full-Time Air Driver',
+    rates: [
+      { period: 'August 1, 2025 – July 31, 2026', rate: '$37.38/hr (top/out-of-progression rate)' },
+      { period: 'August 1, 2026 – July 31, 2027', rate: '$38.38/hr' },
+      { period: 'August 1, 2027 – July 31, 2028', rate: '$40.63/hr' },
+    ],
+    notes: 'New hire progression: Start $23.00 → 12mo $24.00 → 24mo $25.00 → 36mo $29.00 → 48mo top rate. 8-hour daily / 40-hour weekly guarantee.'
+  },
 };
 
 function getTopRateContext(classification) {
@@ -272,7 +327,8 @@ function getTopRateContext(classification) {
   if (!match) return '';
   const schedule = TOP_RATE_SCHEDULES[match];
   const lines = schedule.rates.map(r => `  - ${r.period}: ${r.rate}`).join('\n');
-  return `\nVERIFIED TOP RATE SCHEDULE FOR ${schedule.label.toUpperCase()} (use these exact figures — do not use contract text tables for pay rates):\n${lines}\n`;
+  const notes = schedule.notes ? `\n  Note: ${schedule.notes}` : '';
+  return `\nVERIFIED TOP RATE SCHEDULE FOR ${schedule.label.toUpperCase()} (use these exact figures — do not use contract text tables for pay rates):\n${lines}${notes}\n`;
 }
 
 function buildQAPrompt(question, classification, contractText, todayContext) {
