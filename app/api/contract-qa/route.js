@@ -445,8 +445,10 @@ function getSupervisorsWorkingContext(question) {
   const q = question.toLowerCase();
   const keywords = ['supervisor working','supervisors working','supervisor sorting','supervisor loading','supervisor driving','supervisor unloading','management working','supe working','sup working','supervisor doing','manager working','double time penalty','quadruple time','4x pay','2x pay','coverage list'];
   if (!keywords.some(k => q.includes(k))) return '';
-  const ruleList = SUPERVISORS_WORKING_FACTS.rules.map(r => `  - ${r}`).join('\n');
-  return `\nVERIFIED SUPERVISORS WORKING RULES (${SUPERVISORS_WORKING_FACTS.source}) — use these exact facts only:\n${ruleList}\n`;
+  const f = SUPERVISORS_WORKING_FACTS;
+  const exceptions = f.allowed_exceptions.map(r => `  - ${r}`).join('\n');
+  const penalties = f.penalty_calculations.map(r => `  - ${r}`).join('\n');
+  return `\nVERIFIED SUPERVISORS WORKING RULES (${f.source}) — use these exact facts only:\n  Prohibited Work: ${f.prohibited_work}\n  Call-In Sequence: ${f.call_in_sequence}\n  Allowed Exceptions:\n${exceptions}\n  Penalty Calculations:\n${penalties}\n`;
 }
 
 // Hard-coded seniority tiebreaker facts (Article 46, Atlantic Area Supplemental Agreement)
@@ -465,7 +467,7 @@ function getSeniorityTiebreakerContext(question) {
   const q = question.toLowerCase();
   const keywords = ['same day','same date','same seniority','tie','tiebreaker','tie-breaker','coin toss','application date','30th day','30 working days','same hire date','seniority tie','who goes first','higher on the list','seniority order'];
   if (!keywords.some(k => q.includes(k))) return '';
-  const ruleList = SENIORITY_TIEBREAKER_FACTS.rules.map((r, i) => `  ${i + 1}. ${r}`).join('\n');
+  const ruleList = SENIORITY_TIEBREAKER_FACTS.steps.map((r, i) => `  ${i + 1}. ${r}`).join('\n');
   return `\nVERIFIED SENIORITY TIE-BREAKER RULES (${SENIORITY_TIEBREAKER_FACTS.source}) — use these exact facts only:\n${ruleList}\n`;
 }
 
