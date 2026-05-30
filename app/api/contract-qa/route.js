@@ -151,10 +151,10 @@ function extractArticleSection(text, articleNum, maxChars = 10000) {
 function detectArticleLookup(question) {
   const q = question.toLowerCase().trim();
 
-  const lookupTriggers = ['show me','pull up','what does','read me','give me','display','show','what is in','whats in','let me see','can i see','can you show','can you pull'];
+  const lookupTriggers = ['show me','pull up','read me','give me','display','let me see','can i see','can you show','can you pull'];
   const hasTrigger = lookupTriggers.some(t => q.includes(t));
 
-  // Check for explicit article number mention
+  // Check for explicit article number mention — only when a number follows "article"
   const articleNumMatch = question.match(/article\s+(\d+)/i);
   if (articleNumMatch) {
     const num = articleNumMatch[1];
@@ -169,30 +169,20 @@ function detectArticleLookup(question) {
     }
   }
 
-  // Topic-based lookup — fires on trigger word OR any "X article" / "article about X" phrasing
+  // Topic-based lookup — only fires when user has a clear "show/pull/read" trigger
+  // OR uses phrasing like "the meal article" / "article about meal" / "meal section"
   const topicLookupPhrases = [
     'article about', 'section about', 'article on', 'section on',
-    'the article', 'the section', 'that article', 'that section'
+    'the article', 'that article', 'the section', 'that section',
+    'meal article', 'seniority article', 'harassment article', 'safety article',
+    'raise article', 'wage article', 'break article', 'lunch article',
+    'grievance article', 'pension article', 'leave article', 'sleeper article',
   ];
   const hasTopicPhrase = hasTrigger || topicLookupPhrases.some(p => q.includes(p));
 
   if (hasTopicPhrase) {
     for (const mapping of TOPIC_ARTICLE_MAP) {
       if (mapping.topics.some(t => q.includes(t))) {
-        return {
-          isLookup: true,
-          articles: mapping.articles,
-          label: mapping.topics[0]
-        };
-      }
-    }
-  }
-
-  // Last pass — topic word + "article/section/language/rule/contract" anywhere in question
-  for (const mapping of TOPIC_ARTICLE_MAP) {
-    if (mapping.topics.some(t => q.includes(t))) {
-      const hasArticleWord = q.includes('article') || q.includes('section') || q.includes('language') || q.includes('rule') || q.includes('contract');
-      if (hasArticleWord) {
         return {
           isLookup: true,
           articles: mapping.articles,
