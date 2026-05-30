@@ -169,10 +169,30 @@ function detectArticleLookup(question) {
     }
   }
 
-  // Check for topic-based lookup with a trigger word
-  if (hasTrigger || q.includes('article about') || q.includes('section about') || q.includes('article on') || q.includes('section on')) {
+  // Topic-based lookup — fires on trigger word OR any "X article" / "article about X" phrasing
+  const topicLookupPhrases = [
+    'article about', 'section about', 'article on', 'section on',
+    'the article', 'the section', 'that article', 'that section'
+  ];
+  const hasTopicPhrase = hasTrigger || topicLookupPhrases.some(p => q.includes(p));
+
+  if (hasTopicPhrase) {
     for (const mapping of TOPIC_ARTICLE_MAP) {
       if (mapping.topics.some(t => q.includes(t))) {
+        return {
+          isLookup: true,
+          articles: mapping.articles,
+          label: mapping.topics[0]
+        };
+      }
+    }
+  }
+
+  // Last pass — topic word + "article/section/language/rule/contract" anywhere in question
+  for (const mapping of TOPIC_ARTICLE_MAP) {
+    if (mapping.topics.some(t => q.includes(t))) {
+      const hasArticleWord = q.includes('article') || q.includes('section') || q.includes('language') || q.includes('rule') || q.includes('contract');
+      if (hasArticleWord) {
         return {
           isLookup: true,
           articles: mapping.articles,
@@ -251,13 +271,34 @@ STRICT RULES:
 2. If asked about raises or pay: tell the member exactly what they have NOW and precisely when/what the next increase is, including the number of days away.
 3. Always cite the exact Article and Section (and whether it's National Master or Atlantic Area Supplement).
 4. Quote the relevant contract language briefly, then explain it in plain English.
-5. Be concise but complete. Do not pad your answer.
-6. If a question spans multiple articles, address each one.
-7. Never give legal advice — you explain the contract, not legal strategy.
+5. If a question spans multiple articles, address each one in its own section.
+6. Never give legal advice — you explain the contract, not legal strategy.
+7. Be thorough and detailed. Do not give a short answer when more explanation would help the worker.
+
+OUTPUT FORMAT — always structure your answer using these sections (skip any that do not apply):
+
+📋 WHAT THE CONTRACT SAYS
+Cite the exact Article and Section. Quote the key language directly.
+
+📖 WHAT IT MEANS
+Explain it in plain English. What does this mean day-to-day for the worker? Be thorough here.
+
+⏱️ TIMING / DEADLINES
+Any time limits, windows, or deadlines the worker needs to know about.
+
+💰 PAY / REMEDY
+Any pay rates, penalties, back pay, or premium rates that apply.
+
+✅ WHAT YOU SHOULD DO
+Practical next steps — what to say, who to contact, what to document.
+
+⚠️ WATCH OUT FOR
+Common ways management pushes back or tries to avoid this. What to look for.
 
 WORKER'S QUESTION: ${question}
 
-Answer clearly and helpfully:`;
+Answer thoroughly and in detail using the sections above:`;
+}
 }
 
 // AI providers (same chain as analyze route)
