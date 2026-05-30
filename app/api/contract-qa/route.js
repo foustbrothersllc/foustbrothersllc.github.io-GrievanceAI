@@ -507,7 +507,7 @@ function getFeederBidContext(question) {
 // Hard-coded 9.5 overtime protection facts (Article 37, Section 1, National Master)
 const NINE_FIVE_FACTS = {
   source: 'Article 37, Section 1, National Master UPS Agreement',
-  core_principle: 'The Employer must make every reasonable effort to keep an opted-in driver's daily schedule below 9.5 hours. A violation occurs when an eligible, opted-in driver works more than 9.5 hours on THREE (3) separate days in a single workweek.',
+  core_principle: "The Employer must make every reasonable effort to keep an opted-in driver's daily schedule below 9.5 hours. A violation occurs when an eligible, opted-in driver works more than 9.5 hours on THREE (3) separate days in a single workweek.",
   eligibility: [
     '(a) The employee covers a route for a full week.',
     '(b) The employee bids/is assigned a route for the full week but management disrupts it by reassigning them.',
