@@ -62,11 +62,6 @@ export default function Hub() {
             </div>
           </div>
           <div className="flex gap-2">
-            {isAdmin && (
-              <Link href="/admin" className="flex-1">
-                <button className="w-full bg-ups-brown text-ups-gold px-3 py-2 rounded uppercase text-xs font-bold">🔑 Admin</button>
-              </Link>
-            )}
             <Link href="/settings" className="flex-1">
               <button className="w-full bg-ups-brown text-ups-gold px-3 py-2 rounded uppercase text-xs font-bold">⚙️ Settings</button>
             </Link>
@@ -118,6 +113,24 @@ export default function Hub() {
               </div>
             </div>
           </Link>
+
+          {/* Admin Panel — only visible to admins */}
+          {isAdmin && (
+            <Link href="/admin">
+              <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-6 cursor-pointer hover:border-ups-gold hover:bg-gray-800 transition-all duration-200 active:scale-95">
+                <div className="flex items-center gap-4">
+                  <div className="text-4xl">🔑</div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-ups-gold mb-1">Admin Panel</h3>
+                    <p className="text-gray-400 text-sm">
+                      Manage users, view activity, and configure system settings.
+                    </p>
+                  </div>
+                  <div className="text-ups-gold text-2xl">›</div>
+                </div>
+              </div>
+            </Link>
+          )}
 
         </div>
       </main>
