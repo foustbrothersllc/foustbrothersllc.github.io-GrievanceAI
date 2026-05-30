@@ -120,9 +120,11 @@ IMPORTANT: Always answer as of today's date (${todayStr}). When discussing raise
 }
 
 function extractArticleSection(text, articleNum, maxChars = 10000) {
+  // Match ARTICLE 51 or ARTICLE 51— or ARTICLE 51. or ARTICLE 51 (space after)
+  // Using a lookahead so we don't require a specific character after the number
   const patterns = [
-    new RegExp(`ARTICLE\\s+${articleNum}[—\\-\\.\\s]`, 'i'),
-    new RegExp(`Article\\s+${articleNum}[—\\-\\.\\s]`, 'i'),
+    new RegExp(`ARTICLE\\s+${articleNum}(?=[^0-9])`, 'i'),
+    new RegExp(`Article\\s+${articleNum}(?=[^0-9])`, 'i'),
   ];
 
   let start = -1;
@@ -133,7 +135,8 @@ function extractArticleSection(text, articleNum, maxChars = 10000) {
 
   if (start === -1) return null;
 
-  const nextArticlePattern = /ARTICLE\s+\d+[—\-\.\s]/gi;
+  // Find the next article header
+  const nextArticlePattern = /ARTICLE\s+\d+(?=[^0-9])/gi;
   nextArticlePattern.lastIndex = start + 10;
   let end = text.length;
   let nextMatch;
