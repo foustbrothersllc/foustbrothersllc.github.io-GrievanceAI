@@ -78,7 +78,6 @@ if the Employer or its parent maintains the ultimate right to control
 or approve a decision by such entity.
 The Employer will be financially responsible for all losses resulting
 from a violation of this Section.
-
 ARTICLE 2. SCOPE OF THE AGREEMENT
 Section 1. Single Bargaining Unit
 All employees covered by this Master Agreement and the various
@@ -105,7 +104,6 @@ Union covered by this Agreement must be submitted to the Joint
 National Negotiating Committee for review and approval. Failure
 to be approved by the Committee shall render said Supplement,
 Rider or Addendum null and void.
-
 Any lesser conditions contained in any Supplement, Rider or Addendum shall be superseded by the conditions contained in this
 Master Agreement. However, except where specifically stated otherwise in the Master Agreement, nothing in this Master Agreement
 shall deprive any employee of any superior benefit contained in
@@ -131,7 +129,6 @@ employee orientations to talk about the benefits of Union membership. The Employ
 week’s notice of the date, time, and location of such orientation.
 Upon request, the Union representative will be given a list of the
 names of the employees attending orientation no later than at the
-
 meeting. The sole purpose of the business agent’s or steward’s attendance shall be to encourage new employees to join the Union.
 The steward shall remain on the clock for the actual time spent in
 the meeting for that purpose if the orientation is held during their
@@ -159,7 +156,6 @@ hours after the Employer has received written notice from an authorized represen
 employee has had notice and opportunity to make all dues or initiation fee payments. This provision shall be made and become effective as of such time as it may be made and become effective
 under the provision of the National Labor Relations Act, but not
 retroactively.
-
 (b) No provision of Section 2(a) of this Article shall apply to the
 extent that it may be prohibited by state law. In those states where
 subsection (a) above may not be validly applied, the Employer
@@ -187,7 +183,6 @@ month prior to the date the deduction is to be made. The obligation of the Local
 format. The Employer shall deduct the weekly dues from each
 vacation week. This will be implemented within six (6) months of
 ratification of this Agreement.
-
 The Employer shall make no deductions that are not listed on the
 Local Union’s monthly or weekly checkoff statement in those locations which send a checkoff statement to the Employer. In the event
 the Employer improperly deducts too much dues money, the
@@ -214,7 +209,6 @@ methods for the collection, storage, and distribution of the electronic membersh
 and dues checkoff forms can only be implemented upon agreement
 of the Joint Dues Committee. No deduction shall be made which is
 prohibited by applicable law.
-
 Any Local Union shall have the option of monthly deductions with
 monthly remittance on or before the fifteenth (15th) day of the same
 month.
@@ -242,7 +236,6 @@ In the event the Employer has been determined to be in violation of
 this Article by a decision in the grievance procedure, and if such Employer subsequently is in violation thereof after receipt of seventy-two (72) hours’ written notice of specific delinquencies, the Local
 Union may strike to enforce this Article. However, such strike shall
 be terminated upon the delivery thereof. Errors or inadvertent omissions relating to individual employees shall not constitute a violation.
-
 Section 4. Work Assignments
 The Employer agrees to respect the jurisdictional rules of the Union
 and, except as otherwise provided in this Master Agreement, Supplements, Riders, or Addenda, shall not direct or require their employees or persons, other than the employees in the bargaining units
@@ -294,7 +287,6 @@ work on three (3) separate occasions within a calendar month shall
 have their names removed from the coverage list. Those employees
 shall be eligible to re-sign the list the following month. When coverage work is available, the Company will use the appropriate list
 to fill the required positions, and such employees will work as assigned. The employee must be qualified for the available work and
-
 double shift employees shall have seniority among themselves. No
 employee is allowed to work more than two (2) shifts in any twenty-four (24) hour period. Local call verification practices and procedures shall remain in place.
 Nothing contained in this Section shall change existing practices or
@@ -319,7 +311,6 @@ first paragraph of this subsection.
 ARTICLE 4. STEWARDS
 The Employer recognizes the right of the Local Union to designate
 Job Stewards and alternates from the Employer’s seniority list. The
-
 authority of Job Stewards and alternates so designated by the Local
 Union shall be limited to, and shall not exceed, the following duties
 and activities:
@@ -368,7 +359,6 @@ The Employer recognizes the employee’s right to be given requested representat
 time as the employee reasonably contemplates disciplinary action.
 The Employer also recognizes the steward’s right to be given requested representation by another Steward, or the designated alternate, at such time as the Steward reasonably contemplates disciplinary action. When requested by the Union or the employee, there
 shall be a steward present whenever the Employer meets with an
-
 employee concerning grievances or discipline or investigatory interviews. In such cases, the meeting shall not be continued until the
 steward or alternate steward is present.
 If an employee does not wish to have a Union Steward in any meeting where the employee has a right to Union representation under this
@@ -391,7 +381,6 @@ all present and future UPS buildings which have more than fifteen
 The Employer shall implement procedures designed to ensure privacy for all employees when using facilities in UPS buildings with
 fifteen (15) or fewer drivers.
 Such toilet facilities will be equipped with proper ventilation devices and shall be heated as climatic conditions shall warrant.
-
 The Employer agrees to provide lockers for those employees who
 are required to change into a uniform or take a lunch period. All
 other employees will be provided a suitable area for keeping personal items and clothes. Assigned lockers will not be opened by the
@@ -448,7 +437,6 @@ between the parties the matter shall be resolved under Article 8.
 equal number of representatives from the Union and UPS. The
 Committee shall meet upon request, but not less than three (3)
 times per year, to review any proposed technological changes covered by this Section. As part of this meeting, the Committee shall
-
 discuss whether the planned technological change violates any provision of this Agreement. Further, the Employer will review any
 training required for bargaining unit employees to perform new or
 modified work generated as a result of the new technology or to
@@ -476,7 +464,6 @@ the meeting is completed unless the change is dictated by emergency conditions. 
 scheduling or completion of the requested meeting. Any unresolved issues which have been reduced to writing, will be resolved
 pursuant to Article 8.
 4. If a technological change creates new work that replaces, enhances or modifies bargaining unit work, bargaining unit employees will perform that new or modified work. The Employer shall
-
 provide bargaining unit employees with training required to utilize
 the new technology, if necessary.
 5. This Section shall supersede any Supplemental, Rider or Addendum provision on the same subject.
@@ -503,7 +490,6 @@ done in accordance with supplemental seniority provisions, providing
 the trainers have the necessary qualifications and skills for the job.
 7. The training records that a Teamster represented trainer can be
 required to complete for drivers, are those previously agreed to by
-
 the parties. If the Employer wishes to amend these forms, it will
 first meet and agree with the National Training Committee. Such
 agreement will not be unreasonably withheld. No training record or
@@ -531,7 +517,6 @@ No employee shall be disciplined based solely upon information
 received from GPS, telematics, or any successor system that similarly tracks or surveils an employee’s movements unless they engage in dishonesty (defined for the purposes of this paragraph as
 any intentional act or omission by an employee where they intend
 to defraud the Company). A driver’s failure to accurately recall
-
 what is reflected by the technology shall not by itself be considered dishonesty. The Company must confirm by direct observation
 or other corroborating evidence any other violations warranting
 discharge. The degree of discipline dealing with off-area offenses
@@ -557,7 +542,6 @@ the Union’s Joint National Negotiating Committee Co-Chair a
 meeting will be scheduled with the Company Co-Chair to discuss
 any alleged misuse of technology for disciplinary purposes and
 what steps are necessary to remedy any misuse.
-
 ARTICLE 7. LOCAL AND AREA
 GRIEVANCE MACHINERY
 Except in cases involving cardinal infractions under the applicable
@@ -586,7 +570,6 @@ business days of receipt by the Company of the written panel decision.
 Authorized representatives of the Union may file grievances alleging violation of this Agreement, under local grievance procedure,
 or as provided herein. Time limitations regarding the processing of
 grievances, if not set forth in the respective Supplemental Agreements, Riders or Addenda, must appear in the Rules of Procedures
-
 of the various grievance committees and shall apply equally to the
 Employer, the Union and the employees.
 ARTICLE 8. NATIONAL
@@ -614,7 +597,6 @@ binding upon all parties.
 When a case is docketed with the National Grievance Panel, a
 docketing fee will be applied as specified in the National Master
 UPS Agreement Rules of Procedure.
-
 Section 2. Work Stoppages
 All grievances and/or questions of interpretation arising under the
 provisions of this National Master Agreement shall be submitted to
@@ -640,7 +622,6 @@ delinquencies in the payment of health and welfare or pension
 contributions.
 Section 3.
 The Union and Employer may under this section review and reverse, if necessary, decisions by any area, regional or local grievance committee which interprets Master language erroneously.
-
 The National Grievance Committee may consider and review decisions raising an issue of interpretation of Master Agreement language which are submitted by the Union (either the Chair of the
 Teamsters National United Parcel Service Negotiating Committee
 or their designee) or the designated Employer representative. The
@@ -666,7 +647,6 @@ present first.
 2. The presenter will cite the specific Master language that the lower panel interpreted.
 3. Any evidence to prove that the interpretation was contrary to the
 provisions set forth in the Master Agreement must be presented.
-
 4. The representative of the responding party will present any responsive evidence they deem necessary.
 5. If the Master Panel is unable to reach agreement, then either party
 may appeal the issue presented to final and binding arbitration.
@@ -693,7 +673,6 @@ Any provision in the grievance procedure of any Supplement, Rider, or Addendum h
 to be determined by any arbitration process, shall be null and void
 as to any grievance and/or interpretation of the National Master
 Agreement. The decision of the National Grievance Committee as
-
 to whether a grievance and/or interpretation which is subject to this
 procedure shall be final and conclusive.
 Section 5.
@@ -719,7 +698,6 @@ Master Agreement Article or Section shall be resolved pursuant to
 the provisions relating to the local, state and area grievance procedures set forth in the applicable Supplements, Riders and Addenda.
 The no-strike, work stoppage, slowdowns, walkout and lockout
 provisions of the Supplemental Agreements, Riders and Addenda
-
 shall apply to such grievances. Prior to invoking the arbitration procedure the parties, by mutual agreement, may submit said case to
 the National Grievance Committee for resolution.
 Section 7.
@@ -750,7 +728,6 @@ Employer or Union must be a member of the National Academy of
 Arbitrators and reside within the geographical area covered by the
 panel. This provision can only be invoked by each party two (2)
 times during the life of this Agreement.
-
 5. Each arbitrator shall offer one or more potential hearing date(s)
 within six (6) months of the assignment of the case by the AAA or
 within six (6) months of a cancellation by either party as outlined
@@ -775,7 +752,6 @@ dates by either party in the hearing of any single arbitration case,
 except as permitted by the arbitrator with good cause.
 10. The parties shall share equally the American Arbitration Association’s and the arbitrator’s fees and expenses for the arbitration or
 settlement (including rental of the hearing room). The party requesting a cancellation will pay any cancellation fees.
-
 11. The location of the arbitration will be determined by mutual
 agreement, taking into account the travel requirements of witnesses, counsel, and the arbitrator. In the event that the parties are unable to agree on the location, the arbitrator will decide. All hearings
 will be held at the American Arbitration Association offices unless
@@ -824,7 +800,6 @@ subject to reimbursement for loss or damage to a Driver Release
 parcel valued at one hundred dollars ($100.00) or less. The Employer will provide each driver a current list of all Driver Release
 Areas and all Non Driver Release Areas within that driver’s area
 upon request.
-
 An employee who is charged for loss or damage by the Employer
 shall not be subject to both discipline and reimbursement. The Employer will clearly notify the employee and the Union of its intent
 to either discipline or seek reimbursement. No employee shall be
@@ -851,7 +826,6 @@ vehicular accident under any circumstances.
 Section 2.
 Employees handling money shall account for and remit the same to
 the Employer at the completion of each day’s work. An employee’s
-
 cash turn-in may be verified or audited by the Employer. If the Employer fails to verify and deposit an employee’s cash turn-in, when
 requested, no deduction or disciplinary action shall be taken. Upon
 request by the Local Union, the Employer and the Local Union
@@ -882,7 +856,6 @@ The Employer shall make a reasonable effort to collect for losses
 due to bad checks, to include a driver follow-up, and an attempt by
 the manager or designee to meet with the consignee and a letter to
 the consignee requesting payment, when appropriate. Should a
-
 driver who has been held liable for restitution choose to pursue legal recourse against the consignee, the Employer will provide any
 necessary documents to aid the driver in processing a claim through
 the courts. Employees shall not be held liable for restitution or disciplined if they accept an irregular check if a reasonable person
@@ -906,7 +879,6 @@ personal vehicles in designated employee-parking lots, the applicable Local Unio
 and request a meeting with Security to discuss specific concerns, as
 well as possible steps that can be taken to enhance security in the
 affected parking lot. In addition, if an employee whose personal vehicle was subject to theft or vandalism while parked in a designated
-
 Company parking lot provides immediate notice to the Company
 and obtains a police report, the Company will reimburse the employee up to five hundred dollars ($500), to the extent the theft or
 vandalism is not covered by the employee’s insurance.
@@ -953,7 +925,6 @@ an employee’s time recorded on the DIAD or other device for previous days’ w
 operation record for the current pay period for the purpose of ascertaining their hours worked. If an employee has an issue with their
 hours worked for a particular day, the Employer will provide the
 employee, upon request, with a printout of their hours worked.
-
 The Employer shall not alter the information from the DIAD board, or
 information recorded through the use of any other technology, so as to
 diminish an employee’s compensable time, without the employee’s
@@ -1005,7 +976,6 @@ based solely upon, and applicable to, the facts present in that individual case 
 This stipulation is limited to cases involving or referencing essential job functions.
 The Employer shall provide Worker’s Compensation protection for
 all employees even though not required by state law or the equivalent thereof if the injury arose out of or in the course of employment.
-
 An employee who is injured on the job, and is sent home, or to a
 hospital, or who must obtain medical attention, shall receive pay at
 the applicable hourly rate for the balance of their regular shift on
@@ -1034,7 +1004,6 @@ In the event of a fatality, arising in the course of employment while
 away from the home terminal, the Employer shall return the deceased to the home of the deceased at the point of domicile.
 Section 2. Temporary Alternate Work
 The Company may continue a modified work program on a nondiscriminatory basis. This program is designed to provide temporary
-
 work opportunity to those employees who are unable to perform
 their normal work assignments due to an on-the-job injury. Employees shall be provided their guaranteed hours with a start time
 no more than two (2) hours earlier or two (2) hours later than their
@@ -1066,7 +1035,6 @@ shall also meet with the Local Union upon request to discuss any
 changes the Local Union may propose in the TAW program. Any
 unresolved issues will be referred to the National Safety and Health
 Grievance Committee for resolution.
-
 Section 3. Permanently Disabled Employees
 The Parties agree to abide by the provisions of the Americans with
 Disabilities Act. The Company shall be required to negotiate with
@@ -1096,7 +1064,6 @@ If a full-time employee cannot be reasonably accommodated in a
 full-time job, the Company may offer a part-time job as a reasonable
 accommodation if the employee is qualified and meets the essential
 functions of the job. If the employee accepts the part-time accommodation, the employee will be placed into the applicable part-time
-
 health & welfare and pension programs, will be paid the appropriate
 part-time rate for the job performed based on the employee’s Company seniority, and will receive the part-time contractual entitlements
 as per the appropriate Supplement, Rider, or Addendum using the
@@ -1124,7 +1091,6 @@ Employees in service in the uniformed services of the United
 States, as defined by the provisions of the Uniform Services Employment and Reemployment Rights Act (USERRA), Title 38, U.S.
 Code Chapter 43, shall be granted all rights and privileges provided
 by USERRA and/or other applicable state and federal laws. This
-
 shall include continuation of health coverage as provided by US-
 ERRA, and pension contributions for the employee’s period of service, as provided by USERRA. Employees shall be subject to all
 obligations contained in USERRA which must be satisfied for the
@@ -1153,7 +1119,6 @@ No. Wks Q1 Q2 Q3 Q4
 2 2 1 1 1
 In no event shall the employee have less than one (1) week of vacation available upon their return.
 For the next contractual vacation period, employees shall be credited with the vacation they would have accrued while they were on
-
 military leave. In no event shall the employee have less than they
 are entitled to based on total years of service under the applicable
 Supplement.
@@ -1177,7 +1142,6 @@ exists at the desired location. The position must be one that an existing employ
 b. Job classification seniority is end-tailed.
 c. Company seniority is retained for the purposes of the number of
 weeks of vacation, holiday eligibility, and benefit purposes.
-
 d. The transfer must be requested in advance of the relocation to
 ensure that there is no break in service by the transferring employee. If no permanent position is available at the time of the relocation the provisions of paragraph a. above, shall apply for a maximum of six (6) months.
 e. The Employer shall not be responsible for any moving expenses
@@ -1203,7 +1167,6 @@ without discrimination or loss of seniority rights, and without pay.
 Section 2.
 Any employee desiring leave of absence from employment shall
 secure written permission from both the Union and the Employer.
-
 The request for leave of absence shall be made in writing at least
 thirty (30) days before the day on which the leave is sought to commence. If the leave is not foreseeable, the employee shall submit
 the written request as soon as possible and shall include an explanation why the leave was not foreseeable. The Employer and Union
@@ -1233,7 +1196,6 @@ revocation except for suspension of commercial driver’s license
 (CDL) of one (1) year or less duration.
 Employees who take a leave of absence under this Section whose
 loss of operating privilege or license is the result of driving under
-
 the influence of drugs or alcohol will be allowed alternative work
 and to return to their job in accordance with Section 3.3 below.
 Section 3.2 Alternate Work
@@ -1264,7 +1226,6 @@ their license suspended, or who has limited driving privileges, shall
 be assessed by a SAP within five (5) working days of the citation. If
 the SAP determines the driver does not require rehabilitation, then
 they shall be allowed to return to driving. Until the assessment is
-
 completed, the driver shall be allowed to work at their hourly wage
 and guarantee. If rehabilitation is required, the above paragraph shall
 also be applicable. The right to rehabilitation provided in Article 35,
@@ -1294,7 +1255,6 @@ A light duty request, certified in writing by a physician, shall be
 granted in compliance with state or federal laws, if applicable.
 Light duty requests shall also be made through the Employer’s
 “Light Duty for Pregnant Workers” program.
-
 Paternity leave shall be granted in accordance with Section 6 of this
 Article with the exception of employees not able to meet the qualifications set out in Section 6, who shall be granted leave not to exceed one (1) week.
 Notwithstanding any provision to the contrary in any Supplement,
@@ -1326,7 +1286,6 @@ The leave of absence must be requested prior to the commission of
 any act subject to disciplinary action except as provided in Article
 35, Section 3 and Section 4. The leave of absence shall be for a
 maximum of ninety (90) days; additional time may be granted if it
-
 is mutually agreed between the Company and the Union, or requested by the Substance Abuse Professional (SAP). While on such
 leave, the employee shall not receive any of the benefits provided
 by this Agreement, Supplements, Riders and/or Addenda, except
@@ -1355,7 +1314,6 @@ and signed by the employee and the SAP overseeing the treatment
 program and must have been approved by the Local Union business
 agent prior to the employee’s signature. The postcare agreement
 shall comply with all provisions of this Article.
-
 The Employer agrees to recognize the employee’s rights to privacy
 and confidentiality while being party to such an agreement. The
 Employer agrees that in all circumstances the employee’s dignity
@@ -1381,7 +1339,6 @@ The employee’s seniority rights shall continue as if the employee
 had not taken leave under this section, and the Employer will maintain health insurance coverage during the period of the leave.
 The Employer may require the employee to substitute accrued paid
 vacation or other paid leave for part of the 12/6 week leave period.
-
 Employees shall be allowed to retain up to two (2) weeks of accrued paid vacation that will not be substituted for part of the 12/6
 week leave period.
 The employee is required to provide the Employer with at least
@@ -1409,7 +1366,6 @@ The Employer will not allow employees to work prior to their start
 time without appropriate compensation.
 Wages for selected vacations, in all instances, will be paid to the
 employees no later than the workday prior to their vacation. If the
-
 employee does not receive their vacation check, the Employer will
 make all reasonable efforts to provide the check the following day
 including delivery by Saturday or Next Day Air. If the employee
@@ -1466,7 +1422,6 @@ before taking vacation. Vacation checks for an employee, who is
 taking a scheduled vacation in accordance with the applicable Supplement, Rider or Addendum, will be at the operating center on
 Monday of the week prior to the employee’s vacation week(s). This
 is to ensure that the employee receives their pay prior to taking their
-
 vacation. The employee will be shown their check upon request,
 but will not receive the check until the regular scheduled payday.
 All green checks will be taxed at the employee’s regular withholding tax rate.
@@ -1490,7 +1445,6 @@ C. A Safety and Health Committee, chaired by the UPS Director of
 Health and Safety and the IBT Director of Safety and Health, will
 be formed to address present and future safety and health issues and
 solutions; and
-
 D. Local area joint labor/management committees comprised of
 bargaining unit members and management to address job related
 safety and health concerns through the Comprehensive Health and
@@ -1576,7 +1530,6 @@ the Employer.
 When required by the Employer, the employee, before the end of
 the employee’s shift, shall complete a report of the accident including all available names and addresses of witnesses to the accident.
 The reference number will be given to the employee, and when requested, a copy of the accident report will be furnished to the employee within two (2) working days of such request. A copy of the
-
 accident report will also be furnished to the Local Union if requested by a Local Union official. In cases of equipment accidents where
 a Driver’s Report of Accident form is completed, the employee will
 be given a copy of the form the same day, when requested. In facilities with no copy equipment the employee will be provided a copy
@@ -1604,7 +1557,6 @@ their normal rate of pay.
 The Employer and the Union mutually agree that the employee’s
 rights to Union representation will be protected pursuant to Article
 4 of the National Master UPS Agreement.
-
 Any pictures and/or video used from an accident for the purpose
 of educating the workforce shall exclude the identity of employee(s)
 involved in the accident. Such pictures and/or video shall only be
@@ -1657,7 +1609,6 @@ Employer.
 b. Headsets and earphones shall not be allowed.
 c. The Employer will not be responsible in any way for any damage
 or loss of C.B. Radio equipment.
-
 d. All power hookups and antenna brackets shall be provided and
 installed by the Employer.
 e. Antennas shall be so installed that they do not interfere with the
@@ -1685,7 +1636,6 @@ Section 10. Shocks
 Where the manufacturer recommends and provides shock absorbers as standard equipment, properly maintained shocks on such
 equipment shall be considered as a necessary and integral part of
 that assembly.
-
 Section 11. Mirrors
 All vehicles shall be equipped with regular mirrors and a convex
 mirror.
@@ -1713,7 +1663,6 @@ shall exit to the side of the vehicle.
 Section 14. Package Cars And Other Vehicles
 P-200 through P-470 vans purchased after January 1, 2024 shall be
 equipped with in-cab air conditioning systems. In addition, pushbacks
-
 and fuel trucks purchased after January 1, 2024 shall be equipped with
 in-cab air conditioning. All new package cars, P-500 and larger, shifting units, and twenty-four (24) foot box vans purchased after January
 1, 2024 shall be equipped with in-cab air conditioning systems. All air
@@ -1741,7 +1690,6 @@ Package Car Heat Committee will be created, consisting of three
 (3) individuals appointed by the Union and three (3) individuals
 appointed by the Employer, and shall meet to begin discussing appropriate methods for venting and insulating the package car cargo
 compartments. The Committee also shall identify potential venting
-
 and insulation solutions for evaluation and field testing, including,
 but not limited to, the installation of an insulation product on the
 floor of package car cargo compartments. By October 1, 2024, the
@@ -1768,7 +1716,6 @@ Section 14.1 Driver Safety and Security
 The bulk head door release in package cars must be accessible from
 the inside as well as the outside in order to enable exit from the
 package compartment.
-
 Section 15. Heaters and Defrosters
 The Employer shall install and maintain heaters and defrosters on
 all trucks and all safety equipment required by law. Complaints regarding heaters or defrosters not being in proper working order
@@ -1794,7 +1741,6 @@ It shall be required that the driver’s seat belt and the jump seat
 safety belt be worn at all times when the vehicle is moving. Feeder
 tractor door locks, where provided as original equipment, shall be
 maintained in working order.
-
 Golf cart usage will comply with applicable federal, state and local
 regulations.
 Within one-hundred and twenty (120) days of ratification of this
@@ -1839,7 +1785,6 @@ The National UPS/IBT Safety and Health Committee is also responsible for the Cli
 review severe climatic conditions that may seriously affect employees in different geographic areas.
 The Committee shall have the authority to resolve factual issues
 before it and its decision will be final and binding. Cases that are
-
 deadlocked by the committee shall be referred to the National
 Grievance Committee.
 Section 20.4 Safety and Health Committees
@@ -1894,7 +1839,6 @@ members to effectively perform their respective functions as safety
 and health committee members.
 Any information provided to a CHSP committee will not be shared
 outside the committee without the Employer’s consent.
-
 If the committee is unable to resolve a safety and health concern
 and all steps of the Comprehensive Health and Safety Process
 (CHSP) have been exhausted, the issue will be subject to the grievance procedure.
@@ -1918,7 +1862,6 @@ current employees during normal working hours, with all employees compensated at
 4. Provide the necessary medical examination for designated first
 responders at no cost to the employee.
 5. Provide annual refresher training to all employees.
-
 6. Comply with all applicable state and federal OSHA regulations
 regarding hazardous materials.
 7. Identify, process and store all hazardous type waste, resulting
@@ -1941,7 +1884,6 @@ training programs and make recommendations for improvements in:
 2. Equipment needed.
 3. Other related issues deemed appropriate by the Committee. Failure of the subcommittee or the National UPS/IBT Safety and
 Health Committee to reach an agreement will result in the unresolved issue being processed under the National Grievance procedure rules.
-
 Section 22. Incompatible Package Handling
 The Employer agrees that all irregular or incompatible packages
 such as bars, buckets, exposed metal parts, tire rims, etc., shall be
@@ -1967,7 +1909,6 @@ Section 25. Building Security
 The Employer shall have the right to implement and/or maintain
 building inbound and outbound security procedures on a local basis. The Employer shall meet with the applicable local union(s) to
 review and discuss the procedures prior to any new implementation.
-
 Section 26. Recording Devices
 In facilities where video surveillance equipment is maintained, the
 Employer shall post a sign identifying the presence of video surveillance where employees enter the facility.
@@ -2018,7 +1959,6 @@ Stewards shall have a key for the Union bulletin boards. The Employer shall not 
 the Union unless such notice is harmful to the Employer. Any such
 notice removed by the Employer shall be re-posted if the Union’s
 position is sustained through the grievance procedure.
-
 ARTICLE 20. EXAMINATION AND
 IDENTIFICATION FEES
 Section 1. Required Examination
@@ -2074,7 +2014,6 @@ complied with by the employees. The cost of such personal identification shall b
 time hourly rate of pay for their time in the process of obtaining an
 airport badge. This includes obtaining the initial badge and any recertification badge. Provisions in Supplements, Riders or Addenda
 that are superior shall prevail.
-
 All management personnel shall wear an ID badge or nametag
 identifying them as supervision while on duty and shall provide
 their name upon request.
@@ -2098,7 +2037,6 @@ part-time employees. In addition, the number of permanent fulltime inside jobs c
 of Section 3 will also be guaranteed from replacement by part-time
 employees. The exception to the above will be in cases of bona fide
 agreements prior to the ratification of this Agreement.
-
 Section 3.
 The parties agree that providing part-time employees the opportunity
 to become full-time employees is a priority of this Agreement. Accordingly, the Employer commits that during the life of this Agreement, it will offer part-time employees the opportunity to fill at least
@@ -2123,7 +2061,6 @@ The following will be incorporated into the job selection procedures in the appl
 The Employer will fill all vacancies and permanent new jobs for
 part-time employees from the part-time selection list in all months
 except November and December.
-
 Part-time employees with six (6) months or more seniority shall
 have the right to place their name on the list of employees waiting to
 be moved to a preferred job within their building. Such preferred
@@ -2152,7 +2089,6 @@ raised to the minimum of twenty-one dollars ($21.00) and shall
 thereafter be eligible for the above general wage increases and the
 one-time longevity increase below.
 (3) After application of the GWI and the minimum twenty-one dollar ($21.00) rate, the following one-time longevity increases shall
-
 become a part of the applicable employee’s base wage rate, based
 on their original hire date:
 Five (5) up to ten (10) years of service (YOS)—
@@ -2179,7 +2115,6 @@ shall be increased to twenty-three dollars ($23.00). Employees already in progre
 on August 1, 2027.
 (c) The wage rates and increases provided in (a) and (b) shall be a
 minimum.
-
 (d) All part-time employees governed by this Article shall be provided a minimum daily three and one-half (3-1/2) hour guarantee.
 (e) Seniority part-time employees who are receiving an hourly rate
 higher than set forth above in Section (b), as a result of a Market
@@ -2205,7 +2140,6 @@ F. It is the Employee’s responsibility to verify all benefits including, but n
 coverages and pensions at the requested transfer location.
 G. The Employer shall be required to notify the Local Union that
 has jurisdiction over the requested transfer location that the employee has been transferred to that location.
-
 Section 7. Benefit Entitlements
 Part-time employees hired after August 1, 2008 will receive holidays, personal days and option days provided by any applicable
 Supplement, rider, or Addendum no earlier than after one (1) year
@@ -2228,7 +2162,6 @@ Authorized agents of the Union shall have access to the Employer’s
 establishment during working hours for the purpose of adjusting disputes, investigating working conditions, collection of dues, and ascertaining that this Agreement is being adhered to, provided, however, that there is no interruption of the Employer’s working schedule.
 The Employer agrees that in situations where a specific form of
 identification may be required by law to access a location, it will
-
 assist the Local Union in obtaining such identification so as to perform their duties consistent with this Article.
 ARTICLE 25. SEPARABILITY AND SAVINGS
 If any article or section of this Agreement or Supplements, Riders or
@@ -2256,7 +2189,6 @@ the distribution of express letter, parcel express, parcel delivery,
 and freight, both air and surface. In order to meet that competition
 and thereby protect and, if possible, increase the number of bargaining unit jobs, it is agreed that any provisions in this Agreement
 to the contrary notwithstanding, the Employer:
-
 (a) may use substitute means of transportation (such as airplane,
 helicopter, ship or T.O.F.C.) in its operations; provided, however,
 that no feeder driver with more than three (3) years of seniority in
@@ -2286,7 +2218,6 @@ Temporary shall be limited to six (6) months unless there are circumstances beyo
 will not be unreasonably withheld. The Employer and the Union
 shall agree on the most expeditious method to obtain additional
 personnel and/or equipment, if necessary, for the new runs to be
-
 operated by bargaining unit members. If the equipment or employees are not available, the Employer may use subcontractors for a
 reasonable start-up period, not to exceed thirty (30) days. The subcontracting can exceed thirty (30) days with the Union’s agreement
 if there are problems obtaining additional personnel or equipment.
@@ -2310,7 +2241,6 @@ shall review those areas with the Local Union. Outside carriers
 shall only remain on property in the designated areas for a reasonable amount of time, not to exceed one (1) hour after their arrival
 time. From the Monday prior to Thanksgiving until December
 30th, outside carriers shall not exceed four (4) hours on property. If
-
 a contractor exceeds the timelines, they must leave the UPS property. All outside carriers shall adhere to UPS safety regulations and
 local yard rules. Any violations of these regulations and rules will
 be addressed immediately by management. This language will not
@@ -2336,7 +2266,6 @@ proposed change and to resolve questions raised in connection with
 the effects of the proposed change. During the joint meeting, the Employer and the Union shall reduce to writing all agreed upon issues
 and both parties shall sign the written document in acknowledgment
 of such agreement. The parties shall also reduce to writing all unresolved issues, if any. This meeting shall be completed where practical
-
 at least forty-five (45) days prior to the implementation of the seven
 (7) day operation. The seven (7) day operation may not be implemented until the forty (45) days’ notice is provided and the meeting
 is completed. The Package Division and the affected Local Union(s)
@@ -2363,7 +2292,6 @@ If Peak delivery needs are not met by existing part-time employees
 or cover drivers, the Employer may hire seasonal support drivers
 who use their personal vehicles to deliver packages between November 15th and December 26th each year. Seasonal support drivers will be part-time seasonal hires, W-2 employees and Union
 members in accordance with Article 3, Section 2. The Union shall
-
 be provided access to these employees for the purpose of encouraging them to join the Union. These employees will receive a three (3)
 hour daily guarantee. Such employees shall be entitled to all privileges and benefits that may be provided in the applicable Supplement, Rider or Addendum.
 Both existing and Seasonal Support Drivers covered by this Section
@@ -2388,7 +2316,6 @@ violation. The destination Local Union shall also have the right to
 file a grievance protesting a subcontracted movement. If the Local
 Union where the movement originated files a grievance on the run
 it shall take priority over any other grievance.
-
 Section 4. Surepost
 1) In order to retain existing commercial customers that are solicited by a competitor offering services similar to those described
 herein, or to attract new commercial customers, the Company may
@@ -2417,7 +2344,6 @@ Surepost and ground packages are to be delivered. The Company
 will monitor and test the technology used for redirect to ensure it is
 operating in accordance with the parameters of this Section not less
 frequently than annually and shall provide evidence of the testing
-
 to the Union’s Director of the Package Division. The Company
 shall meet with the Competition Committee to review any potential
 expansion of the volume to be redirected and determine if it is economically feasible to handle in UPS’ operations.
@@ -2445,7 +2371,6 @@ to ensure that, once a package is identified, a clerk shall redirect
 the package(s) to the appropriate package driver. No employee
 shall be disciplined for redirecting a package pursuant to this
 paragraph.
-
 Section 5. DOT Hours of Service
 The Company shall not change the DOT sixty (60) hours in seven
 (7) days to the seventy (70) hours in eight (8) days rule for package drivers except at Peak. With prior approval of the Company’s
@@ -2473,7 +2398,6 @@ sixty (60) days thereafter, either party shall be permitted all lawful
 economic recourse to support its request for revisions. If governmental approval of revisions should become necessary, all parties
 will cooperate to the utmost to attain such approval. The parties
 agree that the notice provided herein shall be accepted by all parties
-
 as compliance with the notice requirements of applicable law, so as
 to permit economic action at the expiration thereof.
 2. In the event of the declaration of a National Emergency due to a
@@ -2503,7 +2427,6 @@ When seniority employees are called for jury duty service, they
 shall be excused from their regular duties on the days they are required to appear in court or comply with jury rules that prevent
 them from reporting for work. For any regularly scheduled workday in which time off for such jury service is granted, full-time
 employees shall be paid their guarantee and the part-time employee
-
 shall receive four (4) hours’ pay at their straight-time hourly rate,
 less any amount received as a jury duty fee if such fees are defined
 as wages under applicable laws. The employee shall be required,
@@ -2562,7 +2485,6 @@ employee‘s straight-time hourly rate for each day lost from work
 for those employees whose regular scheduled workweek is five (5)
 days, and ten (10) times the straight-time hourly rate for those employees whose regular scheduled workweek is four (4) days. Parttime employees will receive the same benefits as above, paid at four
 (4) times the employee’s hourly rate. Better conditions contained in
-
 Supplements, Riders or Addenda will be maintained by present employees. All employees hired after July 2, 1982 will be covered by
 the above language.
 Section 3. Tax Deferred Savings Plan 401(k)
@@ -2582,7 +2504,6 @@ over employees or operations covered by this Agreement, the Employer agrees to a
 determine such dispute. The parties do not intend by this paragraph to take away the Employer’s right to designate the home
 domicile of their employees; provided, however, that any employees adversely affected shall have recourse to the grievance procedure. The Employer further agrees that prior to the change of the
 domicile of any of its employees, it shall so notify the Unions directly involved.
-
 ARTICLE 31. GARNISHMENTS
 In the event of notice to the Employer that a court order has been
 issued requiring the Employer to withhold a percentage of an employee’s wages to satisfy a garnishment, the Employer may take
@@ -2608,7 +2529,6 @@ employee’s wages for a second (2nd) debt.
 A garnishment for child support or alimony shall not be considered
 a debt for purposes of discipline.
 The Employer shall comply with federal, state and local law in enforcing the provisions of this Article. Discipline or discharge pursuant to this Article shall be reasonable and nondiscriminatory.
-
 ARTICLE 32. SUBCONTRACTING
 For the purpose of preserving work and job opportunities for the
 employees covered by this Agreement, the Employer agrees that no
@@ -2632,7 +2552,6 @@ provided below on the basis of the “Consumer Price Index for Urban Wage Earner
 using 1982-1984 Expenditure Patterns), All Items (1982-84 = 100),
 published by the Bureau of Labor Statistics, U.S. Department of
 Labor” and referred to herein as the “Index”.
-
 Effective August 1, 2024 and every August 1, thereafter during the life
 of the Agreement, a cost-of-living allowance will be calculated on the
 basis of the difference between the Index for May 2024 (published
@@ -2661,7 +2580,6 @@ meet, negotiate, and agree upon an appropriate substitute for the
 Index. Upon the failure of the parties to agree within sixty (60)
 days, thereafter, the issue of an appropriate substitute shall be submitted to an arbitrator for determination. The arbitrator’s decision
 shall be final and binding.
-
 ARTICLE 34. HEALTH & WELFARE
 AND PENSION
 Section 1.
@@ -2691,7 +2609,6 @@ August 1, 2027 (not to exceed $0.50)
 shall be treated the same as a part-time employee in TeamCare and
 the UPS Pension Plan.
 (iii) [Reserved]
-
 (iv) The increases accrued under this Article on August 1st, of each
 year, can only be allocated to health & welfare and/or pension except as provided within this Article. Any dispute concerning the allocation of health & welfare and pension money shall be determined
 and/or resolved by the Joint National Negotiating Committee.
@@ -2716,7 +2633,6 @@ those areas with such IBT Pension Plans.
 (c) During the life of this Agreement, the Employer will continue to
 make applicable contributions to all IBT Health and Welfare Funds
 and all IBT Pension Funds (or the successor funds in case of merger of funds) for full-time and/or part-time employees in all Supplements, Riders and Addenda where the Employer was making contributions for full-time and/or part-time employees on May 1, 1982,
-
 unless stated to the contrary in this Article or changes placing these
 employees in UPS plans are negotiated and agreed to by the National Negotiating Committee.
 (d) In those Supplements, Riders and Addenda where the Employer
@@ -2743,7 +2659,6 @@ least the amount set forth in Section 1(a) above.
 The portion of the increased amount set forth in paragraph 1(a) above
 to be allocated to the Teamsters Western Region & Local 177 Health
 Care Plan each year will be determined by the Trustees of that Plan.
-
 The remainder of the annual contribution increase set forth in Section
 1(a), if any, shall be paid into pension. This paragraph shall not apply
 if the Western Conference of Teamsters Pension Fund becomes subject to a funding improvement or rehabilitation plan.
@@ -2775,7 +2690,6 @@ the UPS Pension Plan for current or future part-time employees
 who are participants will be increased solely for purposes of the
 monthly accrued benefit, effective August 1, 2008 to sixty dollars
 ($60.00) for each year of future Credited Service to a maximum of
-
 35 years of Credited Service. If a participant is in Covered Employment on August 1, 2008, they shall receive the sixty dollars ($60.00)
 benefit formula for the entire 2008 plan year.
 Effective August 1, 2023 the benefit formula in the UPS Pension
@@ -2798,7 +2712,6 @@ months of part-time Credited Service will be granted for three hundred seventy-f
 calendar year, and nine (9) months of part-time Credited Service
 will be granted for five hundred one (501) to seven hundred forty-nine (749) hours worked in a calendar year.) This paragraph will
 also be applied to determine Credited Service for all full-time employees on the payroll on August 1, 2002 who were formerly participants in the UPS Pension Plan.
-
 (3) The Employer will be responsible for funding the UPS Pension
 Plan as required to provide the benefits described above and will be
 responsible for maintaining the plan.
@@ -2828,7 +2741,6 @@ not change how benefit service is accrued.
 (j) Long-Term Disability
 (1) Full-time seniority employees will become eligible for longterm disability (LTD) after six (6) months of employment for
 non-occupational illnesses or injuries that last longer than twenty-six (26) weeks.
-
 (2) Long-term disability benefits will equal sixty percent (60%) of
 the employee’s base weekly pay to a maximum of eight hundred
 dollars ($800) per week for up to five (5) years. Long-term disability benefits begin when short-term disability coverage ends or after
@@ -2856,7 +2768,6 @@ shall be entitled to receive health care coverage in accordance with
 the SPD for up to twelve (12) months only. An employee will not
 be denied LTD benefits under this Section based on a failure to
 qualify for Social Security Disability Benefits.
-
 (8) Notwithstanding any Supplement, Rider or Addendum all fulltime UPS CSI employees will be provided long term disability benefits through this Section.
 (k) Part-time Retiree Coverage
 (1) Effective August 1, 2002 the Employer began providing health
@@ -2882,7 +2793,6 @@ not eligible for Medicare and is under age sixty-five (65).
 (6) For active retirees as of December 31, 2013, the contribution
 rates shall be as specified in the Summary Plan Description.
 (l) Jointly Trusteed UPS/IBT Full-Time Pension Fund
-
 The following provisions pertain to the UPS/IBT Full-Time Employee Pension Plan (hereinafter “UPS/IBT Plan”) was created for
 employees who participated in the Central States Southeast and
 Southwest Areas Pension Fund (“CS Plan”) and for future employees who would have participated in the CS Plan absent this agreement who have one hour of service in Covered Employment on or
@@ -2963,7 +2873,6 @@ years over 30 up to $4,700
 25 years Up to age 57 $2,400
 25 years Age 57 or $2,900 plus $100/yr of service for
 older years over 25 up to $4,700
-
 For employees who reach the following age and years of service
 milestones on or before July 31, 2028, the following additional enhancements shall apply. These additional enhancements shall become part of the employee’s vested benefit and shall apply even if
 the employee retires after July 31, 2028:
@@ -2992,7 +2901,6 @@ solely through the UPS/IBT Plan administrative claims process.
 and knowledgeable Company contact person with a working phone
 number to assist employees with questions and concerns related to
 the UPS/IBT Pension Plan.
-
 Section 2. TeamCare
 (a) Part-time and full-time employees covered by a Teamster Health
 and Welfare Fund will continue to be covered by those funds.
@@ -3014,7 +2922,6 @@ a Company sponsored health & welfare plan shall be covered by
 TeamCare set forth in Section 2 above, effective January 1, 2014.
 (ii) The UPS Pension Plan shall be modified to provide a one hundred and ten dollar ($110.00) accrual effective January 1, 2019 for
 all years accrued under the UPS Pension Plan.
-
 Section 3. CSI Health and Pension Coverage
 (i) Any full-time or part-time CSI employee who is a participant in
 a Company sponsored health & welfare plan shall be covered by
@@ -3040,7 +2947,6 @@ Pension or Health & Welfare Fund.
 5. The Employer must be notified of any re-allocation, in writing, at
 least thirty (30) days prior to the effective date of the GWI or
 HWPC.
-
 Section 5. Substitute Health Plan
 In the event the Central States Southeast and Southwest Areas
 Health and Welfare Fund does not maintain the benefit coverage
@@ -3069,7 +2975,6 @@ employee who is involved in any accident or accidents during
 working hours and shall assume all responsibility for all judgments and awards against any employee who is involved in accidents during working hours, which result through court action
 against said employee, except as provided above. In case an employee shall be subpoenaed as a witness in a company-related
 case, or as a result of their on duty observations of an accident not
-
 involving a UPS vehicle, they shall be reimbursed for all time lost
 and expenses incurred.
 Section 2. Suspension or Revocation of License
@@ -3093,7 +2998,6 @@ extent that a subject is not covered by this Article the appropriate
 regulation shall control.
 Should other categories, modifications or types of testing be required by the government, the parties will meet as expeditiously as
 possible to develop a mutually agreeable procedure.
-
 The provisions of Article 16, Section 5 will apply to all employees
 requesting enrollment in a rehabilitation program following a positive
 drug test. Employees may use the United Parcel Service Employee
@@ -3123,7 +3027,6 @@ laboratory which is certified by the Department of Health and Human
 Services (HHS). All samples will be tested according to DOT drug
 testing requirements. Validity testing for the presence of adulterants
 shall be conducted on all specimens, per HHS requirements.
-
 Section 3.3 Screening Test
 The initial test uses an immunoassay to determine levels of drugs or
 drug metabolites. The following initial cutoff levels shall be used
@@ -3152,7 +3055,6 @@ Codeine/Morphine 2000
 Hydrocodone/Hydromorphone 100
 Oxycodone/Oxymorphone 100
 6-Acetylmorphine 10
-
 Phencyclidine 25
 Amphetamine/ Methamphetamine (4) 250
 MDMA(4)/MDA (5) 250
@@ -3180,7 +3082,6 @@ In the event the initial drug test indicates a positive response the
 confirmatory test must be done.
 On an initial drug test, the laboratory must report a result below the
 cutoff concentration as negative. If the result is at or above the cutoff concentration, the laboratory must conduct a confirmation test.
-
 On a confirmation drug test, the laboratory must report a result below the cutoff concentration as negative and a result at or above the
 cutoff concentration as confirmed positive.
 These substances and test levels are subject to change by the Department of Transportation as advances in technology or other considerations warrant.
@@ -3203,7 +3104,6 @@ Upon reasonable cause, UPS will require an employee to be tested
 for the use of controlled substances.
 Reasonable cause is defined as an employee’s observable action,
 appearance, or conduct that clearly indicate the need for a fitness-for-duty medical evaluation.
-
 The employee’s conduct must be witnessed by at least two (2) supervisors, if available. The witnesses must have received training in
 observing a person’s behavior to determine if a medical evaluation
 is required. When the supervisor(s) confronts an employee, a Union
@@ -3232,7 +3132,6 @@ this Article. In the event the test result is positive, as set forth
 above, it shall be considered a dischargeable offense.
 Section 3.9 Post-Accident Drug Testing
 DOT mandated drivers will be required to submit to a drug test after a DOT defined serious accident, which is one in which:
-
 1. There is a fatality, or;
 2. A citation is issued and there is bodily injury to a person who, as
 a result of the injury, receives immediate medical treatment away
@@ -3308,7 +3207,6 @@ all return-to-work testing, conference calls, and examinations within
 five (5) working days of completion of a rehabilitation program.
 It is understood that if the grievance procedure is utilized contractual time limits on disciplinary action and the employee’s request for
 rehabilitation will be suspended until resolution of the grievance.
-
 Substance Abuse Professional (SAP)
 Each Substance Abuse Professional (SAP) must be a licensed Doctor of Medicine or Osteopathy, or a licensed or certified psychologist, social worker, employee assistance professional, or drug and
 alcohol counselor (certified by the National Association of Alcoholism and Drug Abuse Counselors Certification Commission)
@@ -3357,7 +3255,6 @@ Employer expressly agree to a lesser penalty. Any such agreement
 will not be precedent setting.
 b. Refusal to submit to a reasonable cause drug test is a dischargeable offense.
 c. Non-Driving Reasonable Cause
-
 i. 1st offense—A positive test for cannabis/marijuana shall result in
 a warning letter (subject to successful completion of rehabilitation).
 ii. 2nd offense—A positive test for cannabis/marijuana five (5) or
@@ -3378,7 +3275,6 @@ considered for feeder list until the next feeder driver school is conducted (sub
 b. 2nd offense—A positive test is a dischargeable offense.
 5. Other Dischargeable Offenses:
 a. Failure to successfully complete rehabilitation.
-
 b. A positive specimen as part of after-care drug testing.
 c. Failure to comply with after-care treatment plan.
 d. An adulterated or substituted specimen.
@@ -3404,7 +3300,6 @@ failure to use or the refusal to use the checklist does not invalidate
 a properly conducted controlled substance testing procedure. Nor
 does it prohibit an employee’s recourse to the collective bargaining
 agreement and/or the grievance procedure.
-
 All procedures for urine collection will follow Department of
 Transportation guidelines to ensure an individual’s privacy. An employee who gives reason to believe that they may have adulterated
 or substituted a sample will be required to provide a specimen under direct observation by a same gender collection agent. If it is
@@ -3429,7 +3324,6 @@ the collection process at all times and at all collection sites. Further,
 the Employer agrees that in all circumstances the employee’s dignity will be considered and all necessary steps will be taken to ensure
 that the entire process does nothing to demean, embarrass or offend
 the employee unnecessarily. Authorization for collection under direct observation will be in accordance with Department of Transportation regulations. All procedures shall be conducted in a professional, discreet and objective manner. Refusal to provide a
-
 specimen under direct observation when requested shall be considered a refusal to test and a terminable offense.
 The employee shall be instructed to provide at least forty-five (45)
 milliliters of urine in the collection container. The employee shall
@@ -3457,7 +3351,6 @@ not limited to, conduct clearly and unequivocally indicating an attempt to subst
 color or urine temperature outside the acceptable range. All specimens suspected of being adulterated shall be packaged and forwarded to the laboratory for testing.
 In the event of suspected specimen adulteration, a second (2nd)
 specimen will be immediately collected under direct observation
-
 and the entire procedure should be repeated including initiation of
 a new custody and control form and separate packaging for shipping. If an employee refuses to provide a second (2nd) specimen, it
 shall be noted as a refusal to test and shall be a terminable offense.
@@ -3485,7 +3378,6 @@ program. For those employees who choose to have the second
 (2nd) specimen tested, disciplinary action can only take place after
 the MRO verifies the first test as positive and the second laboratory
 confirms the presence of the drug. However, the employee must be
-
 taken out of service once the first (1st) test result is verified as positive by the MRO while the second test is being performed. If the
 second (2nd) laboratory report is negative, the employee will not be
 charged for the cost of the second (2nd) test and will be reimbursed
@@ -3511,7 +3403,6 @@ Company must be a licensed doctor of medicine or osteopathy with
 knowledge of substance abuse disorders, issues relating to adulterated and substituted specimens, possible medical causes of specimens having an invalid result, and applicable DOT agency regulations. In addition, the MRO shall keep current on applicable DOT
 agency regulations and comply with the DOT qualification training
 and continuing education requirements.
-
 The MRO is responsible for performing the following functions, in
 addition to those specified in the DOT regulations:
 1. Reviewing the results of UPS’s drug testing program.
@@ -3539,7 +3430,6 @@ testing will be conducted at the employee’s expense. The employee
 shall be reimbursed by UPS for any such expense should the retest
 provide a negative result. If a reanalysis is negative, then the MRO
 will declare the test canceled.
-
 Section 3.18 MRO Determination
 If the MRO determines, after appropriate review, that there is a legitimate medical explanation for the confirmed positive test result,
 the MRO shall report the test to the Employer as a negative. If the
@@ -3566,7 +3456,6 @@ shall maintain in a driver’s qualification file only such information
 as required by the DOT to document compliance with the drug testing requirements.
 Section 3.20 Release of Drug Testing Information
 The MRO shall inform the employee before beginning the verification interview, that the MRO could transmit to appropriate parties
-
 information concerning medications being used by the employee or
 the employee’s medical condition only if, in the MRO’s medical
 judgment, the information indicated that the employee may be
@@ -3596,7 +3485,6 @@ time when the driver is not en route to or from work, the employee
 shall be paid in addition to all time at the collection site, travel time
 both ways between the employee’s home and the collection site
 with no minimum guarantee.
-
 When an employee is on the clock and a random drug test is taken
 any time during the employee’s shift, and the shift ends after eight
 (8) hours, the employee shall be paid time and one-half (1-1/2) for
@@ -3625,7 +3513,6 @@ model course. All samples will be tested according to DOT alcohol
 testing requirements. In the event that breath testing is not possible
 in such cases as reasonable cause, or post-accident, the Employer
 has the right to use alternative DOT approved methods.
-
 Section 4.3 Screening Test
 The initial screening test uses an Evidential Breath Testing (EBT)
 device to determine levels of alcohol. The following initial cutoff
@@ -3651,7 +3538,6 @@ Section 4.5 Types of Testing Required
 Testing procedures will be performed as part of pre-qualified practices, after defined DOT reportable accidents, on the basis of reasonable cause, upon return to duty after a positive test, under DOT
 mandated random testing and as follow-up testing for post alcohol
 rehabilitation as outlined under Article 16, Section 5.
-
 Section 4.6 Reasonable Cause Testing
 Upon reasonable cause, UPS will require an employee to be tested
 for the use of alcohol.
@@ -3678,7 +3564,6 @@ after a DOT defined serious accident, which is one in which:
 2. A citation is issued and there is bodily injury to a person who, as
 a result of the injury, receives immediate medical treatment away
 from the scene of the accident, or;
-
 3. A citation is issued and one (1) or more motor vehicles incur
 disabling damage as a result of the accident requiring a vehicle to
 be transported away from the scene by a tow truck or other vehicle.
@@ -3729,7 +3614,6 @@ The parties agree that no effort will be made to cause the system
 and method of selection to be anything but a true random selection
 procedure insuring that all affected employees are treated fairly
 and equally.
-
 The parties further agree not to amend or change the current method of random selection as described herein without prior agreement
 between the parties.
 A driver shall only be tested for alcohol while the driver is performing safety sensitive functions, just before the driver is to perform
@@ -3753,7 +3637,6 @@ It is understood that if the grievance procedure is utilized contractual time li
 rehabilitation will be suspended until resolution of the grievance.
 The provision of Article 16, Section 5 will apply to all employees requesting enrollment in a rehabilitation program following a positive
 alcohol test. Employees may use the United Parcel Service Employee
-
 Assistance Program, a union sponsored program, as well as any other
 referral service in choosing an approved program for treatment.
 Follow-up testing shall consist of at least six (6) tests in the first
@@ -3778,7 +3661,6 @@ level is 0.02 to 0.039 will be taken out of service for twenty-four
 An employee who is tested for reasonable cause and whose alcohol
 level is 0.040 to 0.069 will be taken out of service for twenty-four
 (24) hours, referred to a Substance Abuse Professional (SAP) and
-
 suspended for ten (10) days. If the employee has committed a disciplinary offense under the terms of the supplemental agreement,
 the results of the test may be used in the support of the Employer’s
 disciplinary action.
@@ -3805,7 +3687,6 @@ cost of such treatment will not be borne by the UPS medical plan.
 A third (3rd) positive test of 0.02 or above after the employee was
 tested pursuant to the above levels will subject the employee to
 discharge.
-
 3. Dischargeable Offenses
 Other language to the contrary notwithstanding, the following may
 result in discipline up to and including discharge:
@@ -3829,7 +3710,6 @@ Upon arrival at the testing site, an employee must provide the BAT
 with a photo identification.
 If the employee arrives without the photo identification, issued by
 the Employer, or a federal, state or local government, the BAT
-
 should contact the District Safety and Health manager or the District Human Resources manager.
 A standard DOT approved alcohol testing form must be used by all
 testing facilities. The form used for non-DOT tests will contain the
@@ -3853,7 +3733,6 @@ nothing to demean, embarrass or offend the employees unnecessarily. Testing will
 manner. Direct observation will be necessary in all cases.
 The employee shall provide an adequate amount of breath for the
 EBT device. If the individual is unable to provide a sufficient amount
-
 of breath, the BAT shall direct the individual to again attempt to provide a complete sample. If the employee fails for any reason to provide the requisite amount of breath, the BAT shall contact the District
 Safety and Health manager or Human Resources manager.
 If an employee is unsuccessful in providing the requisite amount of
@@ -3879,7 +3758,6 @@ regulations. In addition, the SAP shall keep current on applicable
 DOT agency regulations and comply with the DOT qualification
 training and continuing education requirements.
 The SAP is responsible for performing the following functions:
-
 1. Conducting the initial face-to-face clinical assessment and evaluation to determine what assistance is needed by the employee to
 solve problems associated with alcohol and/or drug use;
 2. Referring the employee to an appropriate education and/or treatment program;
@@ -3905,7 +3783,6 @@ in employee testing; and
 The Employer or its agent must maintain for two (2) years records
 pertaining to the calibration of each EBT used in alcohol testing,
 including records of the results of external calibration checks.
-
 Section 4.16 Release of Alcohol Testing Information
 The Breath Alcohol Technician (BAT) shall inform the employee
 before testing that the Employer will be notified if the confirmatory
@@ -3931,7 +3808,6 @@ eight (8) hours, the employee shall be paid time and one-half
 (1 1/2) for all time past the eight (8) hours.
 Provisions in Supplements, Riders and Addenda that are superior
 shall prevail.
-
 ARTICLE 36. NONDISCRIMINATION
 The Employer and the Union agree not to discriminate against
 any individual with respect to hiring, compensation, terms or conditions of employment because of such individual’s race, color,
@@ -3954,7 +3830,6 @@ shall be relevant factors to a determination of motivation. The
 Employer will treat employees with dignity and respect at all
 times, which shall include, but not be limited to, giving due consideration to the age and physical condition of the employee. Employees will also treat each other as well as the Employer with
 dignity and respect.
-
 The following language is applicable to grievances arising from
 Article 37 Section 1(a) which allege intimidation, harassment, coercion or over supervision:
 1. Grievances not resolved by the Local or Area grievance procedure shall be forwarded to the National Article 37 Grievance Committee. Such Committee shall be comprised of an equal number of
@@ -3979,7 +3854,6 @@ above the Employer may need to provide an earlier start time. This
 subsection applies regardless of whether the driver has opted in or out
 pursuant to the provisions of subsection (c) below. Such requests shall
 not be submitted during the months of November and December.
-
 An employee who desires to be relieved from overtime on a particular day must make a written request on a form furnished by
 the Employer. Such a request must be submitted no later than the
 start of their shift on the third (3rd) workday preceding the day
@@ -4012,7 +3886,6 @@ the driver is off in the requested eight (8) hours. Drivers shall
 notify management no later than 1:00 P.M. if they cannot complete their assigned work within eight (8) hours. No employee
 shall be threatened, harassed, or disciplined by management in
 the exercising of this right.
-
 (c) The Union shall circulate and collect the names of eligible package drivers who wish to be covered by the provisions of this Section once each year. This list shall be provided to the Company by
 January 5th of each year. The Employer shall make a reasonable
 effort to reduce package car drivers’ workdays below nine and one
@@ -4040,7 +3913,6 @@ any time, with one week’s notice to the Employer.
 If a driver is paid a penalty under this subsection more than four (4)
 times in a calendar year a meeting shall be scheduled with the District Labor Manager, Business Agent and the Co-Chairs, or their
 chosen designee of the applicable Supplemental panel within forty-five (45) days of the filing to determine what actions are necessary to ensure compliance.
-
 If a grievance under this provision (or a grievance under any excessive overtime provision of a Supplement, Rider or Addendum) cannot be resolved at the local level, including Supplemental Panels,
 where applicable, the Union may docket the grievance to be heard
 by the “9.5 Committee.” This Committee shall be composed of two
@@ -4070,7 +3942,6 @@ is sustained, the arbitrator shall have the authority to award any remedy set fo
 rate of pay to the employee(s) adversely affected, as well as appropriate progression credit. The back wages shall be equal to what the
 employee(s) would have earned as a package driver at the applicable
 daily guarantee versus what they actually earned.
-
 In addition, the Union Chair of the National Negotiating Committee may, at any time, request a meeting with the Employer’s President of Labor Relations to review the adequacy of the Company’s
 staffing in any center having excessive 9.5 grievances deadlocked
 at the local level panel. If the dispute cannot be resolved, either
@@ -4100,7 +3971,6 @@ will only drive for demonstration purposes and this will not exceed
 three (3) hours per workday.
 Section 3.
 Any alleged violation of this Article shall be subject to the applicable grievance procedure. Where an employee has submitted a
-
 grievance regarding an excessive number of rides, no member of
 management shall ride with that employee unless and until the local
 level hearing is concluded provided such hearing is held within five
@@ -4127,7 +3997,6 @@ dictated by emergency conditions. The Union shall not unreasonably
 delay the scheduling or completion of the requested meeting. Any
 unresolved issues reflected in Section (c) below, which have been
 reduced to writing, will be resolved pursuant to that Section.
-
 (b) Any agreed to change of operations reached by the Local
 Union(s) and the Employer shall be reduced to writing and filed
 with the Joint National Change of Operations Committee. It is understood that a regional area representative of the affected region(s)
@@ -4153,7 +4022,6 @@ to follow their work and their seniority shall be dovetailed at the
 new center.
 2. Whenever a center or hub is partially closed and the work of
 package drivers and all other regular employees, part-time and fulltime, excluding feeder drivers, is transferred to or absorbed by another center, the affected employees may either follow their work
-
 and have their seniority dovetailed in the new center or be allowed
 to exercise their seniority in their present center and displace the
 least senior employee in their respective classifications. If any of
@@ -4206,7 +4074,6 @@ Section 1. Recognition
 By execution of this Agreement, the Employer acknowledges and
 agrees that employees employed in the classifications listed below.
 In this Article shall be considered bargaining unit employees for all
-
 intents and purposes and be covered by and included in Article 3
 Recognition, Union Shop and Checkoff, and additionally, such employees shall become a part of the National Single Bargaining Unit
 as set forth in this Agreement, unless otherwise provided by law.
@@ -4257,7 +4124,6 @@ the Trailer Shop provided they are qualified to perform the work of
 the employee they have displaced.
 The employee shall receive the appropriate rate of pay for the job
 being performed.
-
 (c) Trailer shop employees will be given the opportunity to select
 start times by seniority on an annual basis, provided they are qualified to perform the work.
 Employees shall have classification seniority within the trailer repair facility only and shall have the right to exercise the same as set
@@ -4282,7 +4148,6 @@ Section 9. Amendments
 Any alterations, changes, additions or deletions to this Article must
 be presented to the National Negotiating Committee for approval
 prior to being placed into effect.
-
 Section 10. Paint and Body Facilities
 In the event paint and body facilities are created to perform repair
 work on feeder and package car equipment, the above Article and
@@ -4340,7 +4205,6 @@ Section 1. Air Drivers
 (a) Air driver work shall consist of delivery and pickup of air packages which, because of time and customer commitments, cannot be
 reasonably performed by regular package drivers. Such work may
 include:
-
 (1) Delivery of air packages which the regular delivery drivers cannot deliver within guaranteed time commitments.
 (2) Delivery of air packages arriving at the facility after regular
 drivers have been dispatched.
@@ -4365,7 +4229,6 @@ the Co-chairs of the Joint National Air Committee.
 on packages which are not air packages.
 An exception package is intended to be when an Air Driver is making
 a pick up, as outlined above, after the regular driver has been at the
-
 customer’s premises, and the customer has an exception ground package(s) for shipment, the air driver may make service on this package(s). Air drivers may continue to pick up Automatic Return Service
 packages but the features of this service will not be expanded.
 Any violation of Section 1(a) (7), shall obligate the Employer to
@@ -4416,7 +4279,6 @@ hours worked in excess of eight (8) hours in a twenty-four (24) hour
 period or in excess of forty (40) hours per week.
 (3) Any less than eight (8) hour combination air driver (part-time
 combination air drivers) who works their three (3) hour guarantee
-
 shall be guaranteed four (4) hours. They shall be paid overtime for
 work in excess of eight (8) hours in a twenty-four (24) hour period
 or in excess of forty (40) hours per week.
@@ -4440,7 +4302,6 @@ break or lunch period as that provided to full-time drivers under the
 applicable Supplement, Rider or Addendum.
 (g) Bidding Procedure
 Air driver jobs shall be subject to the appropriate bidding procedures in the applicable Supplement, Rider or Addendum.
-
 (h) Exception Air Drivers
 (1) The Employer and the Union recognize that there may be air
 packages that cannot be delivered by the regular full-time package
@@ -4465,7 +4326,6 @@ vehicle in the service of the Employer and is involved in an accident, the Emplo
 employee’s vehicle and to the other person’s vehicle and/or property, and will provide liability insurance coverage.
 (j) Holiday Work
 When it is necessary to provide air service on holidays, the following procedure shall be used:
-
 (1) The Employer shall offer this work in seniority order to fulltime air drivers who have worked at least one (1) day that week
 before offering it to part-time air drivers.
 (2) When the scheduling needs cannot be met using the above provision, the Employer shall have the right to force part-time air drivers and then full-time air drivers to work starting in reverse order of
@@ -4490,7 +4350,6 @@ eight (8) hours in addition to the holiday pay. Overtime provisions
 shall apply if the employee works over eight (8) hours.
 (5) All part-time bid air drivers who work on a holiday will be provided a three and one half (3 ½) hour guarantee.
 (k) Saturday or Sunday Air Work
-
 (1) To perform Saturday or Sunday air work the Employer and the
 Union recognize the need for air drivers other than those regularly
 scheduled. Qualified part-time employees who are interested in
@@ -4520,7 +4379,6 @@ not drive any vehicle which requires a driver’s license in the performance of 
 (d) Air Walkers shall be guaranteed three (3) hours per day and
 shall be given a ten (10) minute paid break.
 (e) Air Walkers shall be paid in accordance with Section 6 below.
-
 (f) Air Walkers shall receive all part-time benefits and conditions of
 employment as outlined in the appropriate Supplement, Rider or
 Addendum including the right to bid into full-time jobs. An air
@@ -4547,7 +4405,6 @@ three (3) or more hours for thirty (30) working days within a forty-five (45) da
 entitled to a three (3) hour guarantee. The Employer may also provide a higher daily guarantee to the extent it does not conflict with
 the overtime rules in the applicable Supplement, Rider or Addendum. Grievances concerning this issue shall be brought directly to
 the National Air Committee.
-
 (c) Holidays
 (1) When it is necessary to operate an air hub and gateway operation on
 a holiday, those employees worked will be paid overtime in addition to
@@ -4575,7 +4432,6 @@ employment.
 (2) In air hub and gateways that currently have no procedure to
 recognize part-time seniority, part-time employees with one (1) or
 more years of seniority will be allowed in seniority order to fill
-
 permanent vacancies on a different shift and/or fill permanent vacancies between the airport sort facility and the ramp in all months
 except November and December. The employee will be allowed to
 exercise this procedure once a year.
@@ -4601,7 +4457,6 @@ on the ramp) to be performed by United Parcel Service bargaining
 unit members, all of the following criteria must be met:
 (1) The air gateway operation must have an established five (5) day
 workweek with a minimum of three (3) hours of continuous work
-
 on all shifts (excluding rest periods provided in the appropriate
 Supplement, Rider or Addenda) for all employees;
 (2) There is a minimum of forty (40) potential bargaining unit
@@ -4628,7 +4483,6 @@ alteration or changes in the criteria set forth in (1) through (4)
 above at any such converted air gateway.
 Air gateway location(s) which utilize a Teamster represented vendor contracted by United Parcel Service are not subject to this
 Section.
-
 Section 4. S tart Times for Air Shuttle
 and Air Feed Drivers
 Because of the nature of the air business, regular air shuttle and air
@@ -4658,7 +4512,6 @@ determined in accordance with this Section, Article 22 and Article
 as follows:
 Start $23.00
 Twelve (12) months $24.00
-
 Twenty-four (24) months $25.00
 Thirty-six (36) months $29.00
 Forty-eight (48) months Top Rate
@@ -4710,7 +4563,6 @@ receive the start rate in paragraph (a.) above until they gain seniority.
 be paid the applicable part-time rate of pay as set forth in Article
 22, Section 5(a) or (b). However, if a part-time employee is awarded an air walker job they shall continue to receive their inside rate
 in accordance with Article 22. Full-time air hub and gateway jobs
-
 shall be paid in accordance with Article 41, Section 3 unless there
 is an existing agreement under Article 40, Section 3 expressly providing a pay rate for such a classification.
 (i) Air operation employees who are covered by a daily guarantee
@@ -4737,7 +4589,6 @@ contract year. The total wage increase for the year will be as follows:
 2027 two dollars and twenty-five cents ($2.25)
 Full-time employees still in progression on the effective date of this
 Master Agreement shall receive the above contractual increases.
-
 They will be paid no less than what they are entitled to in accordance with Article 41, Section 2 below.
 Section 2. Full-time Wage Progression
 (a) Notwithstanding any provision in any Supplements, Riders or
@@ -4764,7 +4615,6 @@ Part-time employees on the payroll as of July 31, 2023 who subsequently are prom
 will be red circled until such time as the calculated progression rate
 exceeds that rate. The transfer date will become their full-time start
 date for purposes of applying the above progression.
-
 If a part-time employee bids to a full-time position and the top rate
 of the classification is less than their current rate, the employee
 shall be placed at the top rate of the new classification immediately.
@@ -4793,7 +4643,6 @@ Twelve (12) months $24.00
 Twenty-four (24) months $25.00
 Thirty-six (36) months $28.00
 Forty-eight (48) months Top Rate
-
 The Top Rate shall be $35.94 plus the general wage increases provided in Section 1 above.
 Employees who are in progression as of the date of ratification,
 will be slotted into the above progression. When the progression is
@@ -4820,7 +4669,6 @@ Start: 85%
 Twelve (12) months Top Rate
 Mechanics in progression on August 1, 2023 shall be slotted into
 the above progression.
-
 ARTICLE 42. UNIFORMS
 Effective May 1, 1994, short uniform trousers will be provided as
 an option for package and feeder drivers at no cost to the employee.
@@ -4848,7 +4696,6 @@ and from ground and air hubs that are more than two hundred fifty
 (250) miles apart. Wherever practical, the driver will start at approximately the same start time each day and make two (2) round
 trips per week to a scheduled sort location. Such work must provide
 the driver a minimum four (4) day work week.
-
 Benefits provided will be those of regular full-time feeder drivers.
 The driver will be provided the opportunity to work ten (10) hours
 per day four (4) days per week. Drivers will also be provided with
@@ -4905,7 +4752,6 @@ all cases where an employee is required to take a rest period away from
 their home center. Air-conditioned hotel rooms shall be furnished. Hotel rooms shall be equipped with blinds or draperies or be suitably
 darkened during daylight hours. There shall be no bunk beds or double
 beds and both drivers shall be entitled to a room. All team driver lodging must be maintained on the basis of one (1) driver per room.
-
 Under unusual circumstances in which the Employer is unable to
 furnish satisfactory lodging, the employee shall be paid one hundred dollars ($100.00) for each rest period; except where accommodation is unavailable at such figure and it is necessary for the
 driver to pay in excess of one hundred dollars ($100.00), they shall
@@ -4933,7 +4779,6 @@ Premium Service Review Committee.
 (5) Sleeper Equipment
 Newly purchased equipment will meet the following specifications:
 (a) Minimum interior dimensions of the sleeper berths shall be:
-
 Length—79/80 inches;
 Width—36 inches; and
 Height—24 inches.
@@ -4960,7 +4805,6 @@ It is the intent of the parties to make the driver whole for all justified delay
 property work, accident delay or on road equipment breakdown.
 Any disputes will be referred to the Joint Premium Service Review
 Committee.
-
 (8) Solo Driving
 There shall be no solo driving permitted in sleeper cab operations,
 except in cases of emergency. In case of emergency where one (1)
@@ -4988,7 +4832,6 @@ Start 0.6370 0.6504 0.6639
 48 months TOP RATE
 Those drivers in progression as of the ratification of this Agreement
 will maintain the four (4) year progression to Top Rate and be slotted into the above progression rates.
-
 (12) Hourly work performed at the beginning or end of a mileage
 run shall be paid at the applicable hourly feeder one and one-half
 (1 1/2) rate of pay or the applicable premium rate of pay in the
@@ -5036,7 +4879,6 @@ Classification as a direct result of the implementation of a Premium Service Job
 In the event the Employer proposes to implement a mileage layover run, sleeper team run or a city pair (mileage turn) in accordance with the provisions of section 1 above, the run must first
 be reviewed and approved by the Joint Premium Service Review
 Committee. Such approval shall not be unreasonably denied.
-
 No such accommodation shall be implemented without the approval of the Package Division Director or the General President’s designee.
 Approval shall not be unreasonably denied.
 Any run that has been approved and is changed such change
@@ -5061,7 +4903,6 @@ rate in an effort to provide forty (40) hours of work weekly. When
 this occurs, the layover job will not be subjected to the requirement
 of providing hourly work to equal ten (10) hours of pay.
 4. Destination local work will be the last consideration.
-
 Holidays, personal holiday, paid sick days, funeral leave and jury
 duty for city pair (mileage turn), layover and sleeper team drivers
 will be paid in accordance with the applicable supplement, rider or
@@ -5090,7 +4931,6 @@ on-property work, accident delay or on-road equipment breakdown. Any disputes wi
 Committee.” Unless authorized otherwise by management, delays
 will commence at the scheduled departure time.
 Mileage drivers are not paid for traffic delays when mileage is recorded within the delay except as follows:
-
 On major highways, traffic delays will commence when a mileage
 driver’s speed is reduced to a complete stop and then the driver
 continues to move at a speed less than fifteen (15) miles per hour.
@@ -5123,7 +4963,6 @@ these runs in any one (1) Local Union. Also, the Company must
 have a specific business purpose to schedule such a run as well as
 follow the approval process set forth in the Article 43 Guidelines on
 any newly created runs as of March 27, 2013.
-
 Waiting time at intermediate stops will be handled in accordance
 with the applicable local supplement, rider or addendum.
 Delays of fifteen minutes or more will be paid back to the first minute, at the applicable local hourly feeder rate for both team drivers
@@ -5150,7 +4989,6 @@ delay will start at the point of uncoupling and finish when re-coupling is compl
 a facility, a team will commence being paid upon entering the facility
 and finish upon exiting. If uncoupling is not necessary, teams will be
 paid a set fuel/wash allowance of forty (40) minutes.
-
 Re-route:
 A re-route occurs when a sleeper team is taken off their scheduled
 path due to weather, road closure, accident, etc. When a team is
@@ -5178,7 +5016,6 @@ their workweek, the following shall apply:
 1. Mileage drivers who work on their days off shall be paid the
 applicable feeder premium rate of pay in their Supplemental
 Agreement.
-
 2. Mileage drivers scheduled for four (4) runs at ten (10) hours a
 day—When the drivers work on the fifth (5th) punch, such drivers shall be paid the applicable premium rate of pay in their Supplemental Agreement for the sixth (6th) day of work.
 3. Mileage drivers scheduled for four (4) runs at ten (10) hours a
@@ -5204,7 +5041,6 @@ The cost of fees for bridges, turnpikes, expressways and weigh stations shall be
 Each driver will be issued two (2) sheets, two (2) pillow cases, and
 one (1) blanket each year, provided however, that if a driver requests a replacement set of sheets, pillow cases, and blankets because of the material being worn out prior to one (1) year, such request will not be unreasonably denied by UPS. Laundry service
 shall be paid by the drivers.
-
 Planned mileage runs must be bid with designated work days and
 days off (i.e. four-day runs and five-day runs).
 Mileage drivers shall be paid the applicable mileage rate of pay for
@@ -5229,7 +5065,6 @@ PACKAGE HANDLING
 The parties agree that the health and safety of the employees are of
 the utmost importance. The Employer agrees that UPS management will not insist that any unsafe action be undertaken and the
 Union agrees to encourage its members to cooperate in effectuating
-
 the handling, pick-up and delivery of parcels without exposing
 themselves to safety hazards.
 Section 1. On Area Package Handling
@@ -5255,7 +5090,6 @@ a helper is already on the package car in accordance with the terms
 of the Supplement, Rider or Addendum.
 No employee will be required to solicit or accept customer assistance if it is the employee’s good faith belief that the customer is
 not qualified to help or that such assistance would be a safety hazard to themselves or the customer.
-
 All new and existing employees who handle packages shall be provided with periodic training in the recognition and proper handling
 of over 70 pound packages.
 Items 1 and 2 above will also apply to automotive mechanics when
@@ -5283,7 +5117,6 @@ pound packages will be placed onto the belt, box line or slide systems used for 
 in accordance with safe packages handling procedures.
 Where over 70 pound packages are moved by belt, box line or slide
 system, such packages will be handled by two (2) bargaining unit
-
 employees and/or the use of appropriate lifting/handling devices
 when requested in good faith by the employee.
 No over 70 pound package shall be loaded below the flaps of a drop
@@ -5311,7 +5144,6 @@ This Agreement shall be in full force and effect from August 1,
 year thereafter unless written notice of desire to cancel or terminate
 the Agreement is served by either party upon the other at least sixty
 (60) days prior to the date of expiration.
-
 Section 2.
 Where no such cancellation or termination notice is served and the
 parties desire to continue said Agreement but also desire to negotiate
