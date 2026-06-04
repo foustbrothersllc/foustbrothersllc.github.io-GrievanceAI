@@ -1,3 +1,5 @@
+export const runtime = 'nodejs';
+
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 
@@ -5,6 +7,52 @@ const CONTRACT_PATHS = {
   master: join(process.cwd(), 'public', 'master-agreement.txt'),
   local: join(process.cwd(), 'public', 'local-agreement.txt'),
 };
+
+// ============================================================
+// SPELLCHECK TOGGLE — set to false to disable instantly
+// ============================================================
+const SPELLCHECK_ENABLED = true;
+
+async function spellcheckInput(text) {
+  if (!SPELLCHECK_ENABLED) return text;
+  try {
+    const key = process.env.GROQ_API_KEY;
+    if (!key) return text;
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [{
+          role: 'user',
+          content: `Fix spelling and grammar in the following text. Rules:
+- Correct spelling and grammar errors only
+- Never change numbers, dates, times, or mileage figures
+- Never change union/job terminology: feeder, RPCD, steward, DIAD, telematics, seniority, grievance, preload, combo, sleeper, tractor-trailer, layover, dispatch, hub, sorter, loader, unloader, bid, bump, roll
+- Never add or remove any facts or details
+- Never change the meaning or tone
+- If the text is already correct, return it unchanged
+- Return ONLY the corrected text with no explanation, no quotes, no preamble
+
+Text to fix: ${text}`
+        }],
+        max_tokens: 500,
+        temperature: 0,
+      })
+    });
+    const data = await response.json();
+    const corrected = data.choices?.[0]?.message?.content?.trim();
+    if (corrected && corrected.length > 0) {
+      console.log('[spellcheck] Original:', text);
+      console.log('[spellcheck] Corrected:', corrected);
+      return corrected;
+    }
+    return text;
+  } catch (err) {
+    console.error('[spellcheck] Failed, using original:', err.message);
+    return text;
+  }
+}
 
 // Article location map - which contract each article lives in
 const ARTICLE_LOCATIONS = {
@@ -709,10 +757,13 @@ export async function POST(request) {
       return Response.json({ error: 'Invalid request body' }, { status: 400 });
     }
 
-    const { classification, question } = body;
-    if (!question) {
+    const { classification, question: rawQuestion } = body;
+    if (!rawQuestion) {
       return Response.json({ error: 'Missing question' }, { status: 400 });
     }
+
+    // Spellcheck the input before anything else
+    const question = await spellcheckInput(rawQuestion);
 
     // Read both contracts from local filesystem (contracts/ folder in repo root)
     let masterText = '';
