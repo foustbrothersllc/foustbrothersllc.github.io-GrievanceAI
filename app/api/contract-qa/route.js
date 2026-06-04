@@ -836,7 +836,7 @@ ${contractText}
 
 RULES:
 1. Answer as of TODAY's date — never describe raise schedules or timelines as if it's the beginning of the contract.
-2. If asked about raises or pay: lead with exactly what they have NOW and precisely when/what the next increase is, including the number of days away.
+2. If asked about raises or pay: use the NEXT UPCOMING RAISE and days countdown from the TODAY'S DATE context above. Lead with exactly what they earn NOW, then state precisely when the next raise hits and how many days away it is. Always include the exact dollar amount of the next raise.
 3. For pay rates: use ONLY the VERIFIED TOP RATE SCHEDULE above — never calculate rates from the contract text tables.
 4. Cite the Article and Section (National Master or Atlantic Area Supplement) by name only — e.g. "Article 51, Section 1, Atlantic Area Supplemental Agreement." Do NOT include REF codes, anchor tags, or line numbers in your response.
 5. Quote key contract language only when it genuinely adds clarity — keep quotes short.
