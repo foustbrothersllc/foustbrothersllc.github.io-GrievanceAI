@@ -549,8 +549,14 @@ function getSleeperMileageContext(question) {
     'solo exception','partner incapacitated','split rate','mileage rate split',
     'sleeper rate','two man rate','team mileage','team pay','sleeper team pay',
     'how does sleeper pay work','how is sleeper pay calculated','mileage rate',
+    'per mile','per-mile','what do i make per mile','how much per mile',
+    'what is my rate','what am i paid','what do sleeper','sleeper driver pay',
+    'paid per mile','mile rate','cents per mile','dollar per mile',
   ];
-  if (!keywords.some(k => q.includes(k))) return '';
+  // Also fire if question mentions sleeper AND any pay/rate/mile concept
+  const mentionsSleeper = q.includes('sleeper') || q.includes('two man') || q.includes('two-man') || q.includes('team driver');
+  const mentionsRate = q.includes('rate') || q.includes('pay') || q.includes('paid') || q.includes('mile') || q.includes('wage') || q.includes('make') || q.includes('earn');
+  if (!keywords.some(k => q.includes(k)) && !(mentionsSleeper && mentionsRate)) return '';
   const s = SLEEPER_MILEAGE_FACTS;
   return `
 GUARDRAIL ACTIVE — SLEEPER TEAM MILEAGE PAY [${s.anchor}]
@@ -627,11 +633,29 @@ const GUARANTEE_FACTS = {
   },
 };
 
-function getGuaranteeContext(classification) {
-  if (!classification) return '';
-  const key = classification.toLowerCase();
-  const match = Object.keys(GUARANTEE_FACTS).find(k => key.includes(k));
+function getGuaranteeContext(classification, question) {
+  const q = (question || '').toLowerCase();
+  const cl = (classification || '').toLowerCase();
+
+  const GUARANTEE_PHRASES = {
+    'feeder driver':       ['feeder driver','feeder drivers','i am a feeder','i\'m a feeder','as a feeder'],
+    'package car driver':  ['package car driver','package car drivers','i am a package','package driver','rpcd'],
+    'mechanic':            ['mechanic','journeyman','automotive mechanic','fleet mechanic'],
+    'combo':               ['combo worker','combo driver','22.4'],
+    'part-time air driver':['part time air driver','part-time air driver','pt air driver'],
+    'full-time air driver':['full time air driver','full-time air driver','ft air driver'],
+    'part-time':           ['part time','part-time','hub worker','preloader','sorter','loader','unloader'],
+  };
+
+  let match = null;
+  if (cl) match = Object.keys(GUARANTEE_FACTS).find(k => cl.includes(k));
+  if (!match) {
+    for (const [key, phrases] of Object.entries(GUARANTEE_PHRASES)) {
+      if (phrases.some(p => q.includes(p))) { match = key; break; }
+    }
+  }
   if (!match) return '';
+
   const g = GUARANTEE_FACTS[match];
   const rules = g.rules.length ? '\n' + g.rules.map(r => `  - ${r}`).join('\n') : '';
   return `\nVERIFIED DAILY GUARANTEE FOR ${g.label.toUpperCase()} (use these exact facts — do not guess or estimate):\n  Guarantee: ${g.guarantee}${rules}\n`;
@@ -723,11 +747,64 @@ const TOP_RATE_SCHEDULES = {
   },
 };
 
-function getTopRateContext(classification) {
-  if (!classification) return '';
-  const key = classification.toLowerCase();
-  const match = Object.keys(TOP_RATE_SCHEDULES).find(k => key.includes(k));
-  if (!match) return '';
+function getTopRateContext(classification, question) {
+  const q = (question || '').toLowerCase();
+  const cl = (classification || '').toLowerCase();
+
+  // Detect from classification field first, then fall back to question text
+  const CLASSIFICATION_PHRASES = {
+    'feeder driver':       ['feeder driver','feeder drivers','i am a feeder','i\'m a feeder','as a feeder','feeder rate','feeder top rate'],
+    'sleeper team':        ['sleeper team','sleeper driver','two man team','two-man team','sleeper pay','sleeper rate','sleeper mileage'],
+    'package car driver':  ['package car driver','package car drivers','i am a package car','i\'m a package','package driver','package car rate','rpcd'],
+    'mechanic':            ['mechanic','mechanics','journeyman','automotive mechanic','fleet mechanic','mechanic rate','mechanic pay'],
+    'combo':               ['combo worker','combo driver','22.4','inside outside','combo rate','combo pay'],
+    'part-time air driver':['part time air driver','part-time air driver','air driver rate','pt air driver'],
+    'full-time air driver':['full time air driver','full-time air driver','ft air driver','air driver pay'],
+    'part-time':           ['part time','part-time','hub worker','preloader','sorter','loader','unloader','pt rate','part time rate','hub pay','part time pay','part-time pay','hub rate'],
+  };
+
+  let match = null;
+
+  // Check classification field first
+  if (cl) {
+    match = Object.keys(TOP_RATE_SCHEDULES).find(k => cl.includes(k));
+  }
+
+  // Fall back to scanning question text
+  if (!match) {
+    for (const [key, phrases] of Object.entries(CLASSIFICATION_PHRASES)) {
+      if (phrases.some(p => q.includes(p))) {
+        match = key;
+        break;
+      }
+    }
+  }
+
+  // Also fire on generic pay/rate questions — inject all relevant rates
+  const isGenericRateQuestion = !match && (
+    q.includes('top rate') || q.includes('what do i make') || q.includes('how much do i make') ||
+    q.includes('what is my pay') || q.includes('what am i paid') || q.includes('what is my rate') ||
+    q.includes('my wage') || q.includes('my pay rate') || q.includes('hourly rate') ||
+    (q.includes('raise') && (q.includes('when') || q.includes('how much') || q.includes('next')))
+  );
+
+  if (!match && !isGenericRateQuestion) return '';
+
+  if (isGenericRateQuestion && !match) {
+    // Return a summary of all full-time rates
+    return `\nVERIFIED CURRENT TOP RATES (Effective August 1, 2025) — use ONLY these figures:
+  - Feeder Driver / Package Car Driver (standard): $45.74/hr
+  - Feeder Driver (tractor-trailer singles/doubles): $45.84/hr
+  - Double Bottoms premium: +$0.45/hr over tractor-trailer rate
+  - Double 40's and Trains premium: +$0.80/hr over tractor-trailer rate
+  - Mechanic (Journeyman): $46.83/hr
+  - Full-Time Combo Worker (22.4): $37.38/hr
+  - Full-Time Air Driver: $37.38/hr
+  - Part-Time (hub/preload/sort): $22.50/hr
+  - Part-Time Air Driver: $35.14/hr
+  Source: Article 53, Section 1, Atlantic Area Supplemental Agreement\n`;
+  }
+
   const schedule = TOP_RATE_SCHEDULES[match];
   const lines = schedule.rates.map(r => `  - ${r.period}: ${r.rate}`).join('\n');
   const notes = schedule.notes ? `\n  Note: ${schedule.notes}` : '';
@@ -736,8 +813,8 @@ function getTopRateContext(classification) {
 }
 
 function buildQAPrompt(question, classification, contractText, todayContext, indexCitationBlock) {
-  const topRateContext = getTopRateContext(classification);
-  const guaranteeContext = getGuaranteeContext(classification);
+  const topRateContext = getTopRateContext(classification, question);
+  const guaranteeContext = getGuaranteeContext(classification, question);
   const holidayContext = getHolidayContext(question);
   const seniorityTiebreakerContext = getSeniorityTiebreakerContext(question);
   const supervisorsWorkingContext = getSupervisorsWorkingContext(question);
