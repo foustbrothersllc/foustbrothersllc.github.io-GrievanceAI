@@ -2,8 +2,8 @@ import { readFile } from 'fs/promises';
 import { join } from 'path';
 
 const CONTRACT_PATHS = {
-  master: join(process.cwd(), 'public', 'contracts', 'master-agreement.txt'),
-  local: join(process.cwd(), 'public', 'contracts', 'local-agreement.txt'),
+  master: join(process.cwd(), 'public', 'master-agreement.txt'),
+  local: join(process.cwd(), 'public', 'local-agreement.txt'),
 };
 
 const ARTICLE_LOCATIONS = {
