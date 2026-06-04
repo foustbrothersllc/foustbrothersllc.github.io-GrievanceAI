@@ -61,8 +61,12 @@ export default function ContractQA() {
         body: JSON.stringify({ text: question.trim() })
       });
       const data = await response.json();
-      if (data.corrected) setQuestion(data.corrected);
+      // Always update if we got a non-empty corrected string back
+      if (data.corrected && data.corrected.trim().length > 0) {
+        setQuestion(data.corrected);
+      }
     } catch (err) {
+      console.error('Spellcheck failed:', err);
       // Fail silently — spellcheck is optional
     } finally {
       setSpellchecking(false);
