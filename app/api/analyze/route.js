@@ -270,13 +270,37 @@ REQUIRED OUTPUT: Include anchor [${b.anchor}-L4450] in your ARTICLES field. Outp
 // ============================================================
 // GUARDRAIL: SLEEPER TEAM MILEAGE PAY
 // ============================================================
+// Hard-coded top rate schedules — source: Article 53 Atlantic Area Supplement & Article 43 National Master
+const TOP_RATE_SCHEDULES = {
+  'feeder driver': {
+    label: 'Feeder Driver',
+    source: 'Article 53, Section 1, Atlantic Area Supplemental Agreement',
+    current: '$45.74/hr (standard) | $45.84/hr (tractor-trailer singles/doubles)',
+    next: '$46.74/hr (standard) | $46.84/hr (tractor-trailer) — effective August 1, 2026',
+    future: '$48.99/hr (standard) | $49.09/hr (tractor-trailer) — effective August 1, 2027',
+    premium: 'Double Bottoms: +$0.45/hr over tractor-trailer rate. Double 40\'s and Trains: +$0.80/hr over tractor-trailer rate. (Article 19, Section 8, Atlantic Area Supplement)',
+  },
+  'package car driver': {
+    label: 'Package Car Driver',
+    source: 'Article 53, Section 1, Atlantic Area Supplemental Agreement',
+    current: '$45.74/hr',
+    next: '$46.74/hr — effective August 1, 2026',
+    future: '$48.99/hr — effective August 1, 2027',
+    premium: null,
+  },
+};
+
 const SLEEPER_MILEAGE_FACTS = {
-  source: 'Article 43, National Master Freight Agreement — Two-Man Sleeper Operation / Schedule B Rate Appendix',
+  source: 'Article 43, Section 3, National Master Freight Agreement',
   anchor: 'REF:NMFA-OTR-RATE',
   interpretation_rule: 'Applies ONLY to Two-Man Sleeper Team operations. Do NOT conflate with local hourly cartage rates or single-driver OTR rules.',
-  split_formula: 'MANDATORY 50/50 SPLIT: [Total Truck Rate for the dispatch] ÷ 2 = Per-Driver Share. Each driver receives exactly half the total truck payout, regardless of who drove more miles.',
-  earning_while_resting: 'EARNING WHILE RESTING: Both drivers are paid their full 50% split for EVERY mile the tractor logs during the dispatch — including miles logged while one driver is in the berth. Berth time is compensated time.',
-  solo_exception: 'SINGLE-DRIVER EXCEPTION: If a partner becomes incapacitated mid-run, the remaining driver switches to the full single-driver OTR rate for all miles driven solo from that point forward.',
+  current_rates: 'CURRENT (Aug 1, 2025): Single Trailer: $1.0492/mi | Double Trailers: $1.0713/mi | Triple/Double 40s: $1.0937/mi',
+  rates_2026: 'Aug 1, 2026: Single: $1.0721/mi | Doubles: $1.0947/mi | Triple/Dbl 40s: $1.1176/mi',
+  rates_2027: 'Aug 1, 2027: Single: $1.1237/mi | Doubles: $1.1474/mi | Triple/Dbl 40s: $1.1714/mi',
+  team_premium: '+$0.02 per mile premium added to base rate for two-person sleeper team operations.',
+  split_formula: 'MANDATORY 50/50 SPLIT: (Base Rate + $0.02 team premium) × total miles = Total Truck Payout ÷ 2 = Per-Driver Share. Each driver receives exactly half regardless of who drove more miles.',
+  earning_while_resting: 'EARNING WHILE RESTING: Both drivers are paid their full 50% split for EVERY mile the tractor logs — including miles while one driver is in the berth. Berth time is compensated time.',
+  solo_exception: 'SINGLE-DRIVER EXCEPTION: If a partner becomes incapacitated mid-run, the remaining driver switches to the full single-driver OTR rate for all solo miles from that point forward.',
 };
 
 function getSleeperMileageContext(question) {
@@ -287,7 +311,7 @@ function getSleeperMileageContext(question) {
     'earning while resting','berth pay','berth miles','paid in the bunk',
     'solo exception','partner incapacitated','split rate','mileage rate split',
     'sleeper rate','two man rate','team mileage','team pay','sleeper team pay',
-    'how does sleeper pay work','how is sleeper pay calculated',
+    'how does sleeper pay work','how is sleeper pay calculated','mileage rate',
   ];
   if (!keywords.some(k => q.includes(k))) return '';
   const s = SLEEPER_MILEAGE_FACTS;
@@ -295,10 +319,13 @@ function getSleeperMileageContext(question) {
 GUARDRAIL ACTIVE — SLEEPER TEAM MILEAGE PAY [${s.anchor}]
 SOURCE: ${s.source}
 INTERPRETATION RULE: ${s.interpretation_rule}
-SPLIT FORMULA: ${s.split_formula}
+VERIFIED RATES: ${s.current_rates}
+FUTURE RATES: ${s.rates_2026} | ${s.rates_2027}
+TEAM PREMIUM: ${s.team_premium}
+SPLIT FORMULA: ${s.split_formula} — display math explicitly for the trailer type involved.
 EARNING WHILE RESTING: ${s.earning_while_resting}
 SINGLE-DRIVER EXCEPTION: ${s.solo_exception}
-REQUIRED OUTPUT: Display split math explicitly as [Total Truck Rate] ÷ 2 = [Per-Driver Split]. Include anchor [${s.anchor}-LXXXX] in your ARTICLES field (replace XXXX with line number from contract text).
+REQUIRED OUTPUT: Include anchor [${s.anchor}] in your ARTICLES field. Show the rate, the premium, and the split math.
 `;
 }
 
