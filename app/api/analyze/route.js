@@ -38,6 +38,11 @@ const CONTRACT_SEARCH_INDEX = [
   { topics: ['sick leave','personal day','personal holiday','floating holiday','sick day','personal time'], contract: 'local', article: '60', section: null, lineRef: 'L-6800', anchor: 'REF:ATLA-A60-SCK' },
   { topics: ['holiday pay','holiday','paid holiday','holiday qualifier','working on holiday','christmas','thanksgiving','labor day','memorial day','new years','fourth of july','independence day'], contract: 'local', article: '62', section: null, lineRef: 'L-7100', anchor: 'REF:ATLA-A62-HOL' },
   { topics: ['doubles run','doubles letter','sick leave doubles','doubles sick'], contract: 'local', article: '69', section: null, lineRef: 'L-7900', anchor: 'REF:ATLA-A69-DBL' },
+  // Bump and Roll / Seniority Displacement
+  { topics: ['bump and roll','bumping','bump a junior','rolling a junior','roll a junior','losing a bid','lost my bid','bid abolished','bid eliminated','reduction of force','layoff displacement','seniority displacement','displace a junior','exercising seniority'], contract: 'local', article: '47', section: null, lineRef: 'L-4450', anchor: 'REF:ATLA-A47-ROLL' },
+  { topics: ['bump and roll','bumping','reduction of force','layoff displacement','seniority displacement'], contract: 'master', article: '5', section: null, lineRef: 'L-0850', anchor: 'REF:NMFA-A05-SEN' },
+  // Sleeper Mileage / Two-Man Rate
+  { topics: ['sleeper pay','sleeper mileage','sleeper mileage rate','two man split','two-man split','mileage rate','sleeper rate','schedule b','otr rate','over the road rate','total truck rate','earning while resting','berth pay'], contract: 'master', article: '43', section: null, lineRef: 'L-NMFA-OTR', anchor: 'REF:NMFA-OTR-RATE' },
 ];
 
 // Keyword to article mapping for smart routing
@@ -76,6 +81,10 @@ const KEYWORD_ARTICLE_MAP = [
   { keywords: ['probationary period','new hire','30 working days','90 days','seniority acquisition'], articles: ['local:46'] },
   { keywords: ['local seniority','route bid','run bid','bid posting'], articles: ['local:47'] },
   { keywords: ['overtime','workweek guarantee','40 hour week'], articles: ['local:52'] },
+  // Bump and Roll guardrail
+  { keywords: ['bump and roll','bumping','bump a junior','rolling a junior','roll a junior','losing a bid','lost my bid','bid abolished','bid eliminated','reduction of force','layoff displacement','seniority displacement','displace a junior','exercising seniority','chain reaction bump','bump chain'], articles: ['local:47','master:5'] },
+  // Sleeper Mileage guardrail
+  { keywords: ['sleeper pay','sleeper mileage rate','two man split','two-man split','total truck rate','schedule b','otr rate','over the road rate','earning while resting','berth pay','solo exception','partner incapacitated','split rate','mileage rate split'], articles: ['master:43'] },
 ];
 
 // ============================================================
@@ -214,6 +223,80 @@ function extractRelevantSections(masterText, localText, question, classification
   return sections.join('\n\n');
 }
 
+// ============================================================
+// GUARDRAIL: BUMP AND ROLL / SENIORITY DISPLACEMENT
+// ============================================================
+const BUMP_AND_ROLL_FACTS = {
+  source_master: 'Article 5, National Master Freight Agreement',
+  source_local: 'Article 47, Atlantic Area Supplemental Agreement',
+  anchor: 'REF:ATLA-A47-ROLL',
+  legal_term: 'Reduction of Force / Abolishment of Bid / Exercise of Seniority (operational slang: "Bump and Roll")',
+  definition: 'When a bid position is cut or abolished, the displaced senior employee has the contractual right to exercise their seniority to displace ("bump") the most junior employee in any classification they are qualified to perform. The junior employee then has the same right to bump the next most junior employee — this cascade is the "roll".',
+  absolute_right: 'A senior employee whose bid is abolished CANNOT be forced to accept a lesser assignment without first being offered the opportunity to displace a junior employee. This right is absolute and management cannot bypass it.',
+  time_window: 'The employee typically has 48 hours from the time of written notice of abolishment to exercise their bump rights. Failure to act within the window may be treated as a voluntary acceptance of the junior position.',
+  chain_reaction: 'Each bumped driver is immediately entitled to bump the next most junior driver in a classification they are qualified for — the chain continues until the most junior overall employee absorbs the cut. Management must allow the full chain to complete before finalizing the new work assignments.',
+  qualification_rule: 'The bumping driver must be qualified for the position they are claiming. Management cannot deny the bump solely on the grounds of preference or convenience.',
+};
+
+function getBumpAndRollContext(question) {
+  const q = question.toLowerCase();
+  const keywords = [
+    'bump and roll','bumping','bump a junior','rolling a junior','roll a junior',
+    'losing a bid','lost my bid','bid abolished','bid eliminated','bid cut',
+    'reduction of force','layoff displacement','seniority displacement',
+    'displace a junior','exercising seniority','chain reaction bump','bump chain',
+    'bump rights','who do i bump','can i bump','bump the junior','roll the junior',
+    'they cut my bid','my run got cut','my job got cut','position abolished',
+  ];
+  if (!keywords.some(k => q.includes(k))) return '';
+  const b = BUMP_AND_ROLL_FACTS;
+  return `
+GUARDRAIL ACTIVE — BUMP AND ROLL / SENIORITY DISPLACEMENT [${b.anchor}, Line Ref: L-4450]
+SOURCE: ${b.source_local} (controlling) + ${b.source_master} (general seniority framework)
+LEGAL TERM: "${b.legal_term}"
+ABSOLUTE RIGHT: ${b.absolute_right}
+TIME WINDOW: ${b.time_window}
+CHAIN-REACTION RULE: ${b.chain_reaction}
+QUALIFICATION RULE: ${b.qualification_rule}
+REQUIRED OUTPUT: Include anchor [${b.anchor}-L4450] in your ARTICLES field. Output the enforced structure: legal term → absolute right → time window → chain-reaction rule → qualification rule.
+`;
+}
+
+// ============================================================
+// GUARDRAIL: SLEEPER TEAM MILEAGE PAY
+// ============================================================
+const SLEEPER_MILEAGE_FACTS = {
+  source: 'Article 43, National Master Freight Agreement — Two-Man Sleeper Operation / Schedule B Rate Appendix',
+  anchor: 'REF:NMFA-OTR-RATE',
+  interpretation_rule: 'Applies ONLY to Two-Man Sleeper Team operations. Do NOT conflate with local hourly cartage rates or single-driver OTR rules.',
+  split_formula: 'MANDATORY 50/50 SPLIT: [Total Truck Rate for the dispatch] ÷ 2 = Per-Driver Share. Each driver receives exactly half the total truck payout, regardless of who drove more miles.',
+  earning_while_resting: 'EARNING WHILE RESTING: Both drivers are paid their full 50% split for EVERY mile the tractor logs during the dispatch — including miles logged while one driver is in the berth. Berth time is compensated time.',
+  solo_exception: 'SINGLE-DRIVER EXCEPTION: If a partner becomes incapacitated mid-run, the remaining driver switches to the full single-driver OTR rate for all miles driven solo from that point forward.',
+};
+
+function getSleeperMileageContext(question) {
+  const q = question.toLowerCase();
+  const keywords = [
+    'sleeper pay','sleeper mileage','sleeper mileage rate','two man split','two-man split',
+    'total truck rate','schedule b','otr rate','over the road rate',
+    'earning while resting','berth pay','berth miles','paid in the bunk',
+    'solo exception','partner incapacitated','split rate','mileage rate split',
+    'sleeper rate','two man rate','team mileage','team pay','sleeper team pay',
+    'how does sleeper pay work','how is sleeper pay calculated',
+  ];
+  if (!keywords.some(k => q.includes(k))) return '';
+  const s = SLEEPER_MILEAGE_FACTS;
+  return `
+GUARDRAIL ACTIVE — SLEEPER TEAM MILEAGE PAY [${s.anchor}]
+SOURCE: ${s.source}
+INTERPRETATION RULE: ${s.interpretation_rule}
+SPLIT FORMULA: ${s.split_formula}
+EARNING WHILE RESTING: ${s.earning_while_resting}
+SINGLE-DRIVER EXCEPTION: ${s.solo_exception}
+REQUIRED OUTPUT: Display split math explicitly as [Total Truck Rate] ÷ 2 = [Per-Driver Split]. Include anchor [${s.anchor}-LXXXX] in your ARTICLES field (replace XXXX with line number from contract text).
+`;
+}
+
 const buildPrompt = (question, classification, contractText, indexCitationBlock) => `You are a strict, highly analytical Labor Relations Expert and Teamster Shop Steward. Your sole purpose is to protect the worker by identifying contract and safety violations. You do not compromise, you do not make assumptions for the employer, and you do not let minor details slide.
 
 The Atlantic Area Supplemental Agreement ALWAYS takes precedence over the National Master Agreement. Check Supplement first. Both can apply simultaneously - cite BOTH when relevant.
@@ -263,7 +346,11 @@ CRITICAL ENFORCEMENT RULES:
 - FEEDER DRIVERS over 14 hours on-duty: Flag safety article AND FMCSA 14-Hour Rule.
 - ARTICLE 43 MILEAGE RULE: For Sleeper Team runs, if ANY run is under 550 miles, immediately audit Article 43 for premium pay, mileage rate violations, and layover pay.
 - ANCHOR CODE CITATION RULE: When your analysis references an article that has an anchor code in the search index, include that anchor code and line reference in your ARTICLES field so the member can locate the exact provision.
+- BUMP AND ROLL GUARDRAIL: If the question involves "bump and roll", "bumping", "bid abolished", "reduction of force", or "seniority displacement" — you MUST output: (1) the legal term, (2) the employee's absolute right, (3) the 48-hour time window, (4) the chain-reaction rule, (5) the qualification rule, and (6) the anchor [REF:ATLA-A47-ROLL-L4450].
+- SLEEPER MILEAGE GUARDRAIL: If the question involves sleeper mileage, two-man split, total truck rate, or earning while resting — you MUST output: (1) current Total Truck Rate, (2) the 50/50 split math displayed explicitly, (3) the Earning While Resting rule, (4) the Single-Driver Exception, and (5) the anchor [REF:NMFA-OTR-RATE-LXXXX].
 
+ACTIVE GUARDRAIL CONTEXTS (injected for this request):
+${getBumpAndRollContext(question)}${getSleeperMileageContext(question)}
 WORKER DETAILS:
 Classification: ${classification}
 Question/Complaint: "${question}"
@@ -280,6 +367,8 @@ Treat EVERY clause, action verb, or noun as a separate potential legal claim.
 - Yelling, cursing, threatening -> Dignity and Respect (Article 37)
 - Sleeper run under 550 miles -> Mileage/Premium Pay (Article 43)
 - No meal period by 6th hour -> Meal Period Violation (Article 51) [REF:ATLA-A51-VIOL]
+- Bid abolished / position cut -> Bump and Roll / Seniority Displacement (Article 47 + Article 5) [REF:ATLA-A47-ROLL-L4450]
+- Sleeper mileage pay dispute -> Two-Man Split / Earning While Resting (Article 43) [REF:NMFA-OTR-RATE]
 NEVER combine distinct issues. Output separate numbered blocks for each.
 
 STEP 2 - LOGIC OVER TEXT:
