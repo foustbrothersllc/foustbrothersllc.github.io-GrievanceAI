@@ -326,76 +326,6 @@ function extractRelevantSections(masterText, localText, question, classification
   return sections.join('\n\n');
 }
 
-// Hard-coded top rate schedules by classification
-const TOP_RATE_SCHEDULES = {
-  'feeder driver': {
-    label: 'Feeder Driver',
-    rates: [
-      { period: 'August 1, 2023 – July 31, 2024', rate: '$43.24/hr' },
-      { period: 'August 1, 2024 – July 31, 2025', rate: '$43.99/hr' },
-      { period: 'August 1, 2025 – July 31, 2026', rate: '$45.74/hr' },
-      { period: 'August 1, 2026 – July 31, 2027', rate: '$46.74/hr' },
-      { period: 'August 1, 2027 – July 31, 2028', rate: '$48.99/hr' },
-    ]
-  },
-  'package car driver': {
-    label: 'Package Car Driver',
-    rates: [
-      { period: 'August 1, 2023 – July 31, 2024', rate: '$43.24/hr' },
-      { period: 'August 1, 2024 – July 31, 2025', rate: '$43.99/hr' },
-      { period: 'August 1, 2025 – July 31, 2026', rate: '$45.74/hr' },
-      { period: 'August 1, 2026 – July 31, 2027', rate: '$46.74/hr' },
-      { period: 'August 1, 2027 – July 31, 2028', rate: '$48.99/hr' },
-    ]
-  },
-  'part-time': {
-    label: 'Part-Time Employee (Preloader, Sorter, Loader, Unloader, Clerk)',
-    rates: [
-      { period: 'August 1, 2025 – July 31, 2026', rate: '$22.50/hr (top rate, hired on/after July 2, 1982)' },
-      { period: 'August 1, 2026 – July 31, 2027', rate: '$23.50/hr' },
-      { period: 'August 1, 2027 – July 31, 2028', rate: '$25.75/hr' },
-    ],
-    notes: 'Legacy employees hired BEFORE July 2, 1982 follow the Feeder/Package top rate schedule ($45.74 current, $46.74 in 2026, $48.99 in 2027).'
-  },
-  'combo': {
-    label: 'Full-Time Combination Employee (Article 22.4)',
-    rates: [
-      { period: 'August 1, 2025 – July 31, 2026', rate: '$37.38/hr' },
-      { period: 'August 1, 2026 – July 31, 2027', rate: '$38.38/hr' },
-      { period: 'August 1, 2027 – July 31, 2028', rate: '$40.63/hr' },
-    ]
-  },
-  'mechanic': {
-    label: 'Mechanic (Journeyman)',
-    rates: [
-      { period: 'August 1, 2023 – July 31, 2024', rate: '$45.33/hr' },
-      { period: 'August 1, 2024 – July 31, 2025', rate: '$46.08/hr' },
-      { period: 'August 1, 2025 – July 31, 2026', rate: '$46.83/hr' },
-      { period: 'August 1, 2026 – July 31, 2027', rate: '$47.83/hr' },
-      { period: 'August 1, 2027 – July 31, 2028', rate: '$50.08/hr' },
-    ],
-    notes: 'Sub-classifications: Automotive Helper = 70% of Journeyman rate (currently $32.78/hr, $33.48 in 2026). Maintenance Handyman = 55% of Journeyman rate (currently $25.76/hr, $26.31 in 2026).'
-  },
-  'part-time air driver': {
-    label: 'Part-Time Air Driver',
-    rates: [
-      { period: 'August 1, 2025 – July 31, 2026', rate: '$35.14/hr (top/out-of-progression rate)' },
-      { period: 'August 1, 2026 – July 31, 2027', rate: '$36.14/hr' },
-      { period: 'August 1, 2027 – July 31, 2028', rate: '$38.39/hr' },
-    ],
-    notes: 'New hire progression: Start $21.00 → 12mo $21.50 → 24mo $22.00 → 36mo $23.00 → 48mo top rate. Daily guarantee: 3.5 hours.'
-  },
-  'full-time air driver': {
-    label: 'Full-Time Air Driver',
-    rates: [
-      { period: 'August 1, 2025 – July 31, 2026', rate: '$37.38/hr (top/out-of-progression rate)' },
-      { period: 'August 1, 2026 – July 31, 2027', rate: '$38.38/hr' },
-      { period: 'August 1, 2027 – July 31, 2028', rate: '$40.63/hr' },
-    ],
-    notes: 'New hire progression: Start $23.00 → 12mo $24.00 → 24mo $25.00 → 36mo $29.00 → 48mo top rate. 8-hour daily / 40-hour weekly guarantee.'
-  },
-};
-
 const HOLIDAY_FACTS = {
   source: 'Article 54, Atlantic Area Supplemental Agreement',
   holidays: [
@@ -596,13 +526,18 @@ DO NOT answer bump-and-roll questions using general seniority language. Use ONLY
 // GUARDRAIL: SLEEPER TEAM MILEAGE PAY
 // ============================================================
 const SLEEPER_MILEAGE_FACTS = {
-  source: 'Article 43, National Master Freight Agreement — Two-Man Sleeper Operation / Schedule B Rate Appendix',
+  source: 'Article 43, Section 3, National Master Freight Agreement',
   anchor: 'REF:NMFA-OTR-RATE',
   interpretation_rule: 'This guardrail applies ONLY to Two-Man Sleeper Team operations. Do NOT conflate with local hourly cartage rates or single-driver OTR rules.',
-  split_formula: 'MANDATORY 50/50 SPLIT: [Total Truck Rate for the dispatch] ÷ 2 = Per-Driver Share. Each driver receives exactly half the total truck payout for the run, regardless of who drove more miles.',
-  earning_while_resting: 'EARNING WHILE RESTING RULE: Both drivers are paid their full individual 50% split share for EVERY mile the tractor logs during the dispatch — including all miles logged while one driver is in the berth sleeping. Time in the berth is compensated time.',
-  solo_exception: 'SINGLE-DRIVER EXCEPTION: If a partner becomes incapacitated mid-run (illness, injury, disqualification), the remaining solo driver switches to the full single-driver OTR hourly or mileage rate for all miles driven alone from that point forward. The solo driver does NOT continue on the split rate.',
-  steward_tip: 'To verify a mileage pay dispute: (1) Pull the dispatch sheet showing total miles. (2) Pull both drivers\' pay stubs. (3) Verify the per-driver amount equals exactly half the total truck payout. (4) If a solo exception was invoked, verify the solo rate was applied from the correct mile marker.',
+  current_rates_label: 'CURRENT MILEAGE RATES (Effective August 1, 2025):',
+  current_rates: 'Single Trailer: $1.0492/mi | Double Trailers: $1.0713/mi | Triple/Double 40s: $1.0937/mi',
+  rates_2026: 'August 1, 2026: Single Trailer: $1.0721/mi | Double Trailers: $1.0947/mi | Triple/Double 40s: $1.1176/mi',
+  rates_2027: 'August 1, 2027: Single Trailer: $1.1237/mi | Double Trailers: $1.1474/mi | Triple/Double 40s: $1.1714/mi',
+  team_premium: 'SLEEPER TEAM PREMIUM: An additional $0.02 per mile is added to the base mileage rate for two-person sleeper team operations.',
+  split_formula: 'MANDATORY 50/50 SPLIT: (Base Rate + $0.02 team premium) × total dispatch miles = Total Truck Payout. Total Truck Payout ÷ 2 = Per-Driver Share. Each driver receives exactly half regardless of who drove more miles.',
+  earning_while_resting: 'EARNING WHILE RESTING: Both drivers are paid their full 50% split for EVERY mile the tractor logs during the dispatch — including miles logged while one driver is in the berth sleeping. Berth time is fully compensated time.',
+  solo_exception: 'SINGLE-DRIVER EXCEPTION: If a partner becomes incapacitated mid-run (illness, injury, disqualification), the remaining solo driver switches to the full single-driver OTR rate for all miles driven alone from that point forward. The solo driver does NOT continue on the split rate.',
+  steward_tip: 'To verify a mileage pay dispute: (1) Pull dispatch sheet showing total miles and trailer type. (2) Confirm the correct base rate was used (single/double/triple). (3) Verify the $0.02 team premium was included. (4) Calculate: (base + $0.02) × miles ÷ 2 = each driver\'s correct share. (5) If solo exception was invoked, verify the solo rate applied from the correct mile marker.',
 };
 
 function getSleeperMileageContext(question) {
@@ -613,26 +548,27 @@ function getSleeperMileageContext(question) {
     'earning while resting','berth pay','berth miles','paid in the bunk',
     'solo exception','partner incapacitated','split rate','mileage rate split',
     'sleeper rate','two man rate','team mileage','team pay','sleeper team pay',
-    'how does sleeper pay work','how is sleeper pay calculated',
+    'how does sleeper pay work','how is sleeper pay calculated','mileage rate',
   ];
   if (!keywords.some(k => q.includes(k))) return '';
   const s = SLEEPER_MILEAGE_FACTS;
   return `
 GUARDRAIL ACTIVE — SLEEPER TEAM MILEAGE PAY [${s.anchor}]
 SOURCE: ${s.source}
-
 INTERPRETATION RULE: ${s.interpretation_rule}
 
 ENFORCED OUTPUT STRUCTURE — you MUST include ALL of the following sections:
-1. CURRENT RATE: State the current fiscal year Total Truck Rate from the Schedule B / Rate Appendix in the contract text provided.
-2. SPLIT FORMULA: ${s.split_formula}
-   → Display the math explicitly: [Total Truck Rate] ÷ 2 = [Per-Driver Split]
-3. EARNING WHILE RESTING RULE: ${s.earning_while_resting}
-4. SINGLE-DRIVER EXCEPTION: ${s.solo_exception}
-5. REFERENCE ANCHOR: Output exactly → [${s.anchor}-LXXXX] (replace XXXX with the line number of the rate appendix found in the contract text)
-6. STEWARD EVIDENCE TIP: ${s.steward_tip}
+1. CURRENT RATES (${s.current_rates_label}): ${s.current_rates}
+2. FUTURE RATES: ${s.rates_2026} | ${s.rates_2027}
+3. TEAM PREMIUM: ${s.team_premium}
+4. SPLIT FORMULA: ${s.split_formula}
+   → Display the math explicitly for the specific trailer type asked about.
+5. EARNING WHILE RESTING: ${s.earning_while_resting}
+6. SINGLE-DRIVER EXCEPTION: ${s.solo_exception}
+7. REFERENCE ANCHOR: Output exactly → [${s.anchor}]
+8. STEWARD EVIDENCE TIP: ${s.steward_tip}
 
-DO NOT answer sleeper mileage questions using general hourly or local cartage language. Use ONLY the above facts and the extracted Article 43 / Schedule B contract text below.
+DO NOT answer sleeper mileage questions using general hourly or local cartage language. Use ONLY the above verified rates.
 `;
 }
 
@@ -701,6 +637,92 @@ function getGuaranteeContext(classification) {
   return `\nVERIFIED DAILY GUARANTEE FOR ${g.label.toUpperCase()} (use these exact facts — do not guess or estimate):\n  Guarantee: ${g.guarantee}${rules}\n`;
 }
 
+// Hard-coded top rate schedules by classification
+// Source: Article 53, Section 1, Atlantic Area Supplemental Agreement (page 242)
+//         Article 43, Section 3, National Master Agreement (page 339) for sleeper mileage
+const TOP_RATE_SCHEDULES = {
+  'feeder driver': {
+    label: 'Feeder Driver / Package Car Driver',
+    source: 'Article 53, Section 1, Atlantic Area Supplemental Agreement',
+    rates: [
+      { period: 'August 1, 2025 – July 31, 2026 (CURRENT)', rate: '$45.74/hr (standard feeder/package car) | $45.84/hr (tractor-trailer singles/doubles)' },
+      { period: 'August 1, 2026 – July 31, 2027', rate: '$46.74/hr (standard) | $46.84/hr (tractor-trailer)' },
+      { period: 'August 1, 2027 – July 31, 2028', rate: '$48.99/hr (standard) | $49.09/hr (tractor-trailer)' },
+    ],
+    notes: 'EQUIPMENT PREMIUM (Article 19, Section 8, Atlantic Area Supplement): Double Bottoms = +$0.45/hr over tractor-trailer rate. Double 40\'s and Trains = +$0.80/hr over tractor-trailer rate. These premiums stack ON TOP of the tractor-trailer rate, not the standard rate.'
+  },
+  'package car driver': {
+    label: 'Package Car Driver',
+    source: 'Article 53, Section 1, Atlantic Area Supplemental Agreement',
+    rates: [
+      { period: 'August 1, 2025 – July 31, 2026 (CURRENT)', rate: '$45.74/hr' },
+      { period: 'August 1, 2026 – July 31, 2027', rate: '$46.74/hr' },
+      { period: 'August 1, 2027 – July 31, 2028', rate: '$48.99/hr' },
+    ],
+    notes: null
+  },
+  'sleeper team': {
+    label: 'Sleeper Team (Mileage Rates)',
+    source: 'Article 43, Section 3, National Master Agreement',
+    rates: [
+      { period: 'August 1, 2025 – July 31, 2026 (CURRENT)', rate: 'Single Trailer: $1.0492/mi | Double Trailers: $1.0713/mi | Triple/Double 40s: $1.0937/mi' },
+      { period: 'August 1, 2026 – July 31, 2027', rate: 'Single Trailer: $1.0721/mi | Double Trailers: $1.0947/mi | Triple/Double 40s: $1.1176/mi' },
+      { period: 'August 1, 2027 – July 31, 2028', rate: 'Single Trailer: $1.1237/mi | Double Trailers: $1.1474/mi | Triple/Double 40s: $1.1714/mi' },
+    ],
+    notes: 'SLEEPER TEAM RULES: (1) A 2-cent per mile PREMIUM is added to these base rates for two-person sleeper team operations. (2) The total accumulated mileage pay (base + 2-cent premium) is split 50/50 between both drivers. (3) Both drivers are paid for every mile the tractor logs, including miles while the other driver is in the berth. (4) If one driver becomes incapacitated mid-run, the solo driver switches to the full single OTR rate.'
+  },
+  'part-time': {
+    label: 'Part-Time Employee (Preloader, Sorter, Loader, Unloader, Clerk)',
+    source: 'Article 22, National Master Agreement',
+    rates: [
+      { period: 'August 1, 2025 – July 31, 2026 (CURRENT)', rate: '$22.50/hr (top rate, hired on/after July 2, 1982)' },
+      { period: 'August 1, 2026 – July 31, 2027', rate: '$23.50/hr' },
+      { period: 'August 1, 2027 – July 31, 2028', rate: '$25.75/hr' },
+    ],
+    notes: 'Legacy employees hired BEFORE July 2, 1982 follow the standard feeder/package top rate schedule.'
+  },
+  'combo': {
+    label: 'Full-Time Combination Employee (Article 22.4)',
+    source: 'Article 22, National Master Agreement',
+    rates: [
+      { period: 'August 1, 2025 – July 31, 2026 (CURRENT)', rate: '$37.38/hr' },
+      { period: 'August 1, 2026 – July 31, 2027', rate: '$38.38/hr' },
+      { period: 'August 1, 2027 – July 31, 2028', rate: '$40.63/hr' },
+    ],
+    notes: null
+  },
+  'mechanic': {
+    label: 'Mechanic (Journeyman)',
+    source: 'Atlantic Area Supplemental Agreement',
+    rates: [
+      { period: 'August 1, 2025 – July 31, 2026 (CURRENT)', rate: '$46.83/hr' },
+      { period: 'August 1, 2026 – July 31, 2027', rate: '$47.83/hr' },
+      { period: 'August 1, 2027 – July 31, 2028', rate: '$50.08/hr' },
+    ],
+    notes: 'Sub-classifications: Automotive Helper = 70% of Journeyman rate. Maintenance Handyman = 55% of Journeyman rate.'
+  },
+  'part-time air driver': {
+    label: 'Part-Time Air Driver',
+    source: 'Atlantic Area Supplemental Agreement',
+    rates: [
+      { period: 'August 1, 2025 – July 31, 2026 (CURRENT)', rate: '$35.14/hr (top/out-of-progression rate)' },
+      { period: 'August 1, 2026 – July 31, 2027', rate: '$36.14/hr' },
+      { period: 'August 1, 2027 – July 31, 2028', rate: '$38.39/hr' },
+    ],
+    notes: 'New hire progression: Start $21.00 → 12mo $21.50 → 24mo $22.00 → 36mo $23.00 → 48mo top rate. Daily guarantee: 3.5 hours.'
+  },
+  'full-time air driver': {
+    label: 'Full-Time Air Driver',
+    source: 'Atlantic Area Supplemental Agreement',
+    rates: [
+      { period: 'August 1, 2025 – July 31, 2026 (CURRENT)', rate: '$37.38/hr (top/out-of-progression rate)' },
+      { period: 'August 1, 2026 – July 31, 2027', rate: '$38.38/hr' },
+      { period: 'August 1, 2027 – July 31, 2028', rate: '$40.63/hr' },
+    ],
+    notes: 'New hire progression: Start $23.00 → 12mo $24.00 → 24mo $25.00 → 36mo $29.00 → 48mo top rate. 8-hour daily / 40-hour weekly guarantee.'
+  },
+};
+
 function getTopRateContext(classification) {
   if (!classification) return '';
   const key = classification.toLowerCase();
@@ -709,7 +731,8 @@ function getTopRateContext(classification) {
   const schedule = TOP_RATE_SCHEDULES[match];
   const lines = schedule.rates.map(r => `  - ${r.period}: ${r.rate}`).join('\n');
   const notes = schedule.notes ? `\n  Note: ${schedule.notes}` : '';
-  return `\nVERIFIED TOP RATE SCHEDULE FOR ${schedule.label.toUpperCase()} (use these exact figures — do not use contract text tables for pay rates):\n${lines}${notes}\n`;
+  const source = schedule.source ? `\n  Source: ${schedule.source}` : '';
+  return `\nVERIFIED TOP RATE SCHEDULE FOR ${schedule.label.toUpperCase()} (use ONLY these figures — never use contract text tables for pay rates):${source}\n${lines}${notes}\n`;
 }
 
 function buildQAPrompt(question, classification, contractText, todayContext, indexCitationBlock) {
