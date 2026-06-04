@@ -7,20 +7,15 @@ import { auth, db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import Link from 'next/link';
 
-const jobTypes = [
-  'Feeder Driver','Package Car Driver','Sleeper Team','Part-Time Hub/Preload',
-  'Air Driver','Combo Worker','Mechanic','Specialist','Other',
-];
-
 export default function ContractQA() {
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [classification, setClassification] = useState('');
   const [question, setQuestion] = useState('');
   const [asking, setAsking] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
+  const [showClassInfo, setShowClassInfo] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -48,7 +43,7 @@ export default function ContractQA() {
       const response = await fetch('/api/contract-qa', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ classification, question: question.trim() })
+        body: JSON.stringify({ classification: '', question: question.trim() })
       });
       const data = await response.json();
       if (data.error) setError(data.error);
@@ -102,29 +97,79 @@ export default function ContractQA() {
           <p className="text-gray-400 text-sm">Ask anything about your contract — or say "show me Article 51" to read the contract directly.</p>
         </div>
 
+        {/* Classification Info Panel */}
+        <div className="bg-gray-900 border-2 border-ups-brown rounded-lg mb-6 overflow-hidden">
+          <button
+            onClick={() => setShowClassInfo(!showClassInfo)}
+            className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-800 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-xl">ℹ️</span>
+              <div>
+                <p className="text-ups-gold font-bold text-sm">Not sure which contract covers you?</p>
+                <p className="text-gray-400 text-xs">Tap to see the difference between classifications</p>
+              </div>
+            </div>
+            <span className="text-ups-gold text-xl">{showClassInfo ? '▲' : '▼'}</span>
+          </button>
+
+          {showClassInfo && (
+            <div className="px-6 pb-6 border-t border-ups-brown">
+              <p className="text-gray-400 text-xs mt-4 mb-4">Just ask your question in plain English — you don't need to select anything. But if you're not sure what rules apply to you, here's the quick breakdown:</p>
+
+              <div className="space-y-3">
+                <div className="bg-gray-800 rounded-lg p-4 border-l-4 border-ups-gold">
+                  <p className="text-ups-gold font-bold text-sm mb-1">🚛 Feeder Driver / Sleeper Team</p>
+                  <p className="text-gray-300 text-xs">You drive tractor-trailers between hubs or on over-the-road runs. You're covered by the Atlantic Area Supplement for your daily guarantee (8 hrs), meal period, and bid rights. Sleeper teams have additional mileage and split-pay rules under Article 43.</p>
+                </div>
+
+                <div className="bg-gray-800 rounded-lg p-4 border-l-4 border-yellow-500">
+                  <p className="text-ups-gold font-bold text-sm mb-1">📦 Package Car Driver</p>
+                  <p className="text-gray-300 text-xs">You deliver and pick up packages on a daily route. You have an 8-hour daily guarantee, 9.5 overtime protections (if opted in), and route bid rights. Your harassment and dignity rights come from Article 37 of the National Master.</p>
+                </div>
+
+                <div className="bg-gray-800 rounded-lg p-4 border-l-4 border-blue-500">
+                  <p className="text-ups-gold font-bold text-sm mb-1">🔧 Mechanic / Specialist</p>
+                  <p className="text-gray-300 text-xs">You maintain and repair UPS vehicles or equipment. Your pay rates, apprenticeship rules, and tool allowances are covered under the local Maintenance articles. Journeyman and helper rates are different — ask specifically about your sub-classification.</p>
+                </div>
+
+                <div className="bg-gray-800 rounded-lg p-4 border-l-4 border-green-500">
+                  <p className="text-ups-gold font-bold text-sm mb-1">🔄 Combo Worker (22.4 / Inside-Outside)</p>
+                  <p className="text-gray-300 text-xs">You work a split shift combining inside hub work and driving. You have an 8-hour daily guarantee and are covered under Article 22 of the National Master for work preservation. Your rights differ from a regular package car driver — especially on overtime and bid priority.</p>
+                </div>
+
+                <div className="bg-gray-800 rounded-lg p-4 border-l-4 border-purple-500">
+                  <p className="text-ups-gold font-bold text-sm mb-1">📬 Part-Time (Hub / Preload / Air Driver)</p>
+                  <p className="text-gray-300 text-xs">You work a single sort or shift inside the building, or drive air packages. Your daily guarantee is 3.5 hours under Article 22 of the National Master. Part-time air drivers have a separate pay progression and slightly different guarantee rules than hub workers.</p>
+                </div>
+
+                <div className="bg-gray-800 rounded-lg p-4 border-l-4 border-gray-500">
+                  <p className="text-ups-gold font-bold text-sm mb-1">✈️ Full-Time Air Driver</p>
+                  <p className="text-gray-300 text-xs">You drive an air route full-time (typically Next Day Air or airport shuttle). You have an 8-hour daily and 40-hour weekly guarantee. Your pay progression and top rate are separate from ground package car drivers.</p>
+                </div>
+              </div>
+
+              <p className="text-gray-500 text-xs mt-4">💡 Tip: Just mention your job in your question — e.g. "I'm a feeder driver and..." — and the AI will apply the right contract rules automatically.</p>
+            </div>
+          )}
+        </div>
+
         {error && <div className="bg-red-900 text-red-100 p-4 rounded mb-6 text-sm">{error}</div>}
 
         <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-6 mb-6">
           <h3 className="text-xl font-bold text-ups-gold mb-4">Ask a Question</h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-ups-gold font-semibold mb-2 text-sm">Job Classification <span className="text-gray-500 font-normal">(optional)</span></label>
-              <select value={classification} onChange={(e) => setClassification(e.target.value)} className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base" disabled={asking}>
-                <option value="">Select your job type...</option>
-                {jobTypes.map((type) => (<option key={type} value={type}>{type}</option>))}
-              </select>
-            </div>
-            <div>
               <label className="block text-ups-gold font-semibold mb-2 text-sm">Your Question</label>
               <textarea
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder={`Try asking:\n• "When is my next raise and how much?"\n• "What are my meal break rights?"\n• "Show me Article 51"\n• "Show me the article about harassment"`}
+                placeholder={`Try asking:\n• "I'm a feeder driver — can they send me home before 8 hours?"\n• "What are my meal break rights as a package car driver?"\n• "Show me Article 51"\n• "Show me the article about harassment"`}
                 className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white h-40 text-base resize-none"
                 disabled={asking}
               />
-              <p className="text-gray-600 text-xs mt-1">Tip: Press Cmd+Enter / Ctrl+Enter to submit</p>
+              <p className="text-gray-600 text-xs mt-1">Tip: Mention your job type in your question for the most accurate answer. Press Cmd+Enter / Ctrl+Enter to submit.</p>
             </div>
             <button onClick={handleAsk} disabled={asking || !question.trim()} className="w-full bg-ups-brown text-ups-gold py-4 rounded uppercase font-bold text-base disabled:opacity-50 hover:bg-yellow-900 transition-colors">
               {asking ? '⏳ Looking up your answer...' : '🔍 Ask'}
@@ -163,7 +208,7 @@ export default function ContractQA() {
                     </div>
                     <div className="bg-gray-800 rounded p-4 text-gray-200 text-sm leading-relaxed whitespace-pre-wrap font-mono border-l-4 border-ups-gold overflow-auto max-h-[600px]">{section.text}</div>
                     <div className="mt-4 pt-3 border-t border-ups-brown">
-                      <p className="text-gray-500 text-xs">📄 This is the raw contract text. Ask a question about it and the AI will explain it in plain English.</p>
+                      <p className="text-gray-500 text-xs">📄 This is the raw contract text. For interpretation, ask a question about it.</p>
                     </div>
                   </div>
                 ))}
@@ -171,48 +216,11 @@ export default function ContractQA() {
             )}
 
             {result.mode === 'lookup' && !result.found && (
-              <div className="bg-gray-900 border-2 border-ups-gold rounded-lg p-6 mb-6">
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="text-2xl">⚠️</span>
-                  <h3 className="text-xl font-bold text-ups-gold">Article Not Found</h3>
-                </div>
-                <p className="text-gray-300 text-sm">{result.message}</p>
-                <div className="mt-4 bg-gray-800 rounded p-3">
-                  <p className="text-ups-gold text-xs font-bold mb-2">QUICK REFERENCE — COMMON ARTICLES:</p>
-                  <div className="grid grid-cols-2 gap-1 text-gray-400 text-xs">
-                    <span>Article 7 — Grievance Procedure</span>
-                    <span>Article 17 — Short/Missing Pay</span>
-                    <span>Article 18 — Safety & Equipment</span>
-                    <span>Article 22 — Part-Time Pay</span>
-                    <span>Article 37 — Dignity & 9.5 Rights</span>
-                    <span>Article 41 — Full-Time Wages</span>
-                    <span>Article 43 — Sleeper/Mileage</span>
-                    <span>Article 48 — Seniority (Local)</span>
-                    <span>Article 51 — Meal Breaks (Local)</span>
-                    <span>Article 60 — Daily Guarantee (Local)</span>
-                  </div>
-                </div>
+              <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-6 mb-6">
+                <p className="text-gray-400 text-sm">{result.message}</p>
               </div>
             )}
           </>
-        )}
-
-        {!result && !asking && (
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-4">
-            <p className="text-gray-500 text-xs font-bold uppercase mb-3">Quick lookups — tap to fill</p>
-            <div className="flex flex-wrap gap-2">
-              {[
-                'When is my next raise?','Show me Article 51','What are my meal break rights?',
-                'Show me the article about harassment','What is my daily guarantee?','Show me Article 37',
-                'What does Article 17 say?','Show me the article about seniority',
-                'What are my 9.5 rights?','Show me the article about sleeper teams',
-              ].map((q) => (
-                <button key={q} onClick={() => setQuestion(q)} className="bg-gray-800 text-gray-300 text-xs px-3 py-1.5 rounded border border-gray-700 hover:border-ups-gold hover:text-ups-gold transition-colors">
-                  {q}
-                </button>
-              ))}
-            </div>
-          </div>
         )}
       </main>
     </div>
