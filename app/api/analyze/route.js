@@ -2,8 +2,8 @@ import { readFile } from 'fs/promises';
 import { join } from 'path';
 
 const CONTRACT_PATHS = {
-  master: join(process.cwd(), 'contracts', 'master-agreement.txt'),
-  local: join(process.cwd(), 'contracts', 'local-agreement.txt'),
+  master: join(process.cwd(), 'public', 'contracts', 'master-agreement.txt'),
+  local: join(process.cwd(), 'public', 'contracts', 'local-agreement.txt'),
 };
 
 // Article location map - which contract each article lives in
