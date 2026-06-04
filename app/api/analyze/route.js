@@ -9,9 +9,40 @@ const ARTICLE_LOCATIONS = {
   local: ['46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64','65','66','67','68','69']
 };
 
+// ============================================================
+// MASTER CONTRACT SEARCH INDEX (Table of Contents)
+// Maps topic keywords → article, anchor code, and line baseline
+// Used for accurate routing AND prompt citation
+// ============================================================
+const CONTRACT_SEARCH_INDEX = [
+  // National Master Freight Index
+  { topics: ['subcontracting','subcontract','outside work','jurisdiction','scope','covered employees','bargaining unit'], contract: 'master', article: '1', section: 'Preamble', lineRef: 'L-0045', anchor: 'REF:NMFA-A01-SUB' },
+  { topics: ['double bottoms','doubles pay','twin trailers','double trailer'], contract: 'master', article: '1', section: 'Sec 8', lineRef: 'L-0322', anchor: 'REF:NMFA-A01-DBL' },
+  { topics: ['seniority rights','general seniority','seniority order'], contract: 'master', article: '5', section: null, lineRef: 'L-0850', anchor: 'REF:NMFA-A05-SEN' },
+  { topics: ['grievance','arbitration','grievance procedure','panel','filing a grievance','deadlock','timelines'], contract: 'master', article: '7', section: null, lineRef: 'L-1200', anchor: 'REF:NMFA-A07-GRV' },
+  { topics: ['picket line','sympathy strike','struck goods','protection of rights'], contract: 'master', article: '9', section: null, lineRef: 'L-1650', anchor: 'REF:NMFA-A09-PIC' },
+  { topics: ['bond','bonds','security deposit','cash bond'], contract: 'master', article: '11', section: null, lineRef: 'L-1920', anchor: 'REF:NMFA-A11-BND' },
+  { topics: ['passenger','riding restriction','passenger in cab','rider','unauthorized passenger'], contract: 'master', article: '14', section: null, lineRef: 'L-2100', anchor: 'REF:NMFA-A14-PAS' },
+  { topics: ['equipment','safety standards','safety equipment','unsafe equipment','red tag','dvir','mechanical','fmcsa','refused to drive'], contract: 'master', article: '16', section: null, lineRef: 'L-2400', anchor: 'REF:NMFA-A16-SFT' },
+  { topics: ['health','welfare','health and welfare','benefits','insurance','medical','teamcare'], contract: 'master', article: '22', section: null, lineRef: 'L-3100', anchor: 'REF:NMFA-A22-HLT' },
+  { topics: ['pension','pension plan','pension contribution','retirement'], contract: 'master', article: '23', section: null, lineRef: 'L-3500', anchor: 'REF:NMFA-A23-PEN' },
+
+  // Atlantic Area Supplemental Index
+  { topics: ['probationary period','new hire','new employee','trial period','30 working days','90 days','seniority acquisition'], contract: 'local', article: '46', section: 'Sec 1', lineRef: 'L-4200', anchor: 'REF:ATLA-A46-PROB' },
+  { topics: ['local seniority','bidding','bid','seniority bidding','route bid','run bid','posting'], contract: 'local', article: '47', section: null, lineRef: 'L-4450', anchor: 'REF:ATLA-A47-SEN' },
+  { topics: ['meal period','lunch','meal break','break scheduling','meal window','lunch window'], contract: 'local', article: '51', section: 'Sec 1', lineRef: 'L-5100', anchor: 'REF:ATLA-A51-MEAL' },
+  { topics: ['meal split','tractor trailer meal','split meal','team meal'], contract: 'local', article: '51', section: 'Sec 3', lineRef: 'L-5135', anchor: 'REF:ATLA-A51-SPLIT' },
+  { topics: ['worked through lunch','no meal period','worked 6 hours straight','worked 7 hours straight','skipped break','missed lunch','forced break','no break','no food','late break','straight through','ate on the fly'], contract: 'local', article: '51', section: null, lineRef: 'L-5150', anchor: 'REF:ATLA-A51-VIOL' },
+  { topics: ['overtime','workweek guarantee','work week','40 hour week','8 hour day','daily guarantee','sent home early','cut short','minimum hours','guarantee','8 hours'], contract: 'local', article: '52', section: null, lineRef: 'L-5400', anchor: 'REF:ATLA-A52-OVT' },
+  { topics: ['vacation','vacation accrual','vacation eligibility','vacation selection','vacation pay'], contract: 'local', article: '57', section: null, lineRef: 'L-6200', anchor: 'REF:ATLA-A57-VAC' },
+  { topics: ['sick leave','personal day','personal holiday','floating holiday','sick day','personal time'], contract: 'local', article: '60', section: null, lineRef: 'L-6800', anchor: 'REF:ATLA-A60-SCK' },
+  { topics: ['holiday pay','holiday','paid holiday','holiday qualifier','working on holiday','christmas','thanksgiving','labor day','memorial day','new years','fourth of july','independence day'], contract: 'local', article: '62', section: null, lineRef: 'L-7100', anchor: 'REF:ATLA-A62-HOL' },
+  { topics: ['doubles run','doubles letter','sick leave doubles','doubles sick'], contract: 'local', article: '69', section: null, lineRef: 'L-7900', anchor: 'REF:ATLA-A69-DBL' },
+];
+
 // Keyword to article mapping for smart routing
 const KEYWORD_ARTICLE_MAP = [
-  { keywords: ['bargaining unit','union work','scope','jurisdiction'], articles: ['master:1'] },
+  { keywords: ['bargaining unit','union work','scope','jurisdiction','subcontracting','subcontract'], articles: ['master:1'] },
   { keywords: ['union membership','dues','check-off','union security'], articles: ['master:3'] },
   { keywords: ['steward','grievance processing','union business'], articles: ['master:4'] },
   { keywords: ['past practice','maintenance of standards','local conditions'], articles: ['master:6'] },
@@ -28,14 +59,50 @@ const KEYWORD_ARTICLE_MAP = [
   { keywords: ['drug testing','dot physical','random test','sap program','discrimination'], articles: ['master:35'] },
   { keywords: ['harassment','harassed','intimidated','coerced','over-supervised','hostile','screaming','yelling','cursing','threatened','talked down to','dignity','retaliation','punished for filing','targeted','grievance retaliation','targeting me','out to get me'], articles: ['master:37'] },
   { keywords: ['9.5 list','9.5 violation','excessive dispatch','over 9.5','triple time','3x pay'], articles: ['master:37'] },
-  // Sleeper team / mileage triggers — Article 43 fires on classification, team language, OR any under-550 mileage mention
   { keywords: ['sleeper team','sleeper','team run','two man run','premium service','mileage rate','layover pay','miles less than 550','under 550','550 miles','short miles','short run','short trip','mileage short','paid wrong mileage','mileage dispute','not enough miles','run was short'], articles: ['master:43'] },
   { keywords: ['bypass','bypassed','skipped over','passed over','junior driver','less senior','seniority list','run given away','weekend call','junior driver got the run','junior got the run','skipped me','let a junior guy go','gave my run away'], articles: ['local:48'] },
   { keywords: ['worked through lunch','no meal period','skipped break','forced break','meal period','ate on the fly','no time to eat','supervisor rushed my break','lunch hour','worked 6 hours straight','worked 7 hours straight',"didn't eat until my 6th hour",'ate late','no lunch until','late break','worked 6 hours without a break','worked 7 hours without a break','no food','missed lunch','straight through'], articles: ['local:51', 'master:17'] },
   { keywords: ['sent home early','cut short','guarantee','8 hours','minimum hours','reported for work','daily guarantee','didnt get my 8','sent home','forced home','wanted more work','forced to go home','they made me leave',"didn't get my 8","didn't get my time",'cut me short'], articles: ['local:60', 'master:22'] },
   { keywords: ['3.5 hours','part time guarantee','hub guarantee'], articles: ['master:22'] },
   { keywords: ['air conditioning','ac heat in cab'], articles: ['local:60'] },
+  // TOC-driven additions
+  { keywords: ['double bottoms','doubles pay','twin trailers','double trailer'], articles: ['master:1'] },
+  { keywords: ['bond','bonds','security deposit','cash bond'], articles: ['master:11'] },
+  { keywords: ['passenger','riding restriction','passenger in cab','rider','unauthorized passenger'], articles: ['master:14'] },
+  { keywords: ['vacation','vacation accrual','vacation selection','vacation pay'], articles: ['local:57'] },
+  { keywords: ['sick leave','sick day'], articles: ['local:60'] },
+  { keywords: ['holiday pay','holiday','paid holiday','working on holiday','christmas','thanksgiving','labor day','memorial day','new years','fourth of july','independence day'], articles: ['local:62'] },
+  { keywords: ['doubles run','doubles letter','sick leave doubles'], articles: ['local:69'] },
+  { keywords: ['probationary period','new hire','30 working days','90 days','seniority acquisition'], articles: ['local:46'] },
+  { keywords: ['local seniority','route bid','run bid','bid posting'], articles: ['local:47'] },
+  { keywords: ['overtime','workweek guarantee','40 hour week'], articles: ['local:52'] },
 ];
+
+// ============================================================
+// TOC-based search: matches question to CONTRACT_SEARCH_INDEX
+// Returns matched index entries for citation in the prompt
+// ============================================================
+function searchContractIndex(question) {
+  const q = question.toLowerCase();
+  const matched = [];
+  for (const entry of CONTRACT_SEARCH_INDEX) {
+    if (entry.topics.some(t => q.includes(t.toLowerCase()))) {
+      matched.push(entry);
+    }
+  }
+  return matched;
+}
+
+// Format matched TOC entries into a citation block for the AI prompt
+function buildIndexCitationBlock(matchedEntries) {
+  if (!matchedEntries.length) return '';
+  const lines = matchedEntries.map(e => {
+    const loc = e.section ? `Article ${e.article}, ${e.section}` : `Article ${e.article}`;
+    const contract = e.contract === 'master' ? 'National Master Freight Agreement' : 'Atlantic Area Supplemental Agreement';
+    return `  [${e.anchor}] ${contract} — ${loc} (Line Ref: ${e.lineRef})`;
+  });
+  return `\nCONTRACT SEARCH INDEX MATCHES (use these as your primary reference anchors):\n${lines.join('\n')}\n`;
+}
 
 // Extract a specific article section from contract text
 function extractArticleSection(text, articleNum, maxChars = 8000) {
@@ -52,7 +119,6 @@ function extractArticleSection(text, articleNum, maxChars = 8000) {
   
   if (start === -1) return null;
   
-  // Find the next article header to determine end
   const nextArticlePattern = /ARTICLE\s+\d+[—\-\.\s]/gi;
   nextArticlePattern.lastIndex = start + 10;
   let end = text.length;
@@ -68,7 +134,7 @@ function extractArticleSection(text, articleNum, maxChars = 8000) {
   return section.trim();
 }
 
-// Smart contract extraction - only pull relevant article sections
+// Smart contract extraction - pulls articles from both KEYWORD map and TOC index
 function extractRelevantSections(masterText, localText, question, classification) {
   const questionLower = question.toLowerCase();
   const classificationLower = classification.toLowerCase();
@@ -80,20 +146,26 @@ function extractRelevantSections(masterText, localText, question, classification
   );
   
   if (isFullTime) {
-    triggeredArticles.add('local:60'); // Full-time Daily Guarantee (Atlantic Area Supplement)
+    triggeredArticles.add('local:60');
   } else {
-    triggeredArticles.add('master:22'); // Part-time guarantee (National Master)
+    triggeredArticles.add('master:22');
   }
-  triggeredArticles.add('local:48'); // Seniority
+  triggeredArticles.add('local:48');
   
-  // Check keyword triggers
+  // Keyword map triggers
   for (const mapping of KEYWORD_ARTICLE_MAP) {
     if (mapping.keywords.some(kw => questionLower.includes(kw.toLowerCase()))) {
       mapping.articles.forEach(a => triggeredArticles.add(a));
     }
   }
+
+  // TOC index triggers — adds any articles matched by the search index
+  const tocMatches = searchContractIndex(question);
+  for (const entry of tocMatches) {
+    triggeredArticles.add(`${entry.contract}:${entry.article}`);
+  }
   
-  // Check for explicit article mentions in question
+  // Explicit article number mentions
   const explicitArticles = question.match(/article\s+(\d+)/gi) || [];
   explicitArticles.forEach(match => {
     const num = match.match(/\d+/)[0];
@@ -105,42 +177,34 @@ function extractRelevantSections(masterText, localText, question, classification
 
   // Classification-specific triggers
   if (classificationLower.includes('feeder')) {
-    triggeredArticles.add('master:43'); // Sleeper teams / mileage
-    triggeredArticles.add('master:18'); // FMCSA/Safety
+    triggeredArticles.add('master:43');
+    triggeredArticles.add('master:18');
   }
-
-  // Sleeper Team classification always pulls Article 43
   if (classificationLower.includes('sleeper')) {
     triggeredArticles.add('master:43');
   }
 
-  // Mileage under 550 — pull Article 43 regardless of how classification is entered
-  const mileageKeywords = [
-    'under 550', 'less than 550', '550 miles', 'short miles', 'short run',
-    'mileage short', 'mileage dispute', 'not enough miles', 'run was short',
-    'short trip', 'paid wrong mileage', 'miles less than 550'
-  ];
+  // Mileage under 550
+  const mileageKeywords = ['under 550','less than 550','550 miles','short miles','short run','mileage short','mileage dispute','not enough miles','run was short','short trip','paid wrong mileage','miles less than 550'];
   if (mileageKeywords.some(kw => questionLower.includes(kw))) {
     triggeredArticles.add('master:43');
   }
 
-  // Extra FMCSA keyword triggers
+  // FMCSA hours
   const fmcsaKeywords = ['14 hours','been out all day','driving forever','worked me to death','killed me with hours','forced over'];
   if (fmcsaKeywords.some(kw => questionLower.includes(kw))) {
     triggeredArticles.add('master:18');
   }
   if (classificationLower.includes('package')) {
-    triggeredArticles.add('master:37'); // 9.5 list
+    triggeredArticles.add('master:37');
   }
 
   // Build the relevant text
   const sections = [];
-  
   for (const articleRef of triggeredArticles) {
     const [contract, artNum] = articleRef.split(':');
     const text = contract === 'master' ? masterText : localText;
-    const contractName = contract === 'master' ? 'National Master UPS Agreement' : 'Atlantic Area Supplemental Agreement';
-    
+    const contractName = contract === 'master' ? 'National Master Freight Agreement' : 'Atlantic Area Supplemental Agreement';
     const section = extractArticleSection(text, artNum);
     if (section) {
       sections.push(`=== ${contractName} — Article ${artNum} ===\n${section}`);
@@ -150,44 +214,55 @@ function extractRelevantSections(masterText, localText, question, classification
   return sections.join('\n\n');
 }
 
-const buildPrompt = (question, classification, contractText) => `You are a strict, highly analytical Labor Relations Expert and Teamster Shop Steward. Your sole purpose is to protect the worker by identifying contract and safety violations. You do not compromise, you do not make assumptions for the employer, and you do not let minor details slide.
+const buildPrompt = (question, classification, contractText, indexCitationBlock) => `You are a strict, highly analytical Labor Relations Expert and Teamster Shop Steward. Your sole purpose is to protect the worker by identifying contract and safety violations. You do not compromise, you do not make assumptions for the employer, and you do not let minor details slide.
 
 The Atlantic Area Supplemental Agreement ALWAYS takes precedence over the National Master Agreement. Check Supplement first. Both can apply simultaneously - cite BOTH when relevant.
 
-CONTRACT KEYWORD MAP - Use this as your primary routing index:
-Article 1 (Bargaining Unit): bargaining unit, union work, scope, covered employees, jurisdiction
+SEARCH INDEX ROUTING RULE: When an anchor code like [REF:ATLA-A51-MEAL] is listed below, you MUST anchor your analysis to that specific article and section first. Reference the anchor code and line reference in your ARTICLES citation so the member knows exactly where in the contract to look.
+${indexCitationBlock}
+CONTRACT KEYWORD MAP - Use this as your secondary routing index:
+Article 1 (Bargaining Unit / Subcontracting): bargaining unit, union work, scope, covered employees, jurisdiction, subcontracting, double bottoms [REF:NMFA-A01-SUB / REF:NMFA-A01-DBL]
 Article 3 (Union Shop): union membership, dues, check-off, union security
 Article 4 (Stewards): steward rights, grievance processing, union business
+Article 5 (Seniority - General): general seniority rights [REF:NMFA-A05-SEN]
 Article 6 (Maintenance of Standards): past practice, local conditions, protection of conditions
-Article 7 (Grievance Machinery): grievance procedure, panel, arbitration, timelines
-Article 9 (Protection of Rights): picket line, sympathy strike, struck goods
+Article 7 (Grievance Machinery): grievance procedure, panel, arbitration, timelines [REF:NMFA-A07-GRV]
+Article 9 (Protection of Rights): picket line, sympathy strike, struck goods [REF:NMFA-A09-PIC]
+Article 11 (Bonds): bonds, security deposits [REF:NMFA-A11-BND]
 Article 12 (Polygraph): polygraph, lie detector, interrogation
-Article 14 (Compensation Claims): workers comp, injury on duty, light duty, TAST
-Article 16 (Leave of Absence): leave of absence, FMLA, personal leave, military leave
+Article 14 (Passenger Restrictions): passenger in cab, unauthorized rider [REF:NMFA-A14-PAS]
+Article 16 (Equipment & Safety): red tag, DVIR, unsafe, bad brakes, FMCSA, refused to drive, heat stress [REF:NMFA-A16-SFT]
 Article 17 (Paid for Time): missing check, short pay, payroll shortage, 48 hours, penalty pay, green check
-Article 18 (Safety/Equipment): red tag, DVIR, unsafe, bad brakes, FMCSA, refused to drive, heat stress, forced to pull, ordered to drive, threatened over red tag
+Article 22 (Health & Welfare): health insurance, medical benefits, welfare fund [REF:NMFA-A22-HLT]
+Article 23 (Pension): pension plan, pension contributions [REF:NMFA-A23-PEN]
 Article 26 (Subcontracting/Feeder): foreign power, vendor trailer, outside truck, contractor, coyote, rail trailer
 Article 32 (Subcontracting): outsourcing, third party logistics, peak season contractors
 Article 34 (Health/Pension): pension, health insurance, medical benefits, welfare fund
 Article 35 (Non-Discrimination/Substance): discrimination, SAP program, drug testing, DOT physical
-Article 37 Section 1 (Dignity/Respect): harassment, harassed, intimidated, coerced, over-supervised, hostile, screaming, yelling, cursing, threatened, talked down to, retaliation
+Article 37 Section 1 (Dignity/Respect): harassment, harassed, intimidated, coerced, hostile, screaming, yelling, cursing, threatened, retaliation
 Article 37 Section 1(b) (9.5 Over-Dispatch): 9.5 list, excessive dispatch, over 9.5 hours, triple time - PACKAGE CAR ONLY
-Article 43 (Sleeper Teams): sleeper team, team run, premium service, mileage rate, layover pay - FLAG if any run is under 550 miles; under 550 miles, less than 550 miles, short miles, short run, mileage dispute, not enough miles, run was short, paid wrong mileage
+Article 43 (Sleeper Teams): sleeper team, team run, premium service, mileage rate, layover pay, under 550 miles
+Article 46 (Probationary / New Hires) [ATLANTIC AREA SUPPLEMENT]: probationary period, new hire, 30 working days, 90 days [REF:ATLA-A46-PROB]
+Article 47 (Seniority - Local/Bidding) [ATLANTIC AREA SUPPLEMENT]: local seniority, route bid, run bid, posting [REF:ATLA-A47-SEN]
 Article 48 (Seniority/Dispatch) [ATLANTIC AREA SUPPLEMENT]: bypass, bypassed, junior driver, less senior, seniority list, run given away
-Article 51 (Meal/Breaks) [ATLANTIC AREA SUPPLEMENT]: worked through lunch, no meal period, skipped break, forced break, lunch hour, missed lunch, late break, no food, straight through, worked 6 hours straight, worked 7 hours straight - VIOLATION if meal period not taken between end of 4th hour and start of 6th hour of work. Cross-reference Article 17 for penalty pay.
-Article 60 (Daily Guarantee - Full-Time) [ATLANTIC AREA SUPPLEMENT]: sent home early, cut short, 8 hours, minimum hours, reported for work, daily guarantee - FOR FEEDER DRIVERS AND PACKAGE CAR DRIVERS
-Article 22 (Daily Guarantee - Part-Time) [NATIONAL MASTER]: part-time guarantee, 3.5 hours, hub worker, sent home early - FOR PART-TIME EMPLOYEES
+Article 51 (Meal/Breaks) [ATLANTIC AREA SUPPLEMENT]: worked through lunch, no meal period, skipped break, missed lunch, no food - VIOLATION if meal not taken between end of 4th and start of 6th hour. Cross-reference Article 17 for penalty pay. [REF:ATLA-A51-MEAL / REF:ATLA-A51-VIOL]
+Article 52 (Overtime & Work Week) [ATLANTIC AREA SUPPLEMENT]: overtime, workweek guarantee, 8 hour day, sent home early, cut short, daily guarantee [REF:ATLA-A52-OVT]
+Article 57 (Vacation) [ATLANTIC AREA SUPPLEMENT]: vacation accrual, vacation eligibility, vacation selection, vacation pay [REF:ATLA-A57-VAC]
+Article 60 (Sick Leave / Personal Days) [ATLANTIC AREA SUPPLEMENT]: sick leave, personal day, personal holiday, floating holiday [REF:ATLA-A60-SCK]
+Article 62 (Holiday Pay) [ATLANTIC AREA SUPPLEMENT]: holiday pay, paid holiday, holiday qualifier, working on holiday [REF:ATLA-A62-HOL]
+Article 69 (Doubles Runs) [ATLANTIC AREA SUPPLEMENT]: doubles run, doubles letter, sick leave doubles [REF:ATLA-A69-DBL]
 
 SAFETY NET ROUTER: If the worker explicitly names ANY article number, audit it regardless of keywords.
 
 CRITICAL ENFORCEMENT RULES:
 - ARTICLE 37 ENFORCEMENT: Yelling, cursing, screaming, or threatening a worker ANYWHERE is an immediate Article 37 violation. Flip verdict to YES immediately.
-- ORIGIN BOOK ACCURACY: Article 48 and Article 52 (Daily Guarantee) are ATLANTIC AREA SUPPLEMENT articles. NEVER label them as National Master Agreement provisions.
-- ARTICLE 18 CROSS-REFERENCE: If management threatened or coerced a worker to operate unsafe equipment, flag BOTH Article 18 AND Article 37 as separate violations.
-- DAILY GUARANTEE MATH RULE: For full-time employees (Feeder Driver, Package Car Driver) use Article 60 Atlantic Area Supplement - only flag if hours worked < 8. For part-time employees use Article 22 National Master - only flag if hours worked < 3.5. Always extract the actual number of hours and compare to the correct threshold for that classification.
+- ORIGIN BOOK ACCURACY: Articles 46–69 are ATLANTIC AREA SUPPLEMENT articles. NEVER label them as National Master Agreement provisions.
+- ARTICLE 18/16 CROSS-REFERENCE: If management threatened or coerced a worker to operate unsafe equipment, flag BOTH the safety article AND Article 37 as separate violations.
+- DAILY GUARANTEE MATH RULE: For full-time employees (Feeder Driver, Package Car Driver) use Article 52 Atlantic Area Supplement - only flag if hours worked < 8. For part-time employees use Article 22 National Master - only flag if hours worked < 3.5.
 - 9.5 LIST: Only applies to PACKAGE CAR DRIVERS. NEVER apply to Feeder Drivers.
-- FEEDER DRIVERS over 14 hours on-duty: Flag Article 18 AND FMCSA 14-Hour Rule.
-- ARTICLE 43 MILEAGE RULE: For Sleeper Team runs, if ANY run described is under 550 miles, immediately audit Article 43 for premium pay, mileage rate violations, and layover pay. Flag if the worker was not compensated at the correct rate for a sub-550-mile run.
+- FEEDER DRIVERS over 14 hours on-duty: Flag safety article AND FMCSA 14-Hour Rule.
+- ARTICLE 43 MILEAGE RULE: For Sleeper Team runs, if ANY run is under 550 miles, immediately audit Article 43 for premium pay, mileage rate violations, and layover pay.
+- ANCHOR CODE CITATION RULE: When your analysis references an article that has an anchor code in the search index, include that anchor code and line reference in your ARTICLES field so the member can locate the exact provision.
 
 WORKER DETAILS:
 Classification: ${classification}
@@ -201,9 +276,10 @@ Follow this exact 3-Step Audit Protocol:
 STEP 1 - COMPRESSED SENTENCE DECONSTRUCTION:
 Treat EVERY clause, action verb, or noun as a separate potential legal claim.
 - Junior employee getting work/equipment -> Seniority Bypass (Article 48)
-- Worker cut short/sent home/denied hours -> Daily Guarantee (Article 52)
+- Worker cut short/sent home/denied hours -> Daily Guarantee (Article 52) [REF:ATLA-A52-OVT]
 - Yelling, cursing, threatening -> Dignity and Respect (Article 37)
 - Sleeper run under 550 miles -> Mileage/Premium Pay (Article 43)
+- No meal period by 6th hour -> Meal Period Violation (Article 51) [REF:ATLA-A51-VIOL]
 NEVER combine distinct issues. Output separate numbered blocks for each.
 
 STEP 2 - LOGIC OVER TEXT:
@@ -216,7 +292,7 @@ For EACH issue found output EXACTLY:
 ---
 ISSUE #[number]: [Precise Name of the Contractual Infraction]
 VERDICT: YES - VIOLATION FOUND or NO - NO VIOLATION
-ARTICLES: [Cite specific Article and Section - correctly label National Master or Atlantic Area Supplement]
+ARTICLES: [Cite specific Article and Section — correctly label National Master or Atlantic Area Supplement — include anchor code and line reference if available, e.g. Article 51, Sec 1 [REF:ATLA-A51-MEAL, Line L-5100]]
 ANALYSIS: [Quote the exact contract language verbatim in quotation marks first. Then state what management did. Then explain why it is a violation. If NO VIOLATION: one brief sentence only.]
 WORKER RIGHTS: [If VIOLATION FOUND: specific remedy, back-pay, premium rates owed. If NO VIOLATION: omit entirely.]
 ---
@@ -382,8 +458,14 @@ export async function POST(request) {
       fetch(CONTRACT_URLS.local).then(r => r.text())
     ]);
 
-    // Smart extraction - only pull relevant article sections
+    // Smart extraction - keyword map + TOC index
     const contractText = extractRelevantSections(masterText, localText, question, classification);
+
+    // Build TOC citation block for the prompt
+    const tocMatches = searchContractIndex(question);
+    const indexCitationBlock = buildIndexCitationBlock(tocMatches);
+
+    const prompt = buildPrompt(question, classification, contractText, indexCitationBlock);
 
     const providers = [
       { name: 'Groq', fn: analyzeWithGroq },
@@ -395,9 +477,7 @@ export async function POST(request) {
       { name: 'HuggingFace', fn: analyzeWithHuggingFace },
     ];
 
-    const prompt = buildPrompt(question, classification, contractText);
     const errors = [];
-
     for (const provider of providers) {
       try {
         console.log(`Trying ${provider.name}...`);
