@@ -831,8 +831,25 @@ ${todayContext}
 ${topRateContext}${guaranteeContext}${holidayContext}${seniorityTiebreakerContext}${supervisorsWorkingContext}${telematicsContext}${feederBidContext}${personalHolidayContext}${nineFiveContext}${bumpAndRollContext}${sleeperMileageContext}
 WORKER'S JOB CLASSIFICATION: ${classification || 'Not specified'}
 
-CONTRACT LANGUAGE (relevant sections only):
-${contractText}
+HARD-CODED CONTRACT FACTS (use these even if contract text below is empty or incomplete):
+- FULL-TIME DAILY GUARANTEE (Article 52, Sec 2, Atlantic Area Supplement): Feeder Drivers, Package Car Drivers, and Combo Workers are guaranteed 8 hours pay upon reporting. Sent home before 8 hours = violation.
+- PART-TIME DAILY GUARANTEE (Article 63, Sec 1, Atlantic Area Supplement): Part-time employees guaranteed 3.5 hours per report. Sent home before 3.5 hours = violation.
+- OVERTIME (Article 53, Sec 2, Atlantic Area Supplement): Time and one-half after 8 hours/day or 40 hours/week. Feeder drivers on 4/10 schedule: OT after 10 hours/day. Sunday = double time with 8-hour minimum.
+- UNSCHEDULED START TIME CHANGE (Article 52, Sec 1): Time and one-half for all unscheduled hours worked in any one day.
+- MEAL PERIOD (Article 51, Atlantic Area Supplement): Must be taken between the 4th and 6th hour on duty. 1-hour unpaid for full-time. Package car drivers minimum 30 minutes. All employees get at least one 10-minute paid break.
+- PAY SHORTAGE (Article 17, National Master): Over $50.00 (full-time) or $25.00 (part-time) must be corrected by second scheduled workday or penalty pay applies.
+- SUPERVISORS WORKING (Article 3, Sec 7, National Master / Article 46, Sec 2, Atlantic Area Supplement): No bargaining unit work except training/safety demonstration. Must exhaust all options including calling Local Union before supervisor works.
+- SENIORITY (Article 48, Atlantic Area Supplement): Prevails at all times. Tractor-trailer bids: March 1 and September 1 semi-annually. New vacancies posted 7 days, awarded within 7 days. Permanently discontinued run (14+ days) = employee chooses any run by seniority.
+- TECHNOLOGY DISCIPLINE (Article 6, Sec 6, National Master): No discipline based solely on GPS/telematics unless dishonesty. No inward-facing cameras. Forward-facing camera footage not for discipline.
+- DISCHARGE / SUSPENSION (Article 50, Atlantic Area Supplement): Just cause required. Warning notice required first except for cardinal infractions. Warnings expire after 9 months.
+- SUBCONTRACTING (Article 32, National Master / Article 66, Atlantic Area Supplement): No bargaining unit work subcontracted. No owner-operators.
+- HOLIDAYS (Article 54, Atlantic Area Supplement): 9 named holidays. 12 months seniority to qualify. Work on holiday = 1.5x plus holiday pay.
+- PERSONAL HOLIDAYS (Article 54, Sec 2): 5 personal holidays (24+ months seniority). Request 8 days in advance. Unused paid out at year end.
+- SICK LEAVE (Article 68, Atlantic Area Supplement): 5 sick days annually. Full-time 8 hours/day; Part-time 4 hours/day.
+- 9.5 OVERTIME (Article 37, Sec 1, National Master): PACKAGE CAR DRIVERS ONLY on opt-in list. Blackout Nov 15–Jan 15. NEVER applies to Feeder Drivers.
+- GRIEVANCE FILING (Article 49, Atlantic Area Supplement): Report to steward within 5 working days. Union submits in writing within 5 days. AAPGC within 10 working days.
+
+CONTRACT LANGUAGE (relevant sections only — if empty, use hard-coded facts above):\n${contractText || '[Contract text unavailable — apply hard-coded facts listed above]'}
 
 RULES:
 1. Answer as of TODAY's date — never describe raise schedules or timelines as if it's the beginning of the contract.
