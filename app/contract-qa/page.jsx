@@ -13,6 +13,8 @@ export default function ContractQA() {
   const [loading, setLoading] = useState(true);
   const [question, setQuestion] = useState('');
   const [asking, setAsking] = useState(false);
+  const [spellchecking, setSpellchecking] = useState(false);
+  const [spellcheckEnabled, setSpellcheckEnabled] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
   const [showClassInfo, setShowClassInfo] = useState(false);
@@ -29,10 +31,36 @@ export default function ContractQA() {
           setIsAdmin(data.role === 'admin');
         }
       } catch (e) {}
+      // Load app settings for spellcheck toggle
+      try {
+        const settingsSnap = await getDoc(doc(db, 'settings', 'app'));
+        if (settingsSnap.exists()) {
+          setSpellcheckEnabled(settingsSnap.data().spellcheckEnabled === true);
+        }
+      } catch (e) {}
       setLoading(false);
     });
     return () => unsubscribe();
   }, [router]);
+
+  const handleSpellcheck = async () => {
+    if (!question.trim()) return;
+    setSpellchecking(true);
+    setError('');
+    try {
+      const response = await fetch('/api/spellcheck', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: question.trim() })
+      });
+      const data = await response.json();
+      if (data.corrected) setQuestion(data.corrected);
+    } catch (err) {
+      // Fail silently — spellcheck is optional
+    } finally {
+      setSpellchecking(false);
+    }
+  };
 
   const handleAsk = async () => {
     if (!question.trim()) return;
@@ -129,8 +157,13 @@ export default function ContractQA() {
                 </div>
 
                 <div className="bg-gray-800 rounded-lg p-4 border-l-4 border-blue-500">
-                  <p className="text-ups-gold font-bold text-sm mb-1">🔧 Mechanic / Specialist</p>
-                  <p className="text-gray-300 text-xs">You maintain and repair UPS vehicles or equipment. Your pay rates, apprenticeship rules, and tool allowances are covered under the local Maintenance articles. Journeyman and helper rates are different — ask specifically about your sub-classification.</p>
+                  <p className="text-ups-gold font-bold text-sm mb-1">🔧 Mechanic</p>
+                  <p className="text-gray-300 text-xs">You maintain and repair UPS vehicles or equipment. Your pay rates, apprenticeship rules, and tool allowances are covered under the local Maintenance articles. Journeyman, Automotive Helper, and Maintenance Handyman rates are all different — ask specifically about your sub-classification.</p>
+                </div>
+
+                <div className="bg-gray-800 rounded-lg p-4 border-l-4 border-orange-500">
+                  <p className="text-ups-gold font-bold text-sm mb-1">📡 Specialist</p>
+                  <p className="text-gray-300 text-xs">Specialists are operational support employees — typically working in dispatch, yard control, inbounding, outbounding, or similar hub coordination roles. You are a full-time bargaining unit employee with an 8-hour daily guarantee. Your seniority, bid rights, and discipline protections follow the Atlantic Area Supplement.</p>
                 </div>
 
                 <div className="bg-gray-800 rounded-lg p-4 border-l-4 border-green-500">
@@ -167,11 +200,23 @@ export default function ContractQA() {
                 onKeyDown={handleKeyDown}
                 placeholder={`Try asking:\n• "I'm a feeder driver — can they send me home before 8 hours?"\n• "What are my meal break rights as a package car driver?"\n• "Show me Article 51"\n• "Show me the article about harassment"`}
                 className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white h-40 text-base resize-none"
-                disabled={asking}
+                disabled={asking || spellchecking}
               />
               <p className="text-gray-600 text-xs mt-1">Tip: Mention your job type in your question for the most accurate answer. Press Cmd+Enter / Ctrl+Enter to submit.</p>
             </div>
-            <button onClick={handleAsk} disabled={asking || !question.trim()} className="w-full bg-ups-brown text-ups-gold py-4 rounded uppercase font-bold text-base disabled:opacity-50 hover:bg-yellow-900 transition-colors">
+
+            {/* Spellcheck button — only shown when admin has it enabled */}
+            {spellcheckEnabled && (
+              <button
+                onClick={handleSpellcheck}
+                disabled={spellchecking || asking || !question.trim()}
+                className="w-full bg-gray-700 text-gray-200 py-2 rounded font-bold text-sm disabled:opacity-50 hover:bg-gray-600 transition-colors border border-gray-600"
+              >
+                {spellchecking ? '⏳ Checking spelling...' : '✏️ Spellcheck'}
+              </button>
+            )}
+
+            <button onClick={handleAsk} disabled={asking || spellchecking || !question.trim()} className="w-full bg-ups-brown text-ups-gold py-4 rounded uppercase font-bold text-base disabled:opacity-50 hover:bg-yellow-900 transition-colors">
               {asking ? '⏳ Looking up your answer...' : '🔍 Ask'}
             </button>
           </div>
