@@ -21,6 +21,9 @@ export default function Dashboard() {
 
   const jobTypes = ['Feeder Driver', 'Sleeper Team', 'Package Car Driver', 'Specialist', 'Mechanic', 'Combo Worker', 'Part Time'];
 
+  const [spellchecking, setSpellchecking] = useState(false);
+  const [spellcheckEnabled, setSpellcheckEnabled] = useState(false);
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
       if (currentUser) {
@@ -42,6 +45,13 @@ export default function Dashboard() {
         } catch (err) {
           setUserName(currentUser.email);
         }
+        // Load app settings for spellcheck toggle
+        try {
+          const settingsSnap = await getDoc(doc(db, 'settings', 'app'));
+          if (settingsSnap.exists()) {
+            setSpellcheckEnabled(settingsSnap.data().spellcheckEnabled === true);
+          }
+        } catch (e) {}
       } else {
         router.push('/login');
       }
@@ -49,6 +59,24 @@ export default function Dashboard() {
     });
     return () => unsubscribe();
   }, [router]);
+
+  const handleSpellcheck = async () => {
+    if (!question.trim()) return;
+    setSpellchecking(true);
+    try {
+      const response = await fetch('/api/spellcheck', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: question.trim() })
+      });
+      const data = await response.json();
+      if (data.corrected) setQuestion(data.corrected);
+    } catch (err) {
+      // Fail silently
+    } finally {
+      setSpellchecking(false);
+    }
+  };
 
   const translateDriverSlang = (userSpeech) => {
     let cleanedText = userSpeech;
@@ -159,12 +187,24 @@ export default function Dashboard() {
                 onChange={(e) => setQuestion(e.target.value)}
                 placeholder="Describe what happened in your own words. e.g., 'I'm a feeder driver and they sent me home after 6 hours without my 8-hour guarantee.'"
                 className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white h-48 text-base resize-none"
-                disabled={analyzing}
+                disabled={analyzing || spellchecking}
               />
             </div>
+
+            {/* Spellcheck button — only shown when admin has it enabled */}
+            {spellcheckEnabled && (
+              <button
+                onClick={handleSpellcheck}
+                disabled={spellchecking || analyzing || !question.trim()}
+                className="w-full bg-gray-700 text-gray-200 py-2 rounded font-bold text-sm disabled:opacity-50 hover:bg-gray-600 transition-colors border border-gray-600"
+              >
+                {spellchecking ? '⏳ Checking spelling...' : '✏️ Spellcheck'}
+              </button>
+            )}
+
             <button
               onClick={handleAnalyze}
-              disabled={analyzing || !question.trim()}
+              disabled={analyzing || spellchecking || !question.trim()}
               className="w-full bg-ups-brown text-ups-gold py-4 rounded uppercase font-bold text-base disabled:opacity-50 hover:bg-yellow-900 transition-colors"
             >
               {analyzing ? '⏳ Analyzing... Please wait' : '🔍 Analyze'}
