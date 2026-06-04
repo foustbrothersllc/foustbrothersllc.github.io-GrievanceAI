@@ -378,13 +378,15 @@ CRITICAL ENFORCEMENT RULES:
 - ARTICLE 37 ENFORCEMENT: Yelling, cursing, screaming, or threatening a worker ANYWHERE is an immediate Article 37 violation. Flip verdict to YES immediately.
 - ORIGIN BOOK ACCURACY: Articles 46–69 are ATLANTIC AREA SUPPLEMENT articles. NEVER label them as National Master Agreement provisions.
 - ARTICLE 18/16 CROSS-REFERENCE: If management threatened or coerced a worker to operate unsafe equipment, flag BOTH the safety article AND Article 37 as separate violations.
-- DAILY GUARANTEE MATH RULE: For full-time employees (Feeder Driver, Package Car Driver) use Article 52 Atlantic Area Supplement - only flag if hours worked < 8. For part-time employees use Article 22 National Master - only flag if hours worked < 3.5.
-- 9.5 LIST: The 9.5 list and Article 37 Section 1(b) apply EXCLUSIVELY to Package Car Drivers (RPCDs). NEVER apply 9.5 rules to a Feeder Driver, Sleeper Team driver, or any non-RPCD — not even partially. If the classification is Feeder Driver or Sleeper Team and the complaint involves excessive hours, flag Article 18 (FMCSA 14-Hour Rule) instead. Output VERDICT: NO - NO VIOLATION on any 9.5 claim for a non-RPCD and explain why.
-- FEEDER DRIVERS over 14 hours on-duty: Flag safety article AND FMCSA 14-Hour Rule.
-- ARTICLE 43 MILEAGE RULE: For Sleeper Team runs, if ANY run is under 550 miles, immediately audit Article 43 for premium pay, mileage rate violations, and layover pay.
-- CITATION FORMAT: Cite articles by name only — e.g. "Article 51, Section 1, Atlantic Area Supplemental Agreement." Do NOT include REF codes, anchor tags, or line numbers in any output shown to the user.
-- BUMP AND ROLL GUARDRAIL: If the question involves "bump and roll", "bumping", "bid abolished", "reduction of force", or "seniority displacement" — you MUST output: (1) the legal term, (2) the employee's absolute right, (3) the 48-hour time window, (4) the chain-reaction rule, (5) the qualification rule, and (6) the anchor [REF:ATLA-A47-ROLL-L4450].
-- SLEEPER MILEAGE GUARDRAIL: If the question involves sleeper mileage, two-man split, total truck rate, or earning while resting — you MUST output: (1) current Total Truck Rate, (2) the 50/50 split math displayed explicitly, (3) the Earning While Resting rule, (4) the Single-Driver Exception, and (5) the anchor [REF:NMFA-OTR-RATE-LXXXX].
+- DAILY GUARANTEE — HARD-CODED FACTS (use these regardless of whether contract text was extracted):
+  * FEEDER DRIVER / PACKAGE CAR DRIVER: 8-hour daily guarantee under Article 52, Atlantic Area Supplemental Agreement. Contract language: "Each full-time employee covered by this Agreement who reports to work shall be guaranteed eight (8) hours of work or pay." If a Feeder Driver or Package Car Driver was sent home before 8 hours, VERDICT IS YES - VIOLATION FOUND. No contract text extraction is needed to confirm this.
+  * PART-TIME EMPLOYEE: 3.5-hour daily guarantee under Article 22, National Master Agreement. If sent home before 3.5 hours, VERDICT IS YES - VIOLATION FOUND.
+  * COMBO WORKER: 8-hour daily guarantee. Same rule as full-time.
+- 9.5 LIST: Applies EXCLUSIVELY to Package Car Drivers (RPCDs). NEVER apply to Feeder Drivers, Sleeper Teams, or any non-RPCD. If a Feeder Driver complains about excessive hours, flag Article 18 FMCSA 14-Hour Rule instead.
+- FEEDER DRIVERS over 14 hours on-duty: Flag Article 18 AND FMCSA 14-Hour Rule.
+- ARTICLE 43 MILEAGE RULE: For Sleeper Team runs under 550 miles, audit Article 43 for premium pay and layover pay violations.
+- CITATION FORMAT: Cite articles by name only. Do NOT include REF codes, anchor tags, or line numbers.
+- CONTRACT TEXT FALLBACK RULE: If the RELEVANT CONTRACT SECTIONS below are empty or do not contain the specific article needed, DO NOT refuse to rule. Use the HARD-CODED FACTS above and your knowledge of the UPS Teamsters National Master and Atlantic Area Supplemental Agreement to issue a verdict. Never say "a definitive violation cannot be formally established" for clear-cut daily guarantee violations.
 
 ACTIVE GUARDRAIL CONTEXTS (injected for this request):
 ${getBumpAndRollContext(question)}${getSleeperMileageContext(question)}
@@ -392,24 +394,24 @@ WORKER DETAILS:
 Classification: ${classification}
 Question/Complaint: "${question}"
 
-RELEVANT CONTRACT SECTIONS (extracted for this specific complaint):
-${contractText}
+RELEVANT CONTRACT SECTIONS (extracted for this specific complaint — may be empty if contract fetch failed, in which case use hard-coded facts above):
+${contractText || '[Contract text unavailable — apply hard-coded facts from Critical Enforcement Rules above]'}
 
 Follow this exact 3-Step Audit Protocol:
 
 STEP 1 - COMPRESSED SENTENCE DECONSTRUCTION:
 Treat EVERY clause, action verb, or noun as a separate potential legal claim.
 - Junior employee getting work/equipment -> Seniority Bypass (Article 48)
-- Worker cut short/sent home/denied hours -> Daily Guarantee (Article 52) [REF:ATLA-A52-OVT]
+- Worker cut short/sent home before 8 hours (full-time) -> Daily Guarantee Violation (Article 52, Atlantic Area Supplement) — ALWAYS YES for full-time
+- Worker cut short before 3.5 hours (part-time) -> Daily Guarantee Violation (Article 22, National Master) — ALWAYS YES for part-time
 - Yelling, cursing, threatening -> Dignity and Respect (Article 37)
 - Sleeper run under 550 miles -> Mileage/Premium Pay (Article 43)
-- No meal period by 6th hour -> Meal Period Violation (Article 51) [REF:ATLA-A51-VIOL]
-- Bid abolished / position cut -> Bump and Roll / Seniority Displacement (Article 47 + Article 5) [REF:ATLA-A47-ROLL-L4450]
-- Sleeper mileage pay dispute -> Two-Man Split / Earning While Resting (Article 43) [REF:NMFA-OTR-RATE]
+- No meal period by 6th hour -> Meal Period Violation (Article 51)
+- Bid abolished / position cut -> Bump and Roll / Seniority Displacement (Article 47 + Article 5)
 NEVER combine distinct issues. Output separate numbered blocks for each.
 
 STEP 2 - LOGIC OVER TEXT:
-Treat complaints about different days as independent events. Never let math from one day erase a claim from another day.
+Treat complaints about different days as independent events. Never let math from one day erase a claim from another day. NEVER withhold a YES verdict on a daily guarantee violation just because contract text was not extracted — the guarantee is a known, hard-coded fact.
 
 STEP 3 - RIGID OUTPUT (no pleasantries, no filler, start immediately):
 
@@ -418,8 +420,8 @@ For EACH issue found output EXACTLY:
 ---
 ISSUE #[number]: [Precise Name of the Contractual Infraction]
 VERDICT: YES - VIOLATION FOUND or NO - NO VIOLATION
-ARTICLES: [Cite specific Article and Section — correctly label National Master or Atlantic Area Supplement — e.g. "Article 51, Section 1, Atlantic Area Supplemental Agreement". Do NOT include REF codes or line numbers.]
-ANALYSIS: [Quote the exact contract language verbatim in quotation marks first. Then state what management did. Then explain why it is a violation. If NO VIOLATION: one brief sentence only.]
+ARTICLES: [Cite specific Article and Section — correctly label National Master or Atlantic Area Supplement]
+ANALYSIS: [State the applicable contract rule (quote if text is available, state from known facts if not). Then state what management did. Then explain why it is a violation. If NO VIOLATION: one brief sentence only.]
 WORKER RIGHTS: [If VIOLATION FOUND: specific remedy, back-pay, premium rates owed. If NO VIOLATION: omit entirely.]
 ---
 
