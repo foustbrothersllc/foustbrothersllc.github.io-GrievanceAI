@@ -511,10 +511,21 @@ const NINE_FIVE_FACTS = {
   how_to_file: 'File a grievance under Article 37, Section 1. Document the exact hours worked each day. Your steward submits it within the contractual timeline.',
 };
 
-function getNineFiveContext(question) {
+function getNineFiveContext(question, classification) {
   const q = question.toLowerCase();
+  const cl = (classification || '').toLowerCase();
   const keywords = ['9.5','9 5','nine five','over 9','excessive dispatch','triple time','3x','dispatch too much','too many hours','over dispatched','worked too long','opt in list','9.5 list','rpcd','peak blackout','nov 15','jan 15'];
   if (!keywords.some(k => q.includes(k))) return '';
+
+  // 9.5 DOES NOT APPLY TO FEEDER DRIVERS OR SLEEPER TEAMS — enforce this hard
+  const isFeederOrSleeper =
+    cl.includes('feeder') || cl.includes('sleeper') ||
+    q.includes('feeder driver') || q.includes('feeder') || q.includes('sleeper team') || q.includes('sleeper');
+
+  if (isFeederOrSleeper) {
+    return `\n⛔ 9.5 OVERTIME PROTECTION — NOT APPLICABLE\nThe 9.5 list and Article 37 Section 1(b) overtime protections apply EXCLUSIVELY to Package Car Drivers (RPCDs). Feeder Drivers and Sleeper Team drivers are NOT covered by 9.5 protections and CANNOT file 9.5 grievances. Do not apply 9.5 rules to this worker under any circumstances. If the worker is asking about excessive hours as a Feeder Driver, direct them to FMCSA 14-hour on-duty rules (Article 18) instead.\n`;
+  }
+
   const today = new Date();
   const month = today.getMonth() + 1;
   const day = today.getDate();
@@ -523,7 +534,7 @@ function getNineFiveContext(question) {
   const blackoutWarning = inBlackout
     ? `\n  ⚠️ CURRENT STATUS: TODAY FALLS WITHIN THE PEAK BLACKOUT (Nov 15 – Jan 15). Standard 9.5 grievances CANNOT be filed for this period.`
     : `\n  ✅ CURRENT STATUS: Today is outside the peak blackout window. 9.5 protections are ACTIVE.`;
-  return `\nVERIFIED 9.5 OVERTIME PROTECTION RULES (${NINE_FIVE_FACTS.source}) — use these exact facts only:\n  Core Rule: ${NINE_FIVE_FACTS.core_principle}\n  Eligibility (must meet ANY one of these):\n${eligibilityList}\n  Opt-In Requirement: ${NINE_FIVE_FACTS.opt_in}\n  Blackout Period: ${NINE_FIVE_FACTS.blackout}${blackoutWarning}\n  Penalty: ${NINE_FIVE_FACTS.penalty}\n  Retaliation Rule: ${NINE_FIVE_FACTS.retaliation_rule}\n  How to File: ${NINE_FIVE_FACTS.how_to_file}\n`;
+  return `\nVERIFIED 9.5 OVERTIME PROTECTION RULES (${NINE_FIVE_FACTS.source}) — PACKAGE CAR DRIVERS ONLY:\n  Core Rule: ${NINE_FIVE_FACTS.core_principle}\n  Eligibility (must meet ANY one of these):\n${eligibilityList}\n  Opt-In Requirement: ${NINE_FIVE_FACTS.opt_in}\n  Blackout Period: ${NINE_FIVE_FACTS.blackout}${blackoutWarning}\n  Penalty: ${NINE_FIVE_FACTS.penalty}\n  Retaliation Rule: ${NINE_FIVE_FACTS.retaliation_rule}\n  How to File: ${NINE_FIVE_FACTS.how_to_file}\n`;
 }
 
 const PERSONAL_HOLIDAY_FACTS = {
@@ -710,7 +721,7 @@ function buildQAPrompt(question, classification, contractText, todayContext, ind
   const telematicsContext = getTelematicsContext(question);
   const feederBidContext = getFeederBidContext(question);
   const personalHolidayContext = getPersonalHolidayContext(question);
-  const nineFiveContext = getNineFiveContext(question);
+  const nineFiveContext = getNineFiveContext(question, classification);
   const bumpAndRollContext = getBumpAndRollContext(question);
   const sleeperMileageContext = getSleeperMileageContext(question);
 
@@ -734,8 +745,9 @@ RULES:
 6. Never give legal advice — explain the contract only.
 7. Keep answers concise. For simple factual questions (pay, dates, guarantees), answer in 2–4 short paragraphs.
 8. NEVER guess, estimate, or fill in missing information. Do not use "typically," "generally," "usually," or "approximately" to introduce specific numbers or facts.
-9. If contract text was provided above, use it as your primary source. If the provided text does not contain enough to answer the question, use your general knowledge of the UPS Teamsters National Master and Atlantic Area Supplemental Agreement to give the best answer you can — but flag it clearly: "Based on general contract knowledge (specific section not extracted for this query):"
-10. NEVER refuse to answer or say you cannot help. Always provide the most useful answer possible, then suggest the member confirm with their steward for anything high-stakes.
+9. HARD RULE — 9.5 PROTECTIONS: The 9.5 list and Article 37 Section 1(b) apply ONLY to Package Car Drivers (RPCDs). NEVER tell a Feeder Driver, Sleeper Team driver, or any non-RPCD that they have 9.5 rights. If a Feeder Driver asks about excessive hours, redirect them to FMCSA 14-hour rules under Article 18.
+10. If contract text was provided above, use it as your primary source. If the provided text does not contain enough to answer the question, use your general knowledge of the UPS Teamsters National Master and Atlantic Area Supplemental Agreement to give the best answer you can — but flag it clearly: "Based on general contract knowledge (specific section not extracted for this query):"
+11. NEVER refuse to answer or say you cannot help. Always provide the most useful answer possible, then suggest the member confirm with their steward for anything high-stakes.
 
 For complex situations involving violations, discipline, or multi-step processes, use only the sections that apply:
   ⚖️ VERDICT: State clearly — VIOLATION or NO VIOLATION — and which Article/Section governs.
