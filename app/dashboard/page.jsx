@@ -10,6 +10,7 @@ import Link from 'next/link';
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [userName, setUserName] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [classification, setClassification] = useState('');
   const [question, setQuestion] = useState('');
@@ -34,6 +35,7 @@ export default function Dashboard() {
               return;
             }
             setUserName(data.name || currentUser.email);
+            setIsAdmin(data.role === 'admin');
           } else {
             setUserName(currentUser.email);
           }
@@ -71,8 +73,7 @@ export default function Dashboard() {
   };
 
   const handleAnalyze = async () => {
-    if (!classification.trim()) { setError('Please select a job classification'); return; }
-    if (!question.trim()) { setError('Please ask a question'); return; }
+    if (!question.trim()) { setError('Please describe your situation before analyzing.'); return; }
     setAnalyzing(true);
     setError('');
     setResults(null);
@@ -108,6 +109,11 @@ export default function Dashboard() {
               <h1 className="text-2xl font-bold text-ups-gold cursor-pointer">GRIEVANCE AI</h1>
             </Link>
             <div className="flex gap-2 items-center">
+              {isAdmin && (
+                <Link href="/admin">
+                  <button className="bg-ups-brown text-ups-gold px-4 py-2 rounded uppercase text-sm font-bold">🔑 Admin</button>
+                </Link>
+              )}
               <Link href="/settings">
                 <button className="bg-ups-brown text-ups-gold px-4 py-2 rounded uppercase text-sm font-bold">⚙️ Settings</button>
               </Link>
@@ -132,26 +138,34 @@ export default function Dashboard() {
           <h3 className="text-xl font-bold text-ups-gold mb-4">Contract Analysis</h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-ups-gold font-semibold mb-2 text-sm">Job Classification</label>
-              <select value={classification} onChange={(e) => setClassification(e.target.value)} className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base" disabled={analyzing}>
+              <label className="block text-ups-gold font-semibold mb-2 text-sm">
+                Job Classification <span className="text-gray-500 font-normal">(optional — helps get a more accurate result)</span>
+              </label>
+              <select
+                value={classification}
+                onChange={(e) => setClassification(e.target.value)}
+                className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base"
+                disabled={analyzing}
+              >
                 <option value="">Select your job type...</option>
                 {jobTypes.map((type) => (<option key={type} value={type}>{type}</option>))}
               </select>
+              <p className="text-gray-600 text-xs mt-1">If you don't select one, just mention your job in your description and it will be detected automatically.</p>
             </div>
             <div>
               <label className="block text-ups-gold font-semibold mb-2 text-sm">Describe Your Situation</label>
               <textarea
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
-                placeholder="e.g., Can UPS send me home before I get my 8 hours? Describe your situation in detail."
-                className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white h-48 text-base"
+                placeholder="Describe what happened in your own words. e.g., 'I'm a feeder driver and they sent me home after 6 hours without my 8-hour guarantee.'"
+                className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white h-48 text-base resize-none"
                 disabled={analyzing}
               />
             </div>
             <button
               onClick={handleAnalyze}
-              disabled={analyzing}
-              className="w-full bg-ups-brown text-ups-gold py-4 rounded uppercase font-bold text-base disabled:opacity-50"
+              disabled={analyzing || !question.trim()}
+              className="w-full bg-ups-brown text-ups-gold py-4 rounded uppercase font-bold text-base disabled:opacity-50 hover:bg-yellow-900 transition-colors"
             >
               {analyzing ? '⏳ Analyzing... Please wait' : '🔍 Analyze'}
             </button>
