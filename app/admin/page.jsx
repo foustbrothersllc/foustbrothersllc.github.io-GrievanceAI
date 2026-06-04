@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { auth } from '@/lib/firebase';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, getDoc, setDoc } from 'firebase/firestore';
 import Link from 'next/link';
 
 const PROTECTED_EMAIL = 'Jakef91@gmail.com';
@@ -17,6 +17,11 @@ export default function AdminPanel() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [activeTab, setActiveTab] = useState('users');
+
+  // App settings state
+  const [spellcheckEnabled, setSpellcheckEnabled] = useState(true);
+  const [savingSettings, setSavingSettings] = useState(false);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -24,6 +29,7 @@ export default function AdminPanel() {
       if (currentUser) {
         setUser(currentUser);
         loadUsers();
+        loadAppSettings();
       } else {
         router.push('/login');
       }
@@ -38,6 +44,34 @@ export default function AdminPanel() {
       setUsers(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
     } catch (err) {
       setError('Failed to load users');
+    }
+  };
+
+  const loadAppSettings = async () => {
+    try {
+      const snap = await getDoc(doc(db, 'settings', 'app'));
+      if (snap.exists()) {
+        const data = snap.data();
+        setSpellcheckEnabled(data.spellcheckEnabled !== false); // default true
+      }
+    } catch (err) {
+      console.error('Failed to load app settings:', err);
+    }
+  };
+
+  const saveAppSettings = async () => {
+    setSavingSettings(true);
+    setError('');
+    setSuccess('');
+    try {
+      await setDoc(doc(db, 'settings', 'app'), {
+        spellcheckEnabled,
+      }, { merge: true });
+      setSuccess('Settings saved successfully.');
+    } catch (err) {
+      setError('Failed to save settings: ' + err.message);
+    } finally {
+      setSavingSettings(false);
     }
   };
 
@@ -125,10 +159,10 @@ export default function AdminPanel() {
       <header className="border-b border-ups-brown bg-gray-900 p-4">
         <div className="max-w-6xl mx-auto">
           <div className="flex justify-between items-center mb-3">
-            <Link href="/"><h1 className="text-2xl font-bold text-ups-gold">GRIEVANCE AI</h1></Link>
+            <Link href="/hub"><h1 className="text-2xl font-bold text-ups-gold">GRIEVANCE AI</h1></Link>
           </div>
-          <Link href="/dashboard">
-            <button className="w-full bg-ups-brown text-ups-gold px-3 py-2 rounded uppercase text-sm font-bold">← Back to Dashboard</button>
+          <Link href="/hub">
+            <button className="w-full bg-ups-brown text-ups-gold px-3 py-2 rounded uppercase text-sm font-bold">🏠 Back to Home</button>
           </Link>
         </div>
       </header>
@@ -136,11 +170,11 @@ export default function AdminPanel() {
       <main className="max-w-6xl mx-auto p-4">
         <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-6 mb-6">
           <h2 className="text-3xl font-bold text-ups-gold mb-2">🔑 Admin Panel</h2>
-          <p className="text-gray-400">Manage users and contracts</p>
+          <p className="text-gray-400">Manage users, contracts, and app settings</p>
         </div>
 
-        {error && <div className="bg-red-900 text-red-100 p-4 rounded mb-6">{error}</div>}
-        {success && <div className="bg-green-900 text-green-100 p-4 rounded mb-6">{success}</div>}
+        {error && <div className="bg-red-900 text-red-100 p-4 rounded mb-6 text-sm">{error}</div>}
+        {success && <div className="bg-green-900 text-green-100 p-4 rounded mb-6 text-sm">{success}</div>}
 
         {/* Tabs */}
         <div className="flex gap-3 mb-6">
@@ -149,6 +183,9 @@ export default function AdminPanel() {
           </button>
           <button onClick={() => setActiveTab('contracts')} className={`flex-1 py-2 rounded uppercase font-bold text-sm ${activeTab === 'contracts' ? 'bg-ups-gold text-ups-brown' : 'bg-ups-brown text-ups-gold'}`}>
             📄 Contracts
+          </button>
+          <button onClick={() => setActiveTab('settings')} className={`flex-1 py-2 rounded uppercase font-bold text-sm ${activeTab === 'settings' ? 'bg-ups-gold text-ups-brown' : 'bg-ups-brown text-ups-gold'}`}>
+            ⚙️ Settings
           </button>
         </div>
 
@@ -191,9 +228,7 @@ export default function AdminPanel() {
                         </button>
                         <button onClick={() => handlePasswordReset(u.email)} className="bg-blue-700 text-white px-3 py-1.5 rounded text-xs">📧 Reset Password</button>
                         {canToggleProtected && (
-                          <button onClick={() => handleToggleProtected(u)} className="bg-purple-700 text-white px-3 py-1.5 rounded text-xs">
-                            🛡️ Protect
-                          </button>
+                          <button onClick={() => handleToggleProtected(u)} className="bg-purple-700 text-white px-3 py-1.5 rounded text-xs">🛡️ Protect</button>
                         )}
                         <button onClick={() => handleDeleteUser(u)} className="bg-red-700 text-white px-3 py-1.5 rounded text-xs">🗑️ Delete</button>
                       </div>
@@ -203,9 +238,7 @@ export default function AdminPanel() {
                       <div className="flex flex-wrap gap-2">
                         <button onClick={() => handlePasswordReset(u.email)} className="bg-blue-700 text-white px-3 py-1.5 rounded text-xs">📧 Reset Password</button>
                         {canToggleProtected && (
-                          <button onClick={() => handleToggleProtected(u)} className="bg-purple-900 text-white px-3 py-1.5 rounded text-xs">
-                            🛡️ Remove Protection
-                          </button>
+                          <button onClick={() => handleToggleProtected(u)} className="bg-purple-900 text-white px-3 py-1.5 rounded text-xs">🛡️ Remove Protection</button>
                         )}
                       </div>
                     )}
@@ -226,21 +259,58 @@ export default function AdminPanel() {
         {activeTab === 'contracts' && (
           <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-6">
             <h3 className="text-xl font-bold text-ups-gold mb-4">Contracts</h3>
-            <p className="text-gray-400 mb-4 text-sm">Contracts load directly from GitHub. To update, push new versions to your repo.</p>
+            <p className="text-gray-400 mb-4 text-sm">Contracts are loaded from the <code className="text-ups-gold">public/</code> folder in the repo. To update, replace the files and redeploy.</p>
             <div className="space-y-3">
               <div className="bg-gray-800 border border-ups-brown rounded p-4">
-                <p className="text-ups-gold font-semibold text-sm">Atlantic Area Supplemental Agreement 2023-2028</p>
-                <p className="text-gray-500 text-xs mt-1">local-agreement.txt</p>
-                <a href="https://raw.githubusercontent.com/foustbrothersllc/foustbrothersllc.github.io-GrievanceAI/main/local-agreement.txt" target="_blank" rel="noreferrer" className="text-blue-400 text-xs">View file →</a>
+                <p className="text-ups-gold font-bold text-sm">📄 National Master Agreement</p>
+                <p className="text-gray-400 text-xs mt-1">public/master-agreement.txt</p>
               </div>
               <div className="bg-gray-800 border border-ups-brown rounded p-4">
-                <p className="text-ups-gold font-semibold text-sm">National Master UPS Agreement 2023-2028</p>
-                <p className="text-gray-500 text-xs mt-1">master-agreement.txt</p>
-                <a href="https://raw.githubusercontent.com/foustbrothersllc/foustbrothersllc.github.io-GrievanceAI/main/master-agreement.txt" target="_blank" rel="noreferrer" className="text-blue-400 text-xs">View file →</a>
+                <p className="text-ups-gold font-bold text-sm">📄 Atlantic Area Supplemental Agreement</p>
+                <p className="text-gray-400 text-xs mt-1">public/local-agreement.txt</p>
               </div>
             </div>
           </div>
         )}
+
+        {/* Settings Tab */}
+        {activeTab === 'settings' && (
+          <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-6">
+            <h3 className="text-xl font-bold text-ups-gold mb-6">App Settings</h3>
+
+            <div className="space-y-6">
+
+              {/* Spellcheck Toggle */}
+              <div className="bg-gray-800 border border-ups-brown rounded-lg p-5">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-ups-gold font-bold text-sm mb-1">✏️ Spellcheck Button</p>
+                    <p className="text-gray-400 text-xs">When enabled, a "✏️ Spellcheck" button appears on the Contract Q&amp;A and File a Grievance pages. Users can tap it to auto-correct their input before submitting. Disable this to hide the button from all users instantly.</p>
+                  </div>
+                  <button
+                    onClick={() => setSpellcheckEnabled(!spellcheckEnabled)}
+                    className={`ml-6 flex-shrink-0 w-16 h-8 rounded-full transition-colors duration-200 relative ${spellcheckEnabled ? 'bg-green-600' : 'bg-gray-600'}`}
+                  >
+                    <span className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow transition-transform duration-200 ${spellcheckEnabled ? 'translate-x-9' : 'translate-x-1'}`} />
+                  </button>
+                </div>
+                <p className={`mt-3 text-xs font-bold ${spellcheckEnabled ? 'text-green-400' : 'text-red-400'}`}>
+                  {spellcheckEnabled ? '✅ Spellcheck button is VISIBLE to users' : '⛔ Spellcheck button is HIDDEN from all users'}
+                </p>
+              </div>
+
+            </div>
+
+            <button
+              onClick={saveAppSettings}
+              disabled={savingSettings}
+              className="mt-6 w-full bg-ups-brown text-ups-gold py-3 rounded uppercase font-bold text-sm disabled:opacity-50 hover:bg-yellow-900 transition-colors"
+            >
+              {savingSettings ? '⏳ Saving...' : '💾 Save Settings'}
+            </button>
+          </div>
+        )}
+
       </main>
     </div>
   );
