@@ -1,6 +1,9 @@
-const CONTRACT_URLS = {
-  master: 'https://raw.githubusercontent.com/foustbrothersllc/foustbrothersllc.github.io-GrievanceAI/refs/heads/main/master-agreement.txt',
-  local: 'https://raw.githubusercontent.com/foustbrothersllc/foustbrothersllc.github.io-GrievanceAI/refs/heads/main/local-agreement.txt'
+import { readFile } from 'fs/promises';
+import { join } from 'path';
+
+const CONTRACT_PATHS = {
+  master: join(process.cwd(), 'contracts', 'master-agreement.txt'),
+  local: join(process.cwd(), 'contracts', 'local-agreement.txt'),
 };
 
 const ARTICLE_LOCATIONS = {
@@ -1011,22 +1014,19 @@ export async function POST(request) {
       return Response.json({ error: 'Missing question' }, { status: 400 });
     }
 
-    // Fetch both contracts with timeout and fallback
+    // Read both contracts from local filesystem (contracts/ folder in repo root)
     let masterText = '';
     let localText = '';
     try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 8000);
       const [m, l] = await Promise.all([
-        fetch(CONTRACT_URLS.master, { signal: controller.signal }).then(r => r.text()),
-        fetch(CONTRACT_URLS.local, { signal: controller.signal }).then(r => r.text()),
+        readFile(CONTRACT_PATHS.master, 'utf8'),
+        readFile(CONTRACT_PATHS.local, 'utf8'),
       ]);
-      clearTimeout(timeout);
       masterText = m;
       localText = l;
     } catch (fetchErr) {
-      console.error('[contract-qa] Contract fetch failed:', fetchErr.message);
-      // Continue with empty contract text — AI will use general knowledge
+      console.error('[contract-qa] Contract file read failed:', fetchErr.message);
+      // Continue with empty contract text — AI will use hard-coded facts
     }
 
     // PRE-FLIGHT: Is the user asking to VIEW an article?
