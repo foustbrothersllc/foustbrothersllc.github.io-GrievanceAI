@@ -64,7 +64,7 @@ const KEYWORD_ARTICLE_MAP = [
   { keywords: ['drug testing','dot physical','random test','sap program','discrimination'], articles: ['master:35'] },
   { keywords: ['harassment','harassed','intimidated','coerced','over-supervised','hostile','screaming','yelling','cursing','threatened','talked down to','dignity','retaliation','punished for filing','targeted','grievance retaliation','targeting me','out to get me'], articles: ['master:37'] },
   { keywords: ['9.5 list','9.5 violation','excessive dispatch','over 9.5','triple time','3x pay'], articles: ['master:37'] },
-  { keywords: ['sleeper team','sleeper','team run','two man run','premium service','mileage rate','layover pay','miles less than 550','under 550','550 miles','short miles','short run','short trip','mileage short','paid wrong mileage','mileage dispute','not enough miles','run was short'], articles: ['master:43'] },
+  { keywords: ['sleeper team','sleeper','team run','two man run','premium service','mileage rate','layover pay','miles less than 550','under 550','550 miles','short miles','short run','short trip','mileage short','paid wrong mileage','mileage dispute','not enough miles','run was short','took my load','took my run','stole my load','took my freight','gave my load','gave my run','assigned my run','my load was given','load was taken','100 miles','120 miles','150 miles','200 miles','250 miles','300 miles','regional run','short haul','local feeder','point to point'], articles: ['master:43'] },
   { keywords: ['bypass','bypassed','skipped over','passed over','junior driver','less senior','seniority list','run given away','weekend call','junior driver got the run','junior got the run','skipped me','let a junior guy go','gave my run away'], articles: ['local:48'] },
   { keywords: ['worked through lunch','no meal period','skipped break','forced break','meal period','ate on the fly','no time to eat','supervisor rushed my break','lunch hour','worked 6 hours straight','worked 7 hours straight',"didn't eat until my 6th hour",'ate late','no lunch until','late break','worked 6 hours without a break','worked 7 hours without a break','no food','missed lunch','straight through'], articles: ['local:51', 'master:17'] },
   { keywords: ['sent home early','cut short','guarantee','8 hours','minimum hours','reported for work','daily guarantee','didnt get my 8','sent home','forced home','wanted more work','forced to go home','they made me leave',"didn't get my 8","didn't get my time",'cut me short'], articles: ['local:60', 'master:22'] },
@@ -198,8 +198,15 @@ function extractRelevantSections(masterText, localText, question, classification
     triggeredArticles.add('master:43');
   }
 
-  // Mileage under 550
-  const mileageKeywords = ['under 550','less than 550','550 miles','short miles','short run','mileage short','mileage dispute','not enough miles','run was short','short trip','paid wrong mileage','miles less than 550'];
+  // Mileage under 550 / load assignment / short run
+  const mileageKeywords = [
+    'under 550','less than 550','550 miles','short miles','short run','mileage short',
+    'mileage dispute','not enough miles','run was short','short trip','paid wrong mileage',
+    'miles less than 550','took my load','took my run','stole my load','took my freight',
+    'gave my load','gave my run','assigned my run','my load was given','load was taken',
+    '100 miles','120 miles','150 miles','200 miles','250 miles','300 miles','400 miles',
+    'regional run','short haul','local feeder','point to point',
+  ];
   if (mileageKeywords.some(kw => questionLower.includes(kw))) {
     triggeredArticles.add('master:43');
   }
@@ -450,6 +457,13 @@ SUBCONTRACTING (Article 32, National Master / Article 66, Atlantic Area Suppleme
 - No owner-operators shall be employed.
 - VIOLATION: Any use of outside contractor, owner-operator, or vendor to perform work normally done by bargaining unit employees.
 
+ARTICLE 43 — PREMIUM SERVICES / SLEEPER TEAM WORK PRESERVATION (National Master):
+- The Employer SHALL utilize bargaining unit employees for feeder work of premium services.
+- UNDER-550-MILE RULE: Any feeder run under 550 miles triggers Article 43 premium pay and mileage rate provisions. Runs of 100, 120, 150, 200, 250, 300, 400 miles are ALL under 550.
+- LOAD ASSIGNMENT VIOLATION: When a sleeper team performs a run/load that a senior qualified feeder driver was available to perform, this is BOTH a seniority bypass (Article 48) AND an Article 43 premium service work preservation violation. Flag BOTH as separate issues.
+- "A sleeper team took my load" = Article 43 violation + Article 48 seniority bypass. VERDICT IS YES on both.
+- REMEDY: Worker entitled to make-whole pay for the run at the applicable mileage rate, plus any applicable premium pay for the miles involved.
+
 GRIEVANCE PROCEDURE (Article 49, Atlantic Area Supplemental Agreement):
 - Must report to shop steward within 5 working days of the incident.
 - If no agreement, union submits in writing within 5 days.
@@ -507,6 +521,8 @@ Treat EVERY clause, action verb, or noun as a separate potential legal claim.
 - Sent home before 8 hours (full-time) -> Daily Guarantee Violation, Article 52 Atlantic Area Supplement — ALWAYS YES
 - Sent home before 3.5 hours (part-time) -> Daily Guarantee Violation, Article 63 Atlantic Area Supplement — ALWAYS YES
 - Junior employee gets work over senior -> Seniority Bypass, Article 48 Atlantic Area Supplement
+- Sleeper team took/performed a run that a feeder driver was available for -> Article 43 Premium Service Violation + Article 48 Seniority Bypass — flag BOTH
+- Any run described as under 550 miles (100, 120, 150, 200, 250, 300, 400 miles etc.) -> Article 43 Under-550 Premium Pay Violation
 - Yelling, cursing, screaming, threatening -> Dignity and Respect, Article 37 National Master — ALWAYS YES
 - Supervisor performing bargaining unit work -> Supervisors Working, Article 3 Section 7 National Master / Article 46 Section 2
 - Disciplined from GPS/telematics only -> Technology Discipline, Article 6 Section 6 National Master — ALWAYS YES
