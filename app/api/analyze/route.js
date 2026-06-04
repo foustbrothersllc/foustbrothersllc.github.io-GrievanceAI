@@ -347,7 +347,7 @@ CRITICAL ENFORCEMENT RULES:
 - ORIGIN BOOK ACCURACY: Articles 46–69 are ATLANTIC AREA SUPPLEMENT articles. NEVER label them as National Master Agreement provisions.
 - ARTICLE 18/16 CROSS-REFERENCE: If management threatened or coerced a worker to operate unsafe equipment, flag BOTH the safety article AND Article 37 as separate violations.
 - DAILY GUARANTEE MATH RULE: For full-time employees (Feeder Driver, Package Car Driver) use Article 52 Atlantic Area Supplement - only flag if hours worked < 8. For part-time employees use Article 22 National Master - only flag if hours worked < 3.5.
-- 9.5 LIST: Only applies to PACKAGE CAR DRIVERS. NEVER apply to Feeder Drivers.
+- 9.5 LIST: The 9.5 list and Article 37 Section 1(b) apply EXCLUSIVELY to Package Car Drivers (RPCDs). NEVER apply 9.5 rules to a Feeder Driver, Sleeper Team driver, or any non-RPCD — not even partially. If the classification is Feeder Driver or Sleeper Team and the complaint involves excessive hours, flag Article 18 (FMCSA 14-Hour Rule) instead. Output VERDICT: NO - NO VIOLATION on any 9.5 claim for a non-RPCD and explain why.
 - FEEDER DRIVERS over 14 hours on-duty: Flag safety article AND FMCSA 14-Hour Rule.
 - ARTICLE 43 MILEAGE RULE: For Sleeper Team runs, if ANY run is under 550 miles, immediately audit Article 43 for premium pay, mileage rate violations, and layover pay.
 - ANCHOR CODE CITATION RULE: When your analysis references an article that has an anchor code in the search index, include that anchor code and line reference in your ARTICLES field so the member can locate the exact provision.
