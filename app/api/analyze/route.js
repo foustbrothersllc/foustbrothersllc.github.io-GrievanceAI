@@ -146,21 +146,25 @@ function extractArticleSection(text, articleNum, maxChars = 8000) {
 // Smart contract extraction - pulls articles from both KEYWORD map and TOC index
 function extractRelevantSections(masterText, localText, question, classification) {
   const questionLower = question.toLowerCase();
-  const classificationLower = classification.toLowerCase();
+  const classificationLower = (classification || '').toLowerCase();
   const triggeredArticles = new Set();
-  
+
+  // Detect classification from question text if not explicitly passed
+  const fullTimeTerms = ['feeder driver','feeder','package car driver','package car','package driver','sleeper team','sleeper','specialist','mechanic','combo worker','combo'];
+  const questionMentionsFullTime = fullTimeTerms.some(t => questionLower.includes(t));
+
   // Always include core articles based on classification
   const isFullTime = ['Feeder Driver', 'Package Car Driver', 'Sleeper Team', 'Specialist', 'Mechanic', 'Combo Worker'].some(
     ft => classificationLower.includes(ft.toLowerCase())
-  );
-  
+  ) || questionMentionsFullTime;
+
   if (isFullTime) {
     triggeredArticles.add('local:60');
   } else {
     triggeredArticles.add('master:22');
   }
   triggeredArticles.add('local:48');
-  
+
   // Keyword map triggers
   for (const mapping of KEYWORD_ARTICLE_MAP) {
     if (mapping.keywords.some(kw => questionLower.includes(kw.toLowerCase()))) {
@@ -173,7 +177,7 @@ function extractRelevantSections(masterText, localText, question, classification
   for (const entry of tocMatches) {
     triggeredArticles.add(`${entry.contract}:${entry.article}`);
   }
-  
+
   // Explicit article number mentions
   const explicitArticles = question.match(/article\s+(\d+)/gi) || [];
   explicitArticles.forEach(match => {
@@ -184,12 +188,13 @@ function extractRelevantSections(masterText, localText, question, classification
     if (inLocal) triggeredArticles.add(`local:${num}`);
   });
 
-  // Classification-specific triggers
-  if (classificationLower.includes('feeder')) {
+  // Classification-specific triggers (check question text too)
+  if (classificationLower.includes('feeder') || classificationLower.includes('sleeper') ||
+      questionLower.includes('feeder') || questionLower.includes('sleeper team')) {
     triggeredArticles.add('master:43');
     triggeredArticles.add('master:18');
   }
-  if (classificationLower.includes('sleeper')) {
+  if (classificationLower.includes('sleeper') || questionLower.includes('sleeper')) {
     triggeredArticles.add('master:43');
   }
 
@@ -571,8 +576,11 @@ export async function POST(request) {
       try {
         console.log(`Trying ${provider.name}...`);
         const analysis = await provider.fn(prompt);
-        console.log(`Success with ${provider.name}`);
-        return Response.json({ analysis, provider: provider.name });
+        if (analysis && analysis.trim().length > 10) {
+          console.log(`Success with ${provider.name}`);
+          return Response.json({ analysis, provider: provider.name });
+        }
+        errors.push(`${provider.name}: response too short or empty`);
       } catch (err) {
         console.log(`${provider.name} failed:`, err.message);
         errors.push(`${provider.name}: ${err.message}`);
