@@ -18,7 +18,7 @@ export default function AdminPanel() {
   const [success, setSuccess] = useState('');
   const [activeTab, setActiveTab] = useState('users');
 
-  // App settings state
+  // App settings state — default true so button shows before Firestore doc is created
   const [spellcheckEnabled, setSpellcheckEnabled] = useState(true);
   const [savingSettings, setSavingSettings] = useState(false);
 
@@ -289,9 +289,9 @@ export default function AdminPanel() {
                   </div>
                   <button
                     onClick={() => setSpellcheckEnabled(!spellcheckEnabled)}
-                    className={`ml-6 flex-shrink-0 w-16 h-8 rounded-full transition-colors duration-200 relative ${spellcheckEnabled ? 'bg-green-600' : 'bg-gray-600'}`}
+                    className={`ml-6 flex-shrink-0 w-14 h-7 rounded-full transition-colors duration-200 relative ${spellcheckEnabled ? 'bg-green-600' : 'bg-gray-600'}`}
                   >
-                    <span className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow transition-transform duration-200 ${spellcheckEnabled ? 'translate-x-9' : 'translate-x-1'}`} />
+                    <span className={`absolute top-0.5 left-0.5 w-6 h-6 bg-white rounded-full shadow transition-transform duration-200 ${spellcheckEnabled ? 'translate-x-7' : 'translate-x-0'}`} />
                   </button>
                 </div>
                 <p className={`mt-3 text-xs font-bold ${spellcheckEnabled ? 'text-green-400' : 'text-red-400'}`}>
