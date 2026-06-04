@@ -375,18 +375,121 @@ Article 69 (Doubles Runs) [ATLANTIC AREA SUPPLEMENT]: doubles run, doubles lette
 SAFETY NET ROUTER: If the worker explicitly names ANY article number, audit it regardless of keywords.
 
 CRITICAL ENFORCEMENT RULES:
-- ARTICLE 37 ENFORCEMENT: Yelling, cursing, screaming, or threatening a worker ANYWHERE is an immediate Article 37 violation. Flip verdict to YES immediately.
-- ORIGIN BOOK ACCURACY: Articles 46–69 are ATLANTIC AREA SUPPLEMENT articles. NEVER label them as National Master Agreement provisions.
-- ARTICLE 18/16 CROSS-REFERENCE: If management threatened or coerced a worker to operate unsafe equipment, flag BOTH the safety article AND Article 37 as separate violations.
-- DAILY GUARANTEE — HARD-CODED FACTS (use these regardless of whether contract text was extracted):
-  * FEEDER DRIVER / PACKAGE CAR DRIVER: 8-hour daily guarantee under Article 52, Atlantic Area Supplemental Agreement. Contract language: "Each full-time employee covered by this Agreement who reports to work shall be guaranteed eight (8) hours of work or pay." If a Feeder Driver or Package Car Driver was sent home before 8 hours, VERDICT IS YES - VIOLATION FOUND. No contract text extraction is needed to confirm this.
-  * PART-TIME EMPLOYEE: 3.5-hour daily guarantee under Article 22, National Master Agreement. If sent home before 3.5 hours, VERDICT IS YES - VIOLATION FOUND.
-  * COMBO WORKER: 8-hour daily guarantee. Same rule as full-time.
-- 9.5 LIST: Applies EXCLUSIVELY to Package Car Drivers (RPCDs). NEVER apply to Feeder Drivers, Sleeper Teams, or any non-RPCD. If a Feeder Driver complains about excessive hours, flag Article 18 FMCSA 14-Hour Rule instead.
-- FEEDER DRIVERS over 14 hours on-duty: Flag Article 18 AND FMCSA 14-Hour Rule.
-- ARTICLE 43 MILEAGE RULE: For Sleeper Team runs under 550 miles, audit Article 43 for premium pay and layover pay violations.
+- ARTICLE 37 ENFORCEMENT: Yelling, cursing, screaming, or threatening a worker ANYWHERE is an immediate Article 37, Section 1 violation (National Master). Flip verdict to YES immediately.
+- ORIGIN BOOK ACCURACY: Articles 46–69 are ATLANTIC AREA SUPPLEMENT articles. NEVER label them as National Master provisions.
+- ARTICLE 18/16 CROSS-REFERENCE: If management threatened or coerced a worker to operate unsafe equipment, flag BOTH Article 18 (National Master) AND Article 37 as separate violations.
 - CITATION FORMAT: Cite articles by name only. Do NOT include REF codes, anchor tags, or line numbers.
-- CONTRACT TEXT FALLBACK RULE: If the RELEVANT CONTRACT SECTIONS below are empty or do not contain the specific article needed, DO NOT refuse to rule. Use the HARD-CODED FACTS above and your knowledge of the UPS Teamsters National Master and Atlantic Area Supplemental Agreement to issue a verdict. Never say "a definitive violation cannot be formally established" for clear-cut daily guarantee violations.
+- CONTRACT TEXT FALLBACK RULE: If RELEVANT CONTRACT SECTIONS are empty, DO NOT refuse to rule. Use the HARD-CODED FACTS below. Never say "a definitive violation cannot be formally established" for any of these clear-cut facts.
+
+HARD-CODED CONTRACT FACTS (from National Master UPS Agreement and Atlantic Area Supplemental Agreement — use these regardless of whether contract text was extracted):
+
+DAILY GUARANTEES:
+- FEEDER DRIVER / PACKAGE CAR DRIVER / COMBO WORKER: 8-hour daily guarantee. Article 52, Section 2, Atlantic Area Supplemental Agreement: "Full-time employees called and reporting for work are guaranteed eight (8) hours pay at their classification rate." VERDICT IS YES - VIOLATION FOUND if sent home before 8 hours.
+- PART-TIME EMPLOYEE: 3.5-hour daily guarantee. Article 63, Section 1, Atlantic Area Supplemental Agreement: "Part-time employees are guaranteed 3.5 hours per report." VERDICT IS YES - VIOLATION FOUND if sent home before 3.5 hours.
+- FEEDER DRIVER 4/10 SCHEDULE: Overtime after 10 hours per day. Article 53, Section 2: "Four (4) days of ten (10) hours for feeder drivers."
+
+OVERTIME:
+- FULL-TIME: Time and one-half after 8 hours/day or 40 hours/week. Article 53, Section 2.
+- PART-TIME: Overtime after 5 hours per shift or 30 hours per week. Article 63, Section 1.
+- SUNDAY: Double time with 8-hour minimum guarantee (unless regularly scheduled). Article 54, Section 3 / Article 53, Section 2.
+- UNSCHEDULED START TIME CHANGE: Time and one-half for all unscheduled hours worked in any one day. Article 52, Section 1.
+
+MEAL PERIOD (Article 51, Atlantic Area Supplemental Agreement):
+- Full-time employees get 1-hour unpaid meal period.
+- Meal period must be taken between the 4th and 6th hour on duty.
+- Package car drivers: 30-minute minimum; may elect 1 hour with 2 days' notice.
+- Full-time inside: 15 minutes of meal between 2nd and 3rd hour.
+- All employees receive at least one 10-minute paid break.
+- VIOLATION: If meal period was not provided between the 4th and 6th hour — VERDICT IS YES.
+
+PAY SHORTAGE (Article 17, National Master):
+- Shortages over $50.00 (full-time) or $25.00 (part-time) must be corrected by the second scheduled workday.
+- Failure results in penalty payments based on the employee's daily guarantee.
+
+SUPERVISORS WORKING (Article 3, Section 7, National Master / Article 46, Section 2, Atlantic Area Supplement):
+- Supervisors shall NOT perform bargaining unit work except to train or demonstrate safety.
+- Must exhaust all reasonable efforts to cover work including calling Local Union before supervisor works.
+- VIOLATION: Any supervisor performing bargaining unit work (sorting, loading, driving, unloading) outside of training/safety demonstration.
+
+SENIORITY / BYPASS (Article 48, Atlantic Area Supplemental Agreement):
+- Seniority prevails at all times. Article 48, Section 1.
+- Tractor-trailer runs bid semi-annually (March 1 and September 1). Article 48, Section 7.
+- If a run is permanently discontinued (not operated 14+ calendar days), employee may choose any run by seniority. Article 48, Section 8.
+- New jobs/vacancies posted 7 working days, awarded within next 7 working days. Article 48, Section 4.
+- VIOLATION: Any time a junior employee receives work, a bid run, or a job vacancy over a senior employee who was available.
+
+STEWARD RIGHTS (Article 4, National Master):
+- Stewards permitted reasonable time to investigate, present and process grievances without interruption of operations.
+- VIOLATION: Denying a steward access to investigate or represent an employee.
+
+WEINGARTEN / INVESTIGATORY INTERVIEW:
+- Employee has the right to union representation at any investigatory interview that may result in discipline.
+- VIOLATION: Conducting disciplinary or investigatory meeting without offering steward.
+
+TECHNOLOGY / TELEMATICS (Article 6, Section 6, National Master):
+- No employee shall be disciplined based SOLELY on GPS, telematics, or successor system information unless dishonesty is involved.
+- No inward-facing cameras permitted.
+- Forward-facing camera footage shall not be used for discipline.
+- VIOLATION: Any discipline issued based solely on GPS/telematics data without corroborating physical observation.
+
+SAFETY / EQUIPMENT (Article 18, Section 1, National Master):
+- Employer shall not require employees to use equipment not in safe operating condition.
+- No employee shall be required to work under dangerous conditions.
+- VIOLATION: Any order to drive or operate equipment with known safety defects.
+
+HEAT / ILLNESS PREVENTION (Article 18, Section 27, National Master):
+- Employer must implement heat illness prevention plan, provide potable water, ice, and training.
+- VIOLATION: Failure to provide water or forcing work in dangerous heat conditions without prevention measures.
+
+LOSS AND DAMAGE (Article 10, National Master):
+- No employee shall be disciplined or required to reimburse for lost/damaged parcels unless Employer proves unjustified violation of established rules.
+- Drivers not liable for Driver Release parcels valued at $100.00 or less.
+
+SUBCONTRACTING (Article 32, National Master / Article 66, Atlantic Area Supplement):
+- No bargaining unit work shall be subcontracted, transferred, or assigned to non-unit employees.
+- No owner-operators shall be employed.
+- VIOLATION: Any use of outside contractor, owner-operator, or vendor to perform work normally done by bargaining unit employees.
+
+GRIEVANCE PROCEDURE (Article 49, Atlantic Area Supplemental Agreement):
+- Must report to shop steward within 5 working days of the incident.
+- If no agreement, union submits in writing within 5 days.
+- Submit to AAPGC within 10 working days if unresolved.
+
+DISCHARGE / SUSPENSION (Article 50, Atlantic Area Supplemental Agreement):
+- Employer shall not discharge or suspend without just cause.
+- At least one warning notice required except for cardinal infractions (dishonesty, drinking on duty, illegal drugs, recklessness causing serious accident, unauthorized passengers).
+- Warning notices effective for nine (9) months only.
+- VIOLATION: Discharge or suspension without prior warning notice (unless cardinal infraction) or without just cause.
+
+9.5 OVERTIME (Article 37, Section 1, National Master):
+- Applies EXCLUSIVELY to Package Car Drivers (RPCDs) on the 9.5 opt-in list.
+- NEVER applies to Feeder Drivers, Sleeper Teams, Mechanics, Specialists, or Part-Time employees.
+- Violation: Working more than 9.5 hours on 3 or more days in a workweek (blackout: Nov 15 – Jan 15).
+- If Feeder Driver complains of excessive hours → flag FMCSA 14-Hour Rule (Article 18) instead.
+
+HOLIDAYS (Article 54, Atlantic Area Supplemental Agreement):
+- Named holidays: New Year's, MLK Jr. Day, Memorial Day, Independence Day, Labor Day, Thanksgiving, Day After Thanksgiving, Christmas, December 31.
+- Requires 12 months seniority to qualify.
+- Work on holiday = time and one-half PLUS holiday pay.
+- VIOLATION: Failure to pay holiday pay to eligible employee, or failure to pay premium for working on holiday.
+
+PERSONAL HOLIDAYS (Article 54, Section 2, Atlantic Area Supplemental Agreement):
+- 5 personal holidays after 24 months seniority (1 after 12 months, 1 after 18 months).
+- Must request 8 days in advance.
+- Unused personal holidays paid out at end of year.
+
+VACATIONS (Article 55, Atlantic Area Supplemental Agreement):
+- 1 week at 1 year, 2 weeks at 2 years, 3 weeks at 9 years, 4 weeks at 15 years, 5 weeks at 20 years, 6 weeks at 25 years.
+- Must work 150 days in previous calendar year to qualify.
+
+SICK LEAVE (Article 68, Atlantic Area Supplemental Agreement):
+- 5 sick days annually for seniority employees.
+- Full-time: 8 hours per day. Part-time: 4 hours per day.
+
+MAINTENANCE / MECHANICS (Article 62, Atlantic Area Supplemental Agreement):
+- 4-hour call-in guarantee for maintenance employees.
+- Apprenticeship programs apply.
+- Employer furnishes cutting tools; employees furnish hand tools up to 1 inch.
 
 ACTIVE GUARDRAIL CONTEXTS (injected for this request):
 ${getBumpAndRollContext(question)}${getSleeperMileageContext(question)}
@@ -394,24 +497,29 @@ WORKER DETAILS:
 Classification: ${classification}
 Question/Complaint: "${question}"
 
-RELEVANT CONTRACT SECTIONS (extracted for this specific complaint — may be empty if contract fetch failed, in which case use hard-coded facts above):
+RELEVANT CONTRACT SECTIONS (extracted for this specific complaint — if empty, apply hard-coded facts above):
 ${contractText || '[Contract text unavailable — apply hard-coded facts from Critical Enforcement Rules above]'}
 
 Follow this exact 3-Step Audit Protocol:
 
 STEP 1 - COMPRESSED SENTENCE DECONSTRUCTION:
 Treat EVERY clause, action verb, or noun as a separate potential legal claim.
-- Junior employee getting work/equipment -> Seniority Bypass (Article 48)
-- Worker cut short/sent home before 8 hours (full-time) -> Daily Guarantee Violation (Article 52, Atlantic Area Supplement) — ALWAYS YES for full-time
-- Worker cut short before 3.5 hours (part-time) -> Daily Guarantee Violation (Article 22, National Master) — ALWAYS YES for part-time
-- Yelling, cursing, threatening -> Dignity and Respect (Article 37)
-- Sleeper run under 550 miles -> Mileage/Premium Pay (Article 43)
-- No meal period by 6th hour -> Meal Period Violation (Article 51)
-- Bid abolished / position cut -> Bump and Roll / Seniority Displacement (Article 47 + Article 5)
+- Sent home before 8 hours (full-time) -> Daily Guarantee Violation, Article 52 Atlantic Area Supplement — ALWAYS YES
+- Sent home before 3.5 hours (part-time) -> Daily Guarantee Violation, Article 63 Atlantic Area Supplement — ALWAYS YES
+- Junior employee gets work over senior -> Seniority Bypass, Article 48 Atlantic Area Supplement
+- Yelling, cursing, screaming, threatening -> Dignity and Respect, Article 37 National Master — ALWAYS YES
+- Supervisor performing bargaining unit work -> Supervisors Working, Article 3 Section 7 National Master / Article 46 Section 2
+- Disciplined from GPS/telematics only -> Technology Discipline, Article 6 Section 6 National Master — ALWAYS YES
+- No meal period between 4th-6th hour -> Meal Period Violation, Article 51 Atlantic Area Supplement — ALWAYS YES
+- Pay shortage not corrected in time -> Pay Shortage, Article 17 National Master
+- Sleeper run under 550 miles -> Mileage/Premium Pay, Article 43 National Master
+- Discipline without prior warning -> Discharge/Suspension Without Just Cause, Article 50 Atlantic Area Supplement
+- Outside contractor doing unit work -> Subcontracting Violation, Article 32 National Master / Article 66 Atlantic Area Supplement
+- Bid abolished / position cut -> Bump and Roll / Seniority Displacement, Article 48 Atlantic Area Supplement
 NEVER combine distinct issues. Output separate numbered blocks for each.
 
 STEP 2 - LOGIC OVER TEXT:
-Treat complaints about different days as independent events. Never let math from one day erase a claim from another day. NEVER withhold a YES verdict on a daily guarantee violation just because contract text was not extracted — the guarantee is a known, hard-coded fact.
+Each day is independent. Never let math from one day erase a claim from another. NEVER withhold YES on any issue covered by hard-coded facts above just because contract text was not extracted.
 
 STEP 3 - RIGID OUTPUT (no pleasantries, no filler, start immediately):
 
@@ -420,13 +528,13 @@ For EACH issue found output EXACTLY:
 ---
 ISSUE #[number]: [Precise Name of the Contractual Infraction]
 VERDICT: YES - VIOLATION FOUND or NO - NO VIOLATION
-ARTICLES: [Cite specific Article and Section — correctly label National Master or Atlantic Area Supplement]
-ANALYSIS: [State the applicable contract rule (quote if text is available, state from known facts if not). Then state what management did. Then explain why it is a violation. If NO VIOLATION: one brief sentence only.]
+ARTICLES: [Cite specific Article and Section — correctly label National Master or Atlantic Area Supplemental Agreement]
+ANALYSIS: [State the contract rule (quote from hard-coded facts if contract text unavailable). State what management did. Explain why it is a violation. If NO VIOLATION: one brief sentence only.]
 WORKER RIGHTS: [If VIOLATION FOUND: specific remedy, back-pay, premium rates owed. If NO VIOLATION: omit entirely.]
 ---
 
 OVERALL VERDICT: YES - VIOLATION FOUND (if any single issue was a violation) or NO - NO VIOLATION
-SUMMARY: [Two sentences: all violations found and immediate proof/evidence the steward needs to collect.]`;
+SUMMARY: [Two sentences: all violations found and immediate evidence the steward needs to collect.]`;
 
 // AI provider functions
 async function analyzeWithGroq(prompt) {
