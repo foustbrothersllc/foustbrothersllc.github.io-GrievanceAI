@@ -42,25 +42,37 @@ export default function Hub() {
       <header className="border-b border-ups-brown bg-gray-900 p-4">
         <div className="max-w-6xl mx-auto">
           <div className="flex justify-between items-center">
+
+            {/* Title — shrinks slightly on mobile to give buttons room */}
             <Link href="/hub">
-              <h1 className="text-2xl font-bold text-ups-gold cursor-pointer">GRIEVANCE AI</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-ups-gold cursor-pointer whitespace-nowrap">GRIEVANCE AI</h1>
             </Link>
-            <div className="flex gap-2 items-center">
+
+            {/* Buttons — icons only on mobile, icons + text on sm+ */}
+            <div className="flex gap-1 sm:gap-2 items-center flex-shrink-0">
               {isAdmin && (
                 <Link href="/admin">
-                  <button className="bg-ups-brown text-ups-gold px-4 py-2 rounded uppercase text-sm font-bold">🔑 Admin</button>
+                  <button className="bg-ups-brown text-ups-gold px-2 sm:px-4 py-2 rounded uppercase text-sm font-bold flex items-center gap-1">
+                    <span>🔑</span>
+                    <span className="hidden sm:inline">Admin</span>
+                  </button>
                 </Link>
               )}
               <Link href="/settings">
-                <button className="bg-ups-brown text-ups-gold px-4 py-2 rounded uppercase text-sm font-bold">⚙️ Settings</button>
+                <button className="bg-ups-brown text-ups-gold px-2 sm:px-4 py-2 rounded uppercase text-sm font-bold flex items-center gap-1">
+                  <span>⚙️</span>
+                  <span className="hidden sm:inline">Settings</span>
+                </button>
               </Link>
               <button
                 onClick={() => { signOut(auth); router.push('/'); }}
-                className="bg-ups-brown text-ups-gold px-4 py-2 rounded uppercase text-sm font-bold"
+                className="bg-ups-brown text-ups-gold px-2 sm:px-4 py-2 rounded uppercase text-sm font-bold flex items-center gap-1"
               >
-                Logout
+                <span>🚪</span>
+                <span className="hidden sm:inline">Logout</span>
               </button>
             </div>
+
           </div>
         </div>
       </header>
@@ -74,7 +86,6 @@ export default function Hub() {
         </div>
 
         <div className="space-y-4">
-
           <Link href="/contract-qa">
             <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-6 cursor-pointer hover:border-ups-gold hover:bg-gray-800 transition-all duration-200 active:scale-95">
               <div className="flex items-center gap-4">
@@ -100,7 +111,6 @@ export default function Hub() {
               </div>
             </div>
           </Link>
-
         </div>
       </main>
     </div>
