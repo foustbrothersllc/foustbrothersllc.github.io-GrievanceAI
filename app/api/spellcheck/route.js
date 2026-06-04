@@ -1,15 +1,5 @@
 export const runtime = 'nodejs';
 
-import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
-
-function getAdminApp() {
-  if (getApps().length > 0) return getApps()[0];
-  const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
-  if (!raw) throw new Error('FIREBASE_SERVICE_ACCOUNT env var not set');
-  return initializeApp({ credential: cert(JSON.parse(raw)) });
-}
-
 export async function POST(request) {
   try {
     let body;
@@ -24,22 +14,12 @@ export async function POST(request) {
       return Response.json({ error: 'Missing text' }, { status: 400 });
     }
 
-    // Check admin kill switch in Firestore
-    try {
-      const app = getAdminApp();
-      const adminDb = getFirestore(app);
-      const settingsSnap = await adminDb.collection('settings').doc('app').get();
-      if (settingsSnap.exists && settingsSnap.data()?.spellcheckEnabled === false) {
-        return Response.json({ corrected: text, changed: false });
-      }
-    } catch (e) {
-      // Can't read settings — fail safe, return original
-      return Response.json({ corrected: text, changed: false });
-    }
+    // The kill switch is handled client-side via Firestore onSnapshot.
+    // The button simply doesn't render when disabled — no need to check here.
 
-    // Run spellcheck via Groq
     const key = process.env.GROQ_API_KEY;
     if (!key) {
+      console.error('[spellcheck] No GROQ_API_KEY');
       return Response.json({ corrected: text, changed: false });
     }
 
@@ -73,6 +53,7 @@ Text: ${text}`
     const corrected = data.choices?.[0]?.message?.content?.trim();
 
     if (!corrected) {
+      console.error('[spellcheck] Empty response from Groq');
       return Response.json({ corrected: text, changed: false });
     }
 
@@ -80,6 +61,7 @@ Text: ${text}`
 
   } catch (error) {
     console.error('[spellcheck] Error:', error.message);
-    return Response.json({ corrected: '', changed: false });
+    // Always return original text — never return empty string
+    return Response.json({ corrected: body?.text || '', changed: false });
   }
 }
