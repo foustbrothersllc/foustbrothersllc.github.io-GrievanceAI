@@ -515,8 +515,7 @@ ENFORCED OUTPUT STRUCTURE — you MUST include ALL of the following sections:
 3. TIME WINDOW TO EXECUTE BUMP: ${b.time_window}
 4. CHAIN-REACTION RULE: ${b.chain_reaction}
 5. QUALIFICATION RULE: ${b.qualification_rule}
-6. REFERENCE ANCHOR: Output exactly → [${b.anchor}-L4450]
-7. STEWARD EVIDENCE TIP: ${b.steward_tip}
+6. STEWARD EVIDENCE TIP: ${b.steward_tip}
 
 DO NOT answer bump-and-roll questions using general seniority language. Use ONLY the above facts and the extracted Article 47 / Article 5 contract text below.
 `;
@@ -571,8 +570,7 @@ ENFORCED OUTPUT STRUCTURE — you MUST include ALL of the following sections:
    → Display the math explicitly for the specific trailer type asked about.
 5. EARNING WHILE RESTING: ${s.earning_while_resting}
 6. SINGLE-DRIVER EXCEPTION: ${s.solo_exception}
-7. REFERENCE ANCHOR: Output exactly → [${s.anchor}]
-8. STEWARD EVIDENCE TIP: ${s.steward_tip}
+7. STEWARD EVIDENCE TIP: ${s.steward_tip}
 
 DO NOT answer sleeper mileage questions using general hourly or local cartage language. Use ONLY the above verified rates.
 `;
@@ -827,7 +825,7 @@ function buildQAPrompt(question, classification, contractText, todayContext, ind
 
   return `You are a knowledgeable Teamsters contract expert helping a UPS worker understand their rights. Answer clearly and directly — lead with the answer, then add only essential detail. Do not pad responses with unnecessary sections or filler.
 
-SEARCH INDEX ROUTING RULE: When an anchor code like [REF:ATLA-A51-MEAL] is listed below, anchor your analysis to that specific article and section first. Include the anchor code and line reference in your citation so the member knows exactly where in the contract to look.
+SEARCH INDEX ROUTING RULE: If contract sections are listed below with anchor codes, use them to anchor your analysis to the correct article and section. Do NOT include anchor codes, REF tags, or line numbers in your response to the user — those are internal routing references only.
 ${indexCitationBlock}
 ${todayContext}
 ${topRateContext}${guaranteeContext}${holidayContext}${seniorityTiebreakerContext}${supervisorsWorkingContext}${telematicsContext}${feederBidContext}${personalHolidayContext}${nineFiveContext}${bumpAndRollContext}${sleeperMileageContext}
@@ -840,7 +838,7 @@ RULES:
 1. Answer as of TODAY's date — never describe raise schedules or timelines as if it's the beginning of the contract.
 2. If asked about raises or pay: lead with exactly what they have NOW and precisely when/what the next increase is, including the number of days away.
 3. For pay rates: use ONLY the VERIFIED TOP RATE SCHEDULE above — never calculate rates from the contract text tables.
-4. Cite the Article and Section (National Master or Atlantic Area Supplement) briefly. Include anchor code and line ref when available, e.g. Article 51, Sec 1 [REF:ATLA-A51-MEAL, Line L-5100].
+4. Cite the Article and Section (National Master or Atlantic Area Supplement) by name only — e.g. "Article 51, Section 1, Atlantic Area Supplemental Agreement." Do NOT include REF codes, anchor tags, or line numbers in your response.
 5. Quote key contract language only when it genuinely adds clarity — keep quotes short.
 6. Never give legal advice — explain the contract only.
 7. Keep answers concise. For simple factual questions (pay, dates, guarantees), answer in 2–4 short paragraphs.
