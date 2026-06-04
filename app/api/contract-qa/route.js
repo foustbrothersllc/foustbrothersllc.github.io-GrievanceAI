@@ -8,6 +8,59 @@ const ARTICLE_LOCATIONS = {
   local: ['46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64','65','66','67','68','69']
 };
 
+// ============================================================
+// MASTER CONTRACT SEARCH INDEX (Table of Contents)
+// Maps topic keywords → article, anchor code, and line baseline
+// Used for accurate routing AND prompt citation
+// ============================================================
+const CONTRACT_SEARCH_INDEX = [
+  // National Master Freight Index
+  { topics: ['subcontracting','subcontract','outside work','jurisdiction','scope','covered employees','bargaining unit'], contract: 'master', article: '1', section: 'Preamble', lineRef: 'L-0045', anchor: 'REF:NMFA-A01-SUB' },
+  { topics: ['double bottoms','doubles pay','twin trailers','double trailer'], contract: 'master', article: '1', section: 'Sec 8', lineRef: 'L-0322', anchor: 'REF:NMFA-A01-DBL' },
+  { topics: ['seniority rights','general seniority','seniority order'], contract: 'master', article: '5', section: null, lineRef: 'L-0850', anchor: 'REF:NMFA-A05-SEN' },
+  { topics: ['grievance','arbitration','grievance procedure','panel','filing a grievance','deadlock','timelines'], contract: 'master', article: '7', section: null, lineRef: 'L-1200', anchor: 'REF:NMFA-A07-GRV' },
+  { topics: ['picket line','sympathy strike','struck goods','protection of rights'], contract: 'master', article: '9', section: null, lineRef: 'L-1650', anchor: 'REF:NMFA-A09-PIC' },
+  { topics: ['bond','bonds','security deposit','cash bond'], contract: 'master', article: '11', section: null, lineRef: 'L-1920', anchor: 'REF:NMFA-A11-BND' },
+  { topics: ['passenger','riding restriction','passenger in cab','rider','unauthorized passenger'], contract: 'master', article: '14', section: null, lineRef: 'L-2100', anchor: 'REF:NMFA-A14-PAS' },
+  { topics: ['equipment','safety standards','safety equipment','unsafe equipment','red tag','dvir','mechanical','fmcsa','refused to drive'], contract: 'master', article: '16', section: null, lineRef: 'L-2400', anchor: 'REF:NMFA-A16-SFT' },
+  { topics: ['health','welfare','health and welfare','benefits','insurance','medical','teamcare'], contract: 'master', article: '22', section: null, lineRef: 'L-3100', anchor: 'REF:NMFA-A22-HLT' },
+  { topics: ['pension','pension plan','pension contribution','retirement'], contract: 'master', article: '23', section: null, lineRef: 'L-3500', anchor: 'REF:NMFA-A23-PEN' },
+  // Atlantic Area Supplemental Index
+  { topics: ['probationary period','new hire','new employee','trial period','30 working days','90 days','seniority acquisition'], contract: 'local', article: '46', section: 'Sec 1', lineRef: 'L-4200', anchor: 'REF:ATLA-A46-PROB' },
+  { topics: ['local seniority','bidding','bid','seniority bidding','route bid','run bid','posting'], contract: 'local', article: '47', section: null, lineRef: 'L-4450', anchor: 'REF:ATLA-A47-SEN' },
+  { topics: ['meal period','lunch','meal break','break scheduling','meal window','lunch window'], contract: 'local', article: '51', section: 'Sec 1', lineRef: 'L-5100', anchor: 'REF:ATLA-A51-MEAL' },
+  { topics: ['meal split','tractor trailer meal','split meal','team meal'], contract: 'local', article: '51', section: 'Sec 3', lineRef: 'L-5135', anchor: 'REF:ATLA-A51-SPLIT' },
+  { topics: ['worked through lunch','no meal period','worked 6 hours straight','worked 7 hours straight','skipped break','missed lunch','forced break','no break','no food','late break','straight through','ate on the fly'], contract: 'local', article: '51', section: null, lineRef: 'L-5150', anchor: 'REF:ATLA-A51-VIOL' },
+  { topics: ['overtime','workweek guarantee','work week','40 hour week','8 hour day','daily guarantee','sent home early','cut short','minimum hours','guarantee','8 hours'], contract: 'local', article: '52', section: null, lineRef: 'L-5400', anchor: 'REF:ATLA-A52-OVT' },
+  { topics: ['vacation','vacation accrual','vacation eligibility','vacation selection','vacation pay'], contract: 'local', article: '57', section: null, lineRef: 'L-6200', anchor: 'REF:ATLA-A57-VAC' },
+  { topics: ['sick leave','personal day','personal holiday','floating holiday','sick day','personal time'], contract: 'local', article: '60', section: null, lineRef: 'L-6800', anchor: 'REF:ATLA-A60-SCK' },
+  { topics: ['holiday pay','holiday','paid holiday','holiday qualifier','working on holiday','christmas','thanksgiving','labor day','memorial day','new years','fourth of july','independence day'], contract: 'local', article: '62', section: null, lineRef: 'L-7100', anchor: 'REF:ATLA-A62-HOL' },
+  { topics: ['doubles run','doubles letter','sick leave doubles','doubles sick'], contract: 'local', article: '69', section: null, lineRef: 'L-7900', anchor: 'REF:ATLA-A69-DBL' },
+];
+
+// Search TOC index by question text
+function searchContractIndex(question) {
+  const q = question.toLowerCase();
+  const matched = [];
+  for (const entry of CONTRACT_SEARCH_INDEX) {
+    if (entry.topics.some(t => q.includes(t.toLowerCase()))) {
+      matched.push(entry);
+    }
+  }
+  return matched;
+}
+
+// Format matched TOC entries into citation block for AI prompt
+function buildIndexCitationBlock(matchedEntries) {
+  if (!matchedEntries.length) return '';
+  const lines = matchedEntries.map(e => {
+    const loc = e.section ? `Article ${e.article}, ${e.section}` : `Article ${e.article}`;
+    const contract = e.contract === 'master' ? 'National Master Freight Agreement' : 'Atlantic Area Supplemental Agreement';
+    return `  [${e.anchor}] ${contract} — ${loc} (Line Ref: ${e.lineRef})`;
+  });
+  return `\nCONTRACT SEARCH INDEX MATCHES (anchor your analysis to these first):\n${lines.join('\n')}\n`;
+}
+
 // Topic → article lookup map for natural language article requests
 const TOPIC_ARTICLE_MAP = [
   { topics: ['meal','lunch','break','food','eat','eating','meal period','rest period'], articles: ['local:51'] },
@@ -44,107 +97,60 @@ const TOPIC_ARTICLE_MAP = [
   { topics: ['weingarten','investigatory interview','steward in meeting','disciplinary meeting','right to representation'], articles: ['master:4'] },
   { topics: ['change of operations','closing building','lane realignment','facility move','dovetail'], articles: ['master:38'] },
   { topics: ['garnishment','wage garnishment','child support','terminated for debt'], articles: ['master:31'] },
+  // TOC-driven additions
+  { topics: ['double bottoms','doubles pay','twin trailers'], articles: ['master:1'] },
+  { topics: ['bond','bonds','security deposit'], articles: ['master:11'] },
+  { topics: ['passenger','rider','unauthorized passenger'], articles: ['master:14'] },
+  { topics: ['vacation','vacation accrual','vacation selection'], articles: ['local:57'] },
+  { topics: ['sick leave','sick day'], articles: ['local:60'] },
+  { topics: ['doubles run','doubles letter'], articles: ['local:69'] },
 ];
 
 // Keyword to article map for Q&A smart routing
 const KEYWORD_ARTICLE_MAP = [
-  // Master Article 1 — Bargaining Unit, Scope, Work Preservation
   { keywords: ['bargaining unit','union work','scope','jurisdiction','subcontracting','bad address','rewrap','successors','transfer of company','clerical classification','operations covered'], articles: ['master:1'] },
-
-  // Master Article 3 — Union Shop, Dues, Supervisors Working
   { keywords: ['union membership','dues','check-off','union security','supervisor working','supervisors working','double shift','early call-in','overtime exhaustion','double time penalty','quadruple time','drive contributions','part-time coverage list','supervisor sorting','supervisor loading','supervisor driving'], articles: ['master:3'] },
-
-  // Master Article 4 — Stewards & Weingarten Rights
   { keywords: ['steward','grievance processing','union business','weingarten','investigatory interview','disciplinary meeting','disciplinary representation','warning copy','denying steward','refusing steward'], articles: ['master:4'] },
-
-  // Master Article 6 — Workweek, New Equipment, Technology
   { keywords: ['past practice','maintenance of standards','local conditions','new equipment','technological change','routing software','computerized operations','de-skilling'], articles: ['master:6'] },
-
-  // Master Articles 7 & 8 — Grievance Machinery & Arbitration
   { keywords: ['grievance procedure','panel','arbitration','timelines','national grievance','bench decision','deadlock','binding arbitration','interpretation of master'], articles: ['master:7'] },
-
-  // Master Article 14 — Health & Safety / Heat
   { keywords: ['overweight package','over 70 pounds','heat illness','acclimatization','in-cab ventilation','building fans','water fountain','heat protection','safety violation','workers comp','injury on duty','light duty','tast','broken ac','refused assistance'], articles: ['master:14'] },
-
-  // Master Article 16 — Leave of Absence
   { keywords: ['leave of absence','fmla','personal leave','military leave'], articles: ['master:16'] },
-
-  // Master Article 17 — Pay Shortage / Penalty Pay
   { keywords: ['missing check','short pay','payroll shortage','48 hours','penalty pay','green check','short check','missing pay','paid wrong rate'], articles: ['master:17'] },
-
-  // Master Article 18 — Safety / Equipment / Air Cargo
   { keywords: ['red tag','dvir','unsafe','bad brakes','fmcsa','refused to drive','forced to pull','ordered me to drive','threatened over a red tag','mechanical issue','breakdown','air hub','gateway operations','air sorter','flight delay'], articles: ['master:18'] },
-
-  // Master Article 22 — Inside & Part-Time Employees
   { keywords: ['part time','part-time','hub pay','preload pay','22.3','inside combo','full-time inside','part-time inside','work preservation inside'], articles: ['master:22'] },
-
-  // Master Article 26 — Competition, Rail, SurePost
   { keywords: ['foreign power','vendor trailer','outside truck','contractor','coyote','rail trailer','surepost','rail usage','feeder displacement','substitute transportation','average daily volume','adv','usps competition'], articles: ['master:26'] },
-
-  // Master Article 31 — Garnishments
   { keywords: ['garnishment','wage garnishment','child support','alimony','multiple debts','terminated for garnishment'], articles: ['master:31'] },
-
-  // Master Article 36 — Nondiscrimination
   { keywords: ['discrimination','gender identity','sexual orientation','ada','disability accommodation','civil rights'], articles: ['master:36'] },
-
-  // Master Article 37 — Management Relations, Harassment, 9.5
   { keywords: ['9.5 list','9.5 violation','excessive dispatch','over 9.5','triple time','3x pay','harassment','harassed','intimidated','coerced','over-supervised','hostile','screaming','yelling','cursing','threatened','dignity','retaliation','ride-along','video surveillance','telemetry discipline','fair days work'], articles: ['master:37'] },
-
-  // Master Article 38 — Change of Operations
   { keywords: ['closing building','lane realignment','moving expenses','dovetail seniority','change of operations','pension trust transfer','facility move','structural change'], articles: ['master:38'] },
-
-  // Master Article 39 — Trailer Repair Shops
   { keywords: ['trailer mechanic','shop trainee','tool replacement','tool allowance','trailer repair'], articles: ['master:39'] },
-
-  // Master Articles 40 & 41 — Air & Full-Time Driver Pay / Progression
   { keywords: ['raise','wage increase','pay increase','gwi','general wage','next raise','when do i get paid more','4-year progression','red circled','top rate','break-in rate','step increase','anniversary date','progression scale'], articles: ['master:41','local:60'] },
-
-  // Master Article 43 — Sleeper Teams / Premium Services
   { keywords: ['sleeper team','sleeper','team run','mileage rate','layover pay','under 550','550 miles','took my load','premium service','100 miles','120 miles regional','point-to-point','local feeder displacement'], articles: ['master:43'] },
-
-  // Master Article 33 — COLA
   { keywords: ['cola','cost of living','cost-of-living'], articles: ['master:33'] },
-
-  // Master Article 34 — Pension & Health
   { keywords: ['pension','health insurance','medical benefits','welfare fund','teamcare'], articles: ['master:34'] },
-
-  // Master Article 35 — Drug Testing
   { keywords: ['drug testing','dot physical','random test','sap program'], articles: ['master:35'] },
-
-  // Local Article 46 — Seniority Acquisition
   { keywords: ['30 working days','90 consecutive days','40 days','100 consecutive days','free period','nov 1','dec 31','seniority tie','tie-breaker','coin toss','application date','same seniority date','start time tie','same day hire','seniority number'], articles: ['local:46'] },
-
-  // Local Article 48 — Seniority, Layoff & Recall
   { keywords: ['bypass','bypassed','junior driver','less senior','seniority list','run given away','layoff notice','7 calendar days','emergency notice','displace inside','bump part-time','quarterly posting','updated seniority list','layout sequencing'], articles: ['local:48'] },
-
-  // Local Article 49 — Package Car Job Bids
   { keywords: ['bid center','route vacancy','5-day posting','training period','30-day training','disqualification','route bid','package car bid','senior bidder bypassed'], articles: ['local:49'] },
-
-  // Local Articles 50 & 51 — Feeder Bid Protections
   { keywords: ['tractor-trailer qualified','bid run','super qualified','extra work','present and available','run discontinuance','50-mile rule','yanked off run','dispatch reassigned','on-call took run','extra work bypass','open hot run','dispatch jumping','feeder board','worked through lunch','no meal period','skipped break','forced break','meal period','missed lunch'], articles: ['local:51','master:17'] },
-
-  // Local Article 54 — Holidays
   { keywords: ['holiday','paid holiday','holiday pay','working on holiday','time and a half holiday','holiday qualifier','christmas','thanksgiving','labor day','memorial day','new years','fourth of july','independence day','holiday schedule','90 hours straight-time','attendance gate','day after thanksgiving'], articles: ['local:54'] },
-
-  // Local Article 55 — Vacations & Personal Days
   { keywords: ['vacation','vacation selection','personal day','floating holiday','sick day option','nov 1','nov 30','seniority selection','8 days notice','unused floating','december 31','vacation pay'], articles: ['local:55'] },
-
-  // Local Articles 58 & 59 — Hours, Overtime, Meal Periods
   { keywords: ['sent home early','cut short','guarantee','8 hours','minimum hours','reported for work','daily guarantee','40-hour weekly','unscheduled start time','start time changed','delayed run','time and a half overtime','split shift','8-hour daily guarantee'], articles: ['local:58','local:59','master:22'] },
-
-  // Local Article 60 — Health & Welfare / Pension Contributions
   { keywords: ['health and welfare contribution','pension contribution','monthly contribution','5 days per month','coverage threshold','laid off driver','joint supplemental'], articles: ['local:60'] },
-
-  // Local Article 62 — Maintenance & Fleet Shop
   { keywords: ['automotive mechanic','fleet mechanic','building maintenance','apprenticeship','journeyman ratio','foreman premium','shift differential','mechanic apprentice','trade premium'], articles: ['local:62'] },
+  // TOC-driven additions
+  { keywords: ['double bottoms','doubles pay','twin trailers','double trailer'], articles: ['master:1'] },
+  { keywords: ['bond','bonds','security deposit','cash bond'], articles: ['master:11'] },
+  { keywords: ['passenger','riding restriction','passenger in cab','rider','unauthorized passenger'], articles: ['master:14'] },
+  { keywords: ['overtime','workweek guarantee','40 hour week'], articles: ['local:52'] },
+  { keywords: ['sick leave','sick day'], articles: ['local:60'] },
+  { keywords: ['doubles run','doubles letter','sick leave doubles'], articles: ['local:69'] },
 ];
 
 // Compute today's date context for the AI
 function getTodayContext() {
   const today = new Date();
   const todayStr = today.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-
-  // Raise schedule
   const raises = [
     { year: 2023, date: new Date('2023-08-01'), amount: '$2.75', applied: true },
     { year: 2024, date: new Date('2024-08-01'), amount: '$0.75', applied: true },
@@ -152,23 +158,18 @@ function getTodayContext() {
     { year: 2026, date: new Date('2026-08-01'), amount: '$1.00', applied: false },
     { year: 2027, date: new Date('2027-08-01'), amount: '$2.25', applied: false },
   ];
-
-  // Mark which raises have actually been applied based on today
   raises.forEach(r => {
     r.applied = today >= r.date;
     const diffMs = r.date - today;
     r.daysUntil = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
   });
-
   const appliedRaises = raises.filter(r => r.applied);
   const upcomingRaises = raises.filter(r => !r.applied);
   const nextRaise = upcomingRaises[0] || null;
-
   let raiseContext = `RAISES ALREADY APPLIED AS OF TODAY:\n`;
   appliedRaises.forEach(r => {
     raiseContext += `  - August 1, ${r.year}: ${r.amount}/hr (already received)\n`;
   });
-
   if (nextRaise) {
     raiseContext += `\nNEXT UPCOMING RAISE:\n`;
     raiseContext += `  - August 1, ${nextRaise.year}: ${nextRaise.amount}/hr`;
@@ -179,14 +180,12 @@ function getTodayContext() {
     }
     raiseContext += `\n`;
   }
-
   if (upcomingRaises.length > 1) {
     raiseContext += `\nFUTURE RAISES AFTER THAT:\n`;
     upcomingRaises.slice(1).forEach(r => {
       raiseContext += `  - August 1, ${r.year}: ${r.amount}/hr\n`;
     });
   }
-
   return `TODAY'S DATE: ${todayStr}
 CONTRACT PERIOD: August 1, 2023 through July 31, 2028
 ${raiseContext}
@@ -194,26 +193,17 @@ IMPORTANT: Always answer as of today's date (${todayStr}). When discussing raise
 }
 
 function extractArticleSection(text, articleNum, maxChars = 25000) {
-  // Contract headers use em dash: "ARTICLE 51—MEAL PERIOD"
-  // Match article number followed by anything that is not another digit
   const searchStr = `ARTICLE ${articleNum}`;
   const idx = text.toUpperCase().indexOf(searchStr);
-  
   if (idx === -1) return null;
-  
-  // Make sure the character after the number is not another digit (avoid matching 51 in 510)
   const charAfter = text[idx + searchStr.length];
   if (charAfter && /\d/.test(charAfter)) return null;
-
   const start = idx;
-
-  // Find the next ARTICLE header
   let end = text.length;
   let searchFrom = start + searchStr.length + 1;
   while (searchFrom < text.length) {
     const nextIdx = text.toUpperCase().indexOf('ARTICLE ', searchFrom);
     if (nextIdx === -1) break;
-    // Make sure it's actually a new article (followed by a digit)
     const afterArticle = text[nextIdx + 8];
     if (afterArticle && /\d/.test(afterArticle) && nextIdx > start + 50) {
       end = nextIdx;
@@ -221,18 +211,14 @@ function extractArticleSection(text, articleNum, maxChars = 25000) {
     }
     searchFrom = nextIdx + 1;
   }
-
   return text.slice(start, Math.min(end, start + maxChars)).trim();
 }
 
-// Pre-flight: detect if user is asking to VIEW an article (by number or topic)
+// Pre-flight: detect if user is asking to VIEW an article
 function detectArticleLookup(question) {
   const q = question.toLowerCase().trim();
-
   const lookupTriggers = ['show me','pull up','read me','give me','display','let me see','can i see','can you show','can you pull'];
   const hasTrigger = lookupTriggers.some(t => q.includes(t));
-
-  // Check for explicit article number mention — only when a number follows "article"
   const articleNumMatch = question.match(/article\s+(\d+)/i);
   if (articleNumMatch) {
     const num = articleNumMatch[1];
@@ -246,9 +232,6 @@ function detectArticleLookup(question) {
       };
     }
   }
-
-  // Topic-based lookup — only fires when user has a clear "show/pull/read" trigger
-  // OR uses phrasing like "the meal article" / "article about meal" / "meal section"
   const topicLookupPhrases = [
     'article about', 'section about', 'article on', 'section on',
     'the article', 'that article', 'the section', 'that section',
@@ -257,23 +240,17 @@ function detectArticleLookup(question) {
     'grievance article', 'pension article', 'leave article', 'sleeper article',
   ];
   const hasTopicPhrase = hasTrigger || topicLookupPhrases.some(p => q.includes(p));
-
   if (hasTopicPhrase) {
     for (const mapping of TOPIC_ARTICLE_MAP) {
       if (mapping.topics.some(t => q.includes(t))) {
-        return {
-          isLookup: true,
-          articles: mapping.articles,
-          label: mapping.topics[0]
-        };
+        return { isLookup: true, articles: mapping.articles, label: mapping.topics[0] };
       }
     }
   }
-
   return { isLookup: false };
 }
 
-// Smart extraction for Q&A (only relevant articles)
+// Smart extraction for Q&A — keyword map + TOC index
 function extractRelevantSections(masterText, localText, question, classification) {
   const questionLower = question.toLowerCase();
   const classificationLower = (classification || '').toLowerCase();
@@ -282,7 +259,6 @@ function extractRelevantSections(masterText, localText, question, classification
   const isFullTime = ['feeder driver','package car driver','sleeper team','specialist','mechanic','combo worker'].some(
     ft => classificationLower.includes(ft)
   );
-
   if (isFullTime) {
     triggeredArticles.add('local:60');
   } else if (classification) {
@@ -293,6 +269,12 @@ function extractRelevantSections(masterText, localText, question, classification
     if (mapping.keywords.some(kw => questionLower.includes(kw.toLowerCase()))) {
       mapping.articles.forEach(a => triggeredArticles.add(a));
     }
+  }
+
+  // TOC index triggers
+  const tocMatches = searchContractIndex(question);
+  for (const entry of tocMatches) {
+    triggeredArticles.add(`${entry.contract}:${entry.article}`);
   }
 
   const explicitArticles = question.match(/article\s+(\d+)/gi) || [];
@@ -314,13 +296,12 @@ function extractRelevantSections(masterText, localText, question, classification
   for (const articleRef of triggeredArticles) {
     const [contract, artNum] = articleRef.split(':');
     const text = contract === 'master' ? masterText : localText;
-    const contractName = contract === 'master' ? 'National Master UPS Agreement' : 'Atlantic Area Supplemental Agreement';
+    const contractName = contract === 'master' ? 'National Master Freight Agreement' : 'Atlantic Area Supplemental Agreement';
     const section = extractArticleSection(text, artNum);
     if (section) {
       sections.push(`=== ${contractName} — Article ${artNum} ===\n${section}`);
     }
   }
-
   return sections.join('\n\n');
 }
 
@@ -394,17 +375,11 @@ const TOP_RATE_SCHEDULES = {
   },
 };
 
-// Hard-coded holiday facts (Article 54, Atlantic Area Supplemental Agreement)
 const HOLIDAY_FACTS = {
   source: 'Article 54, Atlantic Area Supplemental Agreement',
   holidays: [
-    "New Year's Day",
-    'Memorial Day',
-    'Independence Day (4th of July)',
-    'Labor Day',
-    'Thanksgiving Day',
-    'Christmas Day',
-    'The day after Thanksgiving',
+    "New Year's Day", 'Memorial Day', 'Independence Day (4th of July)', 'Labor Day',
+    'Thanksgiving Day', 'Christmas Day', 'The day after Thanksgiving',
     'The day before or after Christmas (as designated)',
   ],
   rules: [
@@ -424,7 +399,6 @@ function getHolidayContext(question) {
   return `\nVERIFIED HOLIDAY FACTS (${HOLIDAY_FACTS.source}) — use these exact facts only:\nPAID HOLIDAYS:\n${holidayList}\nRULES:\n${ruleList}\n`;
 }
 
-// Hard-coded supervisors working facts (Article 3, National Master UPS Agreement)
 const SUPERVISORS_WORKING_FACTS = {
   source: 'Article 3, Section 7, National Master UPS Agreement',
   prohibited_work: 'Supervisors are strictly prohibited from performing ANY bargaining unit work: sorting, loading, unloading, driving, pulling mis-sorts, moving equipment, or performing set-up work before a shift.',
@@ -451,7 +425,6 @@ function getSupervisorsWorkingContext(question) {
   return `\nVERIFIED SUPERVISORS WORKING RULES (${f.source}) — use these exact facts only:\n  Prohibited Work: ${f.prohibited_work}\n  Call-In Sequence: ${f.call_in_sequence}\n  Allowed Exceptions:\n${exceptions}\n  Penalty Calculations:\n${penalties}\n`;
 }
 
-// Hard-coded seniority tiebreaker facts (Article 46, Atlantic Area Supplemental Agreement)
 const SENIORITY_TIEBREAKER_FACTS = {
   source: 'Article 46, Section 1, Atlantic Area Supplemental Agreement',
   prohibited: 'Management CANNOT assign work based on preference, arrival time, or who asked first when two employees share the exact same seniority start date.',
@@ -471,7 +444,6 @@ function getSeniorityTiebreakerContext(question) {
   return `\nVERIFIED SENIORITY TIE-BREAKER RULES (${SENIORITY_TIEBREAKER_FACTS.source}) — use these exact facts only:\n${ruleList}\n`;
 }
 
-// Hard-coded telematics discipline facts (Article 3, Section 7, National Master)
 const TELEMATICS_FACTS = {
   source: 'Article 3, Section 7, National Master UPS Agreement',
   rule: 'Management CANNOT discharge or discipline an employee based SOLELY on information gathered from GPS, telematics, IVIS, DIAD, or any sensor system.',
@@ -487,7 +459,6 @@ function getTelematicsContext(question) {
   return `\nVERIFIED TELEMATICS DISCIPLINE RULES (${TELEMATICS_FACTS.source}):\n  Rule: ${TELEMATICS_FACTS.rule}\n  Exception: ${TELEMATICS_FACTS.exception}\n  Corroboration Required: ${TELEMATICS_FACTS.corroboration_requirement}\n  Violation Classification: ${TELEMATICS_FACTS.violation_classification}\n`;
 }
 
-// Hard-coded feeder bid protection facts (Articles 50 & 51, Atlantic Area Supplement)
 const FEEDER_BID_FACTS = {
   source: 'Articles 50 & 51, Atlantic Area Supplemental Agreement',
   rule: 'A contractually bid feeder run belongs entirely to the seniority driver who won the bid. Management CANNOT arbitrarily remove a regular driver from their scheduled bid run.',
@@ -504,7 +475,6 @@ function getFeederBidContext(question) {
   return `\nVERIFIED FEEDER BID PROTECTION RULES (${f.source}):\n  Rule: ${f.rule}\n  Prohibited: ${f.prohibited}\n  Extra Work Rule: ${f.extra_work_rule}\n  Violation Classification: ${f.violation_classification}\n`;
 }
 
-// Hard-coded 9.5 overtime protection facts (Article 37, Section 1, National Master)
 const NINE_FIVE_FACTS = {
   source: 'Article 37, Section 1, National Master UPS Agreement',
   core_principle: "The Employer must make every reasonable effort to keep an opted-in driver's daily schedule below 9.5 hours. A violation occurs when an eligible, opted-in driver works more than 9.5 hours on THREE (3) separate days in a single workweek.",
@@ -524,30 +494,17 @@ function getNineFiveContext(question) {
   const q = question.toLowerCase();
   const keywords = ['9.5','9 5','nine five','over 9','excessive dispatch','triple time','3x','dispatch too much','too many hours','over dispatched','worked too long','opt in list','9.5 list','rpcd','peak blackout','nov 15','jan 15'];
   if (!keywords.some(k => q.includes(k))) return '';
-
   const today = new Date();
   const month = today.getMonth() + 1;
   const day = today.getDate();
   const inBlackout = (month === 11 && day >= 15) || month === 12 || (month === 1 && day <= 15);
-
   const eligibilityList = NINE_FIVE_FACTS.eligibility.map(e => `  - ${e}`).join('\n');
   const blackoutWarning = inBlackout
     ? `\n  ⚠️ CURRENT STATUS: TODAY FALLS WITHIN THE PEAK BLACKOUT (Nov 15 – Jan 15). Standard 9.5 grievances CANNOT be filed for this period.`
     : `\n  ✅ CURRENT STATUS: Today is outside the peak blackout window. 9.5 protections are ACTIVE.`;
-
-  return `\nVERIFIED 9.5 OVERTIME PROTECTION RULES (${NINE_FIVE_FACTS.source}) — use these exact facts only:
-  Core Rule: ${NINE_FIVE_FACTS.core_principle}
-  Eligibility (must meet ANY one of these):
-${eligibilityList}
-  Opt-In Requirement: ${NINE_FIVE_FACTS.opt_in}
-  Blackout Period: ${NINE_FIVE_FACTS.blackout}${blackoutWarning}
-  Penalty: ${NINE_FIVE_FACTS.penalty}
-  Retaliation Rule: ${NINE_FIVE_FACTS.retaliation_rule}
-  How to File: ${NINE_FIVE_FACTS.how_to_file}\n`;
+  return `\nVERIFIED 9.5 OVERTIME PROTECTION RULES (${NINE_FIVE_FACTS.source}) — use these exact facts only:\n  Core Rule: ${NINE_FIVE_FACTS.core_principle}\n  Eligibility (must meet ANY one of these):\n${eligibilityList}\n  Opt-In Requirement: ${NINE_FIVE_FACTS.opt_in}\n  Blackout Period: ${NINE_FIVE_FACTS.blackout}${blackoutWarning}\n  Penalty: ${NINE_FIVE_FACTS.penalty}\n  Retaliation Rule: ${NINE_FIVE_FACTS.retaliation_rule}\n  How to File: ${NINE_FIVE_FACTS.how_to_file}\n`;
 }
 
-
-// Hard-coded personal floating holiday facts (Article 55, Atlantic Area Supplement)
 const PERSONAL_HOLIDAY_FACTS = {
   source: 'Article 55, Atlantic Area Supplemental Agreement',
   eligibility: 'Employees with 24 or more months of seniority receive five (5) personal holidays per year.',
@@ -566,7 +523,6 @@ function getPersonalHolidayContext(question) {
   return `\nVERIFIED PERSONAL FLOATING HOLIDAY RULES (${p.source}):\n  Eligibility: ${p.eligibility}\n  Request Rule: ${p.request_rule}\n  Approval Rule: ${p.approval_rule}\n  Quota: ${p.quota}\n  Blackout Period: ${p.blackout}\n  Cash-Out Rule: ${p.cash_out}\n`;
 }
 
-// Hard-coded guarantee facts by classification
 const GUARANTEE_FACTS = {
   'feeder driver': {
     label: 'Feeder Driver',
@@ -635,7 +591,7 @@ function getTopRateContext(classification) {
   return `\nVERIFIED TOP RATE SCHEDULE FOR ${schedule.label.toUpperCase()} (use these exact figures — do not use contract text tables for pay rates):\n${lines}${notes}\n`;
 }
 
-function buildQAPrompt(question, classification, contractText, todayContext) {
+function buildQAPrompt(question, classification, contractText, todayContext, indexCitationBlock) {
   const topRateContext = getTopRateContext(classification);
   const guaranteeContext = getGuaranteeContext(classification);
   const holidayContext = getHolidayContext(question);
@@ -645,8 +601,11 @@ function buildQAPrompt(question, classification, contractText, todayContext) {
   const feederBidContext = getFeederBidContext(question);
   const personalHolidayContext = getPersonalHolidayContext(question);
   const nineFiveContext = getNineFiveContext(question);
+
   return `You are a knowledgeable Teamsters contract expert helping a UPS worker understand their rights. Answer clearly and directly — lead with the answer, then add only essential detail. Do not pad responses with unnecessary sections or filler.
 
+SEARCH INDEX ROUTING RULE: When an anchor code like [REF:ATLA-A51-MEAL] is listed below, anchor your analysis to that specific article and section first. Include the anchor code and line reference in your citation so the member knows exactly where in the contract to look.
+${indexCitationBlock}
 ${todayContext}
 ${topRateContext}${guaranteeContext}${holidayContext}${seniorityTiebreakerContext}${supervisorsWorkingContext}${telematicsContext}${feederBidContext}${personalHolidayContext}${nineFiveContext}
 WORKER'S JOB CLASSIFICATION: ${classification || 'Not specified'}
@@ -657,13 +616,13 @@ ${contractText}
 RULES:
 1. Answer as of TODAY's date — never describe raise schedules or timelines as if it's the beginning of the contract.
 2. If asked about raises or pay: lead with exactly what they have NOW and precisely when/what the next increase is, including the number of days away.
-3. For pay rates: use ONLY the VERIFIED TOP RATE SCHEDULE above — never calculate rates from the contract text tables, which may be misformatted.
-4. Cite the Article and Section (National Master or Atlantic Area Supplement) briefly.
+3. For pay rates: use ONLY the VERIFIED TOP RATE SCHEDULE above — never calculate rates from the contract text tables.
+4. Cite the Article and Section (National Master or Atlantic Area Supplement) briefly. Include anchor code and line ref when available, e.g. Article 51, Sec 1 [REF:ATLA-A51-MEAL, Line L-5100].
 5. Quote key contract language only when it genuinely adds clarity — keep quotes short.
 6. Never give legal advice — explain the contract only.
-7. Keep answers concise. For simple factual questions (pay, dates, guarantees), answer in 2–4 short paragraphs. Do not force the full section format on simple questions.
-8. NEVER guess, estimate, or fill in missing information. Do not use phrases like "typically," "generally," "usually," "approximately," or "for example" to introduce numbers or facts not found in the contract text.
-9. CRITICAL — THE ANSWER IS IN THE CONTRACT: The contract language provided above is the authoritative source. You MUST read every word of it before responding. If the question is about a topic covered by the provided articles, the answer is there — find it and quote it directly. Do NOT say "the contract does not specify" or "check with your steward" unless you have read the full provided text and confirmed the specific fact is genuinely absent. Do not rely on your general training knowledge — use only the contract text provided.
+7. Keep answers concise. For simple factual questions (pay, dates, guarantees), answer in 2–4 short paragraphs.
+8. NEVER guess, estimate, or fill in missing information. Do not use phrases like "typically," "generally," "usually," or "approximately" to introduce numbers or facts not in the contract text.
+9. CRITICAL — THE ANSWER IS IN THE CONTRACT: The contract language provided above is the authoritative source. Read every word of it before responding. Do NOT say "the contract does not specify" unless you have confirmed the specific fact is genuinely absent from all provided text.
 10. If after reading all provided contract text the answer is truly not present, say: "This specific detail isn't in the sections I was given — your steward can pull the full article for you." Never fabricate an answer.
 
 For complex situations involving violations, discipline, or multi-step processes, use only the sections that apply:
@@ -680,7 +639,7 @@ WORKER'S QUESTION: ${question}
 Answer directly and concisely:`;
 }
 
-// AI providers (same chain as analyze route)
+// AI providers
 async function queryWithGroq(prompt) {
   const key = process.env.GROQ_API_KEY;
   if (!key) throw new Error('No Groq key');
@@ -806,7 +765,6 @@ export async function POST(request) {
       return Response.json({ error: 'Missing question' }, { status: 400 });
     }
 
-    // Fetch both contracts
     const [masterText, localText] = await Promise.all([
       fetch(CONTRACT_URLS.master).then(r => r.text()),
       fetch(CONTRACT_URLS.local).then(r => r.text())
@@ -820,17 +778,12 @@ export async function POST(request) {
       for (const articleRef of lookupResult.articles) {
         const [contract, artNum] = articleRef.split(':');
         const text = contract === 'master' ? masterText : localText;
-        const contractName = contract === 'master' ? 'National Master UPS Agreement' : 'Atlantic Area Supplemental Agreement';
+        const contractName = contract === 'master' ? 'National Master Freight Agreement' : 'Atlantic Area Supplemental Agreement';
         const section = extractArticleSection(text, artNum);
         if (section) {
-          articleSections.push({
-            contractName,
-            articleNum: artNum,
-            text: section
-          });
+          articleSections.push({ contractName, articleNum: artNum, text: section });
         }
       }
-
       if (articleSections.length === 0) {
         return Response.json({
           mode: 'lookup',
@@ -839,19 +792,15 @@ export async function POST(request) {
           message: `Could not find that article in the contract. Try asking by article number (e.g., "Show me Article 51") or rephrasing your topic.`
         });
       }
-
-      return Response.json({
-        mode: 'lookup',
-        found: true,
-        label: lookupResult.label,
-        sections: articleSections
-      });
+      return Response.json({ mode: 'lookup', found: true, label: lookupResult.label, sections: articleSections });
     }
 
-    // Q&A mode — pull relevant sections and query AI
+    // Q&A mode
     const contractText = extractRelevantSections(masterText, localText, question, classification);
     const todayContext = getTodayContext();
-    const prompt = buildQAPrompt(question, classification, contractText, todayContext);
+    const tocMatches = searchContractIndex(question);
+    const indexCitationBlock = buildIndexCitationBlock(tocMatches);
+    const prompt = buildQAPrompt(question, classification, contractText, todayContext, indexCitationBlock);
 
     const providers = [
       { name: 'Groq', fn: queryWithGroq },
@@ -866,19 +815,13 @@ export async function POST(request) {
     for (const provider of providers) {
       try {
         const answer = await provider.fn(prompt);
-        return Response.json({
-          mode: 'qa',
-          answer,
-          provider: provider.name
-        });
+        return Response.json({ mode: 'qa', answer, provider: provider.name });
       } catch (err) {
         errors.push(`${provider.name}: ${err.message}`);
       }
     }
 
-    return Response.json({
-      error: `All AI providers failed. Details: ${errors.join(' | ')}`
-    }, { status: 500 });
+    return Response.json({ error: `All AI providers failed. Details: ${errors.join(' | ')}` }, { status: 500 });
 
   } catch (error) {
     return Response.json({ error: `Q&A failed: ${error.message}` }, { status: 500 });
