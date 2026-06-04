@@ -312,8 +312,13 @@ function getSleeperMileageContext(question) {
     'solo exception','partner incapacitated','split rate','mileage rate split',
     'sleeper rate','two man rate','team mileage','team pay','sleeper team pay',
     'how does sleeper pay work','how is sleeper pay calculated','mileage rate',
+    'per mile','per-mile','what do i make per mile','how much per mile',
+    'what is my rate','paid per mile','mile rate','cents per mile','dollar per mile',
+    'what do sleeper','sleeper driver pay',
   ];
-  if (!keywords.some(k => q.includes(k))) return '';
+  const mentionsSleeper = q.includes('sleeper') || q.includes('two man') || q.includes('two-man') || q.includes('team driver');
+  const mentionsRate = q.includes('rate') || q.includes('pay') || q.includes('paid') || q.includes('mile') || q.includes('wage') || q.includes('make') || q.includes('earn');
+  if (!keywords.some(k => q.includes(k)) && !(mentionsSleeper && mentionsRate)) return '';
   const s = SLEEPER_MILEAGE_FACTS;
   return `
 GUARDRAIL ACTIVE — SLEEPER TEAM MILEAGE PAY [${s.anchor}]
