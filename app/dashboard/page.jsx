@@ -22,7 +22,7 @@ export default function Dashboard() {
   const jobTypes = ['Feeder Driver', 'Sleeper Team', 'Package Car Driver', 'Specialist', 'Mechanic', 'Combo Worker', 'Part Time'];
 
   const [spellchecking, setSpellchecking] = useState(false);
-  const [spellcheckEnabled, setSpellcheckEnabled] = useState(false);
+  const [spellcheckEnabled, setSpellcheckEnabled] = useState(true); // default true until Firestore says otherwise
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
@@ -49,8 +49,10 @@ export default function Dashboard() {
         try {
           const settingsSnap = await getDoc(doc(db, 'settings', 'app'));
           if (settingsSnap.exists()) {
-            setSpellcheckEnabled(settingsSnap.data().spellcheckEnabled === true);
+            // Only disable if explicitly set to false — missing doc = show button
+            setSpellcheckEnabled(settingsSnap.data().spellcheckEnabled !== false);
           }
+          // If doc doesn't exist yet, leave default true
         } catch (e) {}
       } else {
         router.push('/login');
