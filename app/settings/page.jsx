@@ -14,6 +14,8 @@ export default function SettingsPage() {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [employeeId, setEmployeeId] = useState('');
+  const [address, setAddress] = useState('');
+  const [buildingLocation, setBuildingLocation] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const router = useRouter();
@@ -36,9 +38,12 @@ export default function SettingsPage() {
         try {
           const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
           if (userDoc.exists()) {
-            setName(userDoc.data().name || '');
-            setPhone(userDoc.data().phone || '');
-            setEmployeeId(userDoc.data().employeeId || '');
+            const data = userDoc.data();
+            setName(data.name || '');
+            setPhone(data.phone || '');
+            setEmployeeId(data.employeeId || '');
+            setAddress(data.address || '');
+            setBuildingLocation(data.buildingLocation || '');
           }
         } catch (err) {
           setError('Failed to load settings');
@@ -61,7 +66,9 @@ export default function SettingsPage() {
       await updateDoc(doc(db, 'users', user.uid), {
         name: name.trim(),
         phone: phone.trim(),
-        employeeId: employeeId.trim()
+        employeeId: employeeId.trim(),
+        address: address.trim(),
+        buildingLocation: buildingLocation.trim()
       });
       setSuccess('Settings saved successfully!');
     } catch (err) {
@@ -81,9 +88,9 @@ export default function SettingsPage() {
     <div className="min-h-screen bg-ups-black">
       <header className="border-b border-ups-brown bg-gray-900 p-6">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <Link href="/"><h1 className="text-3xl font-bold text-ups-gold">GRIEVANCE AI</h1></Link>
+          <Link href="/hub"><h1 className="text-3xl font-bold text-ups-gold">GRIEVANCE AI</h1></Link>
           <div className="space-x-4">
-            <Link href="/dashboard"><button className="bg-ups-brown text-ups-gold px-6 py-2 rounded uppercase">Dashboard</button></Link>
+            <Link href="/hub"><button className="bg-ups-brown text-ups-gold px-6 py-2 rounded uppercase">🏠 Home</button></Link>
             <button onClick={() => { signOut(auth); router.push('/'); }} className="bg-ups-brown text-ups-gold px-6 py-2 rounded uppercase">Logout</button>
           </div>
         </div>
@@ -100,6 +107,7 @@ export default function SettingsPage() {
 
         <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-8">
           <form onSubmit={handleSave} className="space-y-6">
+
             <div>
               <label className="block text-ups-gold font-semibold mb-2">Full Name</label>
               <input
@@ -135,6 +143,32 @@ export default function SettingsPage() {
                 className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-2 text-white"
                 disabled={saving}
               />
+            </div>
+
+            <div>
+              <label className="block text-ups-gold font-semibold mb-2">Home Address</label>
+              <input
+                type="text"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="e.g., 123 Main St, Greensboro, NC 27401"
+                className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-2 text-white"
+                disabled={saving}
+              />
+              <p className="text-gray-500 text-xs mt-1">Auto-filled on grievance forms as "Address of Filer"</p>
+            </div>
+
+            <div>
+              <label className="block text-ups-gold font-semibold mb-2">Building Location</label>
+              <input
+                type="text"
+                value={buildingLocation}
+                onChange={(e) => setBuildingLocation(e.target.value)}
+                placeholder="e.g., Greensboro Hub, Kernersville Center"
+                className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-2 text-white"
+                disabled={saving}
+              />
+              <p className="text-gray-500 text-xs mt-1">Your UPS facility — auto-filled on grievance forms</p>
             </div>
 
             <button
