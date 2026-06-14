@@ -23,21 +23,17 @@ function GrievanceContent() {
   const question = searchParams.get('question') || '';
 
   const extractArticles = (text) => {
-    // Only extract articles from VIOLATION FOUND sections, not NO VIOLATION sections
-    const violationBlocks = text.split('---').filter(block => 
+    const violationBlocks = text.split('---').filter(block =>
       block.includes('VERDICT: YES - VIOLATION FOUND')
     );
-    
     const matches = [];
     violationBlocks.forEach(block => {
-      // Only grab the ARTICLES: line from each violation block
       const articlesLine = block.split('\n').find(line => line.trim().startsWith('ARTICLES:'));
       if (articlesLine) {
         const articleMatches = articlesLine.match(/Article\s+\d+[\w,.\s-]*/gi) || [];
         articleMatches.forEach(a => matches.push(a.trim()));
       }
     });
-    
     const unique = [...new Set(matches)];
     return unique.map(a => ({ text: a, selected: true }));
   };
@@ -49,6 +45,8 @@ function GrievanceContent() {
     useCustomName: false,
     phone: '',
     employeeId: '',
+    address: '',
+    buildingLocation: '',
     runLoad: '',
     dateOfIncident: '',
     dateFiled: new Date().toISOString().split('T')[0],
@@ -56,7 +54,6 @@ function GrievanceContent() {
     remedy: ''
   });
 
-  // 10 day filing limit
   const today = new Date().toISOString().split('T')[0];
   const tenDaysAgo = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
@@ -69,10 +66,7 @@ function GrievanceContent() {
 
   useEffect(() => { autoResize(natureRef); }, [form.natureOfGrievance]);
   useEffect(() => { autoResize(remedyRef); }, [form.remedy]);
-
-  useEffect(() => {
-    if (violation) setArticles(extractArticles(violation));
-  }, [violation]);
+  useEffect(() => { if (violation) setArticles(extractArticles(violation)); }, [violation]);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
@@ -86,7 +80,9 @@ function GrievanceContent() {
               ...f,
               grievantName: data.name || '',
               phone: formatPhone(data.phone || ''),
-              employeeId: data.employeeId || ''
+              employeeId: data.employeeId || '',
+              address: data.address || '',
+              buildingLocation: data.buildingLocation || ''
             }));
           }
         } catch (err) { console.error(err); }
@@ -124,7 +120,9 @@ function GrievanceContent() {
         useCustomName: false,
         grievantName: val,
         phone: formatPhone(selected?.phone || f.phone),
-        employeeId: selected?.employeeId || f.employeeId
+        employeeId: selected?.employeeId || f.employeeId,
+        address: selected?.address || f.address,
+        buildingLocation: selected?.buildingLocation || f.buildingLocation
       }));
     }
   };
@@ -169,6 +167,8 @@ function GrievanceContent() {
     const currentName = form.useCustomName ? form.grievantNameCustom : form.grievantName;
     const currentPhone = form.phone || '';
     const currentEmployeeId = form.employeeId || '';
+    const currentAddress = form.address || '';
+    const currentBuilding = form.buildingLocation || '';
 
     const htmlContent = `<!DOCTYPE html>
 <html>
@@ -178,19 +178,20 @@ function GrievanceContent() {
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { width: 8.5in; background: white; color: black; }
-    body { font-family: Arial, sans-serif; font-size: 12px; padding: 0.75in; }
-    h1 { font-size: 16px; text-align: center; text-transform: uppercase; margin-bottom: 4px; }
-    h2 { font-size: 14px; text-align: center; margin-bottom: 20px; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
-    td { border: 1px solid black; padding: 6px 8px; width: 50%; vertical-align: top; }
-    .section { border: 1px solid black; padding: 8px; margin-bottom: 12px; min-height: 80px; }
+    body { font-family: Arial, sans-serif; font-size: 11px; padding: 0.75in; }
+    h1 { font-size: 16px; text-align: center; text-transform: uppercase; margin-bottom: 4px; font-weight: bold; }
+    h2 { font-size: 13px; text-align: center; margin-bottom: 16px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+    td { border: 1px solid black; padding: 5px 8px; width: 50%; vertical-align: top; min-height: 24px; }
+    .label { font-weight: bold; }
+    .section { border: 1px solid black; padding: 8px; margin-bottom: 10px; min-height: 90px; }
     .section-title { font-weight: bold; margin-bottom: 6px; font-size: 11px; text-transform: uppercase; }
     .section-content { white-space: pre-wrap; line-height: 1.5; }
-    .signatures { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-top: 30px; }
+    .signatures { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 30px; }
     .sig-block {}
     .sig-line { border-bottom: 1px solid black; margin-bottom: 4px; height: 40px; }
-    .sig-label { font-size: 10px; }
-    .note { font-size: 9px; font-style: italic; margin-top: 12px; }
+    .sig-label { font-size: 9px; text-align: center; }
+    .note { font-size: 9px; font-style: italic; margin-top: 14px; color: #333; }
     @media print {
       html, body { width: 100%; }
       @page { size: letter; margin: 0.75in; }
@@ -205,36 +206,44 @@ function GrievanceContent() {
 <body>
   <h1>Official Grievance Form</h1>
   <h2>Teamsters Local Union No. 391</h2>
+
   <table>
     <tr>
-      <td><strong>Grievant Name:</strong> ${currentName}</td>
-      <td><strong>Phone:</strong> ${currentPhone}</td>
+      <td><span class="label">Grievant Name:</span> ${currentName}</td>
+      <td><span class="label">Employee ID:</span> ${currentEmployeeId}</td>
     </tr>
     <tr>
-      <td><strong>Employee ID:</strong> ${currentEmployeeId}</td>
-      <td><strong>Date Filed:</strong> ${form.dateFiled}</td>
+      <td><span class="label">Today's Date:</span> ${form.dateFiled}</td>
+      <td><span class="label">Violation Date:</span> ${form.dateOfIncident}</td>
     </tr>
     <tr>
-      <td><strong>Classification:</strong> ${classification} &mdash; Violation</td>
-      <td><strong>Violation Date:</strong> ${form.dateOfIncident}</td>
+      <td><span class="label">Phone:</span> ${currentPhone}</td>
+      <td><span class="label">Classification:</span> ${classification}</td>
     </tr>
-    ${form.runLoad ? `<tr>
-      <td><strong>Run/Load #:</strong> ${form.runLoad}</td>
-      <td></td>
-    </tr>` : ''}
+    <tr>
+      <td><span class="label">Run Number:</span> ${form.runLoad || ''}</td>
+      <td><span class="label">Building Location:</span> ${currentBuilding}</td>
+    </tr>
+    <tr>
+      <td colspan="2"><span class="label">Address of Filer:</span> ${currentAddress}</td>
+    </tr>
   </table>
+
   <div class="section">
     <div class="section-title">Articles Violated:</div>
     <div class="section-content">${articlesText}</div>
   </div>
+
   <div class="section">
     <div class="section-title">Nature of Grievance:</div>
     <div class="section-content">${form.natureOfGrievance}</div>
   </div>
+
   <div class="section">
     <div class="section-title">Remedy Requested:</div>
     <div class="section-content">${form.remedy}</div>
   </div>
+
   <div class="signatures">
     <div class="sig-block">
       <div class="sig-line"></div>
@@ -244,7 +253,12 @@ function GrievanceContent() {
       <div class="sig-line"></div>
       <div class="sig-label">Shop Steward Signature</div>
     </div>
+    <div class="sig-block">
+      <div class="sig-line"></div>
+      <div class="sig-label">Management Signature</div>
+    </div>
   </div>
+
   <div class="note">Note: Ensure all evidence (logs, DIAD messages, unit numbers) is attached or cited. Provide copies to your Steward and keep one for your personal records.</div>
   <script>
     window.onload = function() { window.print(); };
@@ -269,7 +283,7 @@ function GrievanceContent() {
       <header className="border-b border-ups-brown bg-gray-900 p-4">
         <div className="max-w-2xl mx-auto">
           <div className="flex justify-between items-center mb-3">
-            <Link href="/"><h1 className="text-xl font-bold text-ups-gold">GRIEVANCE AI</h1></Link>
+            <Link href="/hub"><h1 className="text-xl font-bold text-ups-gold">GRIEVANCE AI</h1></Link>
           </div>
           <Link href="/dashboard">
             <button className="w-full bg-ups-brown text-ups-gold px-3 py-2 rounded uppercase text-sm font-bold">← Back to Dashboard</button>
@@ -295,7 +309,7 @@ function GrievanceContent() {
         {articles.length > 0 && (
           <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-4 mb-4">
             <h3 className="text-base font-bold text-ups-gold mb-2">Articles Violated</h3>
-            <p className="text-gray-400 text-xs mb-3">Deselect any you don't want to include — only selected articles will be used:</p>
+            <p className="text-gray-400 text-xs mb-3">Deselect any you don't want to include:</p>
             <div className="space-y-2">
               {articles.map((a, i) => (
                 <div key={i} className="flex items-center space-x-3">
@@ -325,13 +339,13 @@ function GrievanceContent() {
             </div>
 
             <div>
-              <label className="block text-ups-gold font-semibold mb-2 text-sm">Phone Number</label>
-              <input type="tel" name="phone" value={form.phone} onChange={handlePhoneChange} placeholder="(336) 555-1234" className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base" />
+              <label className="block text-ups-gold font-semibold mb-2 text-sm">Employee ID</label>
+              <input type="text" name="employeeId" value={form.employeeId} onChange={handleChange} className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base" />
             </div>
 
             <div>
-              <label className="block text-ups-gold font-semibold mb-2 text-sm">Employee ID</label>
-              <input type="text" name="employeeId" value={form.employeeId} onChange={handleChange} className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base" />
+              <label className="block text-ups-gold font-semibold mb-2 text-sm">Phone Number</label>
+              <input type="tel" name="phone" value={form.phone} onChange={handlePhoneChange} placeholder="(336) 555-1234" className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base" />
             </div>
 
             <div>
@@ -340,18 +354,29 @@ function GrievanceContent() {
             </div>
 
             <div>
-              <label className="block text-ups-gold font-semibold mb-2 text-sm">Date of Incident *</label>
+              <label className="block text-ups-gold font-semibold mb-2 text-sm">Address of Filer</label>
+              <input type="text" name="address" value={form.address} onChange={handleChange} placeholder="123 Main St, Greensboro, NC 27401" className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base" />
+              <p className="text-gray-500 text-xs mt-1">Save your address in Settings to auto-fill this</p>
+            </div>
+
+            <div>
+              <label className="block text-ups-gold font-semibold mb-2 text-sm">Building Location</label>
+              <input type="text" name="buildingLocation" value={form.buildingLocation} onChange={handleChange} placeholder="e.g., Greensboro Hub" className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base" />
+            </div>
+
+            <div>
+              <label className="block text-ups-gold font-semibold mb-2 text-sm">Today's Date</label>
+              <input type="date" name="dateFiled" value={form.dateFiled} onChange={handleChange} className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base" />
+            </div>
+
+            <div>
+              <label className="block text-ups-gold font-semibold mb-2 text-sm">Violation Date *</label>
               <input type="date" name="dateOfIncident" value={form.dateOfIncident} onChange={handleChange} min={tenDaysAgo} max={today} className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base" />
               <p className="text-gray-500 text-xs mt-1">⚠️ Grievances must be filed within 10 days of the incident</p>
             </div>
 
             <div>
-              <label className="block text-ups-gold font-semibold mb-2 text-sm">Date Filed</label>
-              <input type="date" name="dateFiled" value={form.dateFiled} onChange={handleChange} className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base" />
-            </div>
-
-            <div>
-              <label className="block text-ups-gold font-semibold mb-2 text-sm">Run/Load #</label>
+              <label className="block text-ups-gold font-semibold mb-2 text-sm">Run Number</label>
               <input type="text" name="runLoad" value={form.runLoad} onChange={handleChange} className="w-full bg-gray-800 border border-ups-brown rounded px-4 py-3 text-white text-base" />
             </div>
 
