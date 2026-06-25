@@ -375,7 +375,6 @@ Quote the exact relevant language from the contract, citing the Article and Sect
 
 WORKER'S QUESTION: ${question}`;
 }
-}
 
 // AI providers (same chain as analyze route)
 async function queryWithGroq(prompt) {
