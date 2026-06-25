@@ -123,7 +123,7 @@ const KEYWORD_ARTICLE_MAP = [
   { keywords: ['discrimination','nondiscrimination','race','religion','gender'], articles: ['master:36'] },
   { keywords: ['sleeper team','sleeper','team run','mileage rate','layover pay','under 550','550 miles','premium service'], articles: ['master:43'] },
   { keywords: ['bypass','bypassed','junior driver','less senior','seniority list','run given away'], articles: ['local:46','local:47','local:48'] },
-  { keywords: ['worked through lunch','no meal period','skipped break','forced break','meal period','missed lunch'], articles: ['local:51','master:17'] },
+  { keywords: ['worked through lunch','no meal period','skipped break','forced break','meal period','missed lunch','meal break','meal language','full time meal','what is the meal','meal for','meal policy','meal rule','lunch break','lunch period','meal entitlement'], articles: ['local:51','master:17'] },
   { keywords: ['sent home early','cut short','guarantee','8 hours','minimum hours','reported for work','daily guarantee','wages and hours'], articles: ['local:53','master:22'] },
   { keywords: ['raise','wage increase','pay increase','gwi','general wage','next raise','when do i get paid more','wage rate'], articles: ['master:41','local:53'] },
   { keywords: ['part time','part-time','hub pay','preload pay','part time employee'], articles: ['master:22','local:63'] },
@@ -312,6 +312,22 @@ function extractRelevantSections(masterText, localText, question, classification
   if (wageWords.some(w => questionLower.includes(w))) {
     triggeredArticles.add('master:41');
     triggeredArticles.add('local:53');
+  }
+
+  // Hard overrides — these always trigger regardless of other keywords
+  if (questionLower.includes('meal') || questionLower.includes('lunch break') || questionLower.includes('lunch period')) {
+    triggeredArticles.add('local:51');
+  }
+  if (questionLower.includes('vacation')) triggeredArticles.add('local:55');
+  if (questionLower.includes('holiday')) triggeredArticles.add('local:54');
+  if (questionLower.includes('seniority') || questionLower.includes('bid')) {
+    triggeredArticles.add('local:46');
+    triggeredArticles.add('local:47');
+    triggeredArticles.add('local:48');
+  }
+  if (questionLower.includes('grievance')) {
+    triggeredArticles.add('master:7');
+    triggeredArticles.add('local:49');
   }
 
   for (const mapping of KEYWORD_ARTICLE_MAP) {
