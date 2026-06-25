@@ -175,7 +175,7 @@ function getTodayContext() {
   return `TODAY'S DATE: ${todayStr}
 CONTRACT PERIOD: August 1, 2023 through July 31, 2028
 ${raiseContext}
-IMPORTANT: Always answer as of today's date (${todayStr}). For pay rates and raise amounts, use ONLY what is written in the contract text provided — do not guess or use general knowledge. For timing questions, calculate from today's date above.`;
+IMPORTANT: Always answer as of today's date (${todayStr}). For pay rates and raise amounts, read them DIRECTLY from the contract text provided and state them clearly — the contract text is your source, use it. For timing questions, calculate from today's date above.`;
 }
 
 function extractArticleSection(text, articleNum, maxChars = 10000) {
@@ -299,10 +299,19 @@ function extractRelevantSections(masterText, localText, question, classification
     ft => classificationLower.includes(ft)
   );
 
+  // Always pull wages article for full-time, part-time pay for part-time
   if (isFullTime) {
-    triggeredArticles.add('local:60');
+    triggeredArticles.add('master:41');
+    triggeredArticles.add('local:53');
   } else if (classification) {
     triggeredArticles.add('master:22');
+  }
+
+  // Also trigger wages if question mentions rate, pay, top rate, wage
+  const wageWords = ['rate','top rate','pay','wage','salary','how much','what do i make','what am i paid'];
+  if (wageWords.some(w => questionLower.includes(w))) {
+    triggeredArticles.add('master:41');
+    triggeredArticles.add('local:53');
   }
 
   for (const mapping of KEYWORD_ARTICLE_MAP) {
