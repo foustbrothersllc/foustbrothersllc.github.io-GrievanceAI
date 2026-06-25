@@ -9,60 +9,132 @@ const ARTICLE_LOCATIONS = {
 };
 
 // Topic → article lookup map for natural language article requests
+// Based on verified article headers from the actual contract txt files:
+// LOCAL: 46=Seniority Acquisition, 47=Seniority For, 48=Seniority, 49=Grievance Procedure,
+//        50=Discharge/Suspension, 51=Meal Period, 52=Paid For Time, 53=Wages & Hours,
+//        54=Sundays & Holidays, 55=Vacations, 56=Union Cooperation, 57=Parking Tickets,
+//        58=Uniforms, 59=Breakdowns, 60=Air Conditioning, 61=Health & Welfare,
+//        62=Maintenance, 63=Part-Time, 64=Pay Period, 65=Maintenance of Standards,
+//        66=Subcontracting, 67=Leave of Absence, 68=Sick Leave, 69=Term
+// MASTER: 1=Parties, 2=Scope, 3=Recognition/Union Shop, 4=Stewards, 5=Sanitary,
+//         6=Past Practice, 7=Grievance/Arbitration, 8=National Grievance, 9=Protection of Rights,
+//         10=Loss/Damage, 11=Weekend Work, 12=Polygraph, 13=Passengers, 14=Compensation Claims,
+//         15=Military, 16=Leave of Absence, 17=Paid for Time, 18=Safety & Health,
+//         19=Posting, 20=Examination, 21=Union Activity, 22=Full-Time Combo/Part-Time,
+//         23=Separation, 24=Inspection, 25=Separability, 26=Competition, 27=Emergency,
+//         28=Sympathetic Action, 29=Jurisdictional, 30=Jurisdictional Disputes, 31=Garnishments,
+//         32=Subcontracting, 33=COLA, 34=Health & Welfare, 35=Bail/License/Drug,
+//         36=Nondiscrimination, 37=Management/Employee Relations (9.5/Harassment),
+//         38=Change of Operations, 39=Trailer Repair, 40=Air Operation,
+//         41=Full-Time Wages, 42=Uniforms, 43=Premium Services (Sleeper/Feeder),
+//         44=Over 70 Pound, 45=Duration
+
 const TOPIC_ARTICLE_MAP = [
+  // Meal period — Local 51
   { topics: ['meal','lunch','break','food','eat','eating','meal period','rest period'], articles: ['local:51'] },
-  { topics: ['raise','wage','pay increase','general wage','gwi','next raise','money','how much do i make','what will i make','when do i get','salary'], articles: ['master:41', 'local:60'] },
-  { topics: ['part time wage','part-time wage','part time pay','part-time pay','hub pay','preload pay'], articles: ['master:22'] },
-  { topics: ['harassment','dignity','respect','yelling','screaming','cursing','hostile','intimidat','coerce'], articles: ['master:37'] },
-  { topics: ['9.5','excessive dispatch','over 9.5','triple time'], articles: ['master:37'] },
-  { topics: ['seniority','bypass','bypassed','junior driver','bid','bidding'], articles: ['local:48'] },
-  { topics: ['grievance','arbitration','panel','filing a grievance','grievance procedure'], articles: ['master:7'] },
+  // Wages / raises — Master 41 + Local 53
+  { topics: ['raise','wage','pay increase','general wage','gwi','next raise','money','how much do i make','what will i make','when do i get','salary','wage rate'], articles: ['master:41','local:53'] },
+  // Part-time wages — Master 22
+  { topics: ['part time wage','part-time wage','part time pay','part-time pay','hub pay','preload pay','part time rate'], articles: ['master:22'] },
+  // Harassment / dignity / 9.5 — Master 37
+  { topics: ['harassment','dignity','respect','yelling','screaming','cursing','hostile','intimidat','coerce','9.5','excessive dispatch','over 9.5','triple time'], articles: ['master:37'] },
+  // Seniority / bid — Local 46, 47, 48
+  { topics: ['seniority','bypass','bypassed','junior driver','bid','bidding','bid run','seniority list','acquisition of seniority'], articles: ['local:46','local:47','local:48'] },
+  // Grievance procedure — Local 49 + Master 7
+  { topics: ['grievance','arbitration','panel','filing a grievance','grievance procedure','grievance timeline'], articles: ['master:7','local:49'] },
+  // Stewards — Master 4
   { topics: ['steward','union rep','union business','shop steward'], articles: ['master:4'] },
-  { topics: ['safety','red tag','dvir','equipment','unsafe','fmcsa','mechanical'], articles: ['master:18'] },
-  { topics: ['pension','health','insurance','benefits','welfare fund','teamcare'], articles: ['master:34'] },
-  { topics: ['leave','fmla','leave of absence','military leave','personal leave','time off'], articles: ['master:16'] },
-  { topics: ['sleeper','mileage','team run','sleeper team','premium service','layover'], articles: ['master:43'] },
-  { topics: ['subcontract','outside driver','foreign power','coyote','vendor trailer','contractor'], articles: ['master:26','master:32'] },
+  // Safety / equipment — Master 18
+  { topics: ['safety','red tag','dvir','equipment','unsafe','fmcsa','mechanical','safety and health'], articles: ['master:18'] },
+  // Health & welfare / pension — Master 34 + Local 61
+  { topics: ['pension','health','insurance','benefits','welfare fund','teamcare','health and welfare'], articles: ['master:34','local:61'] },
+  // Leave of absence — Master 16 + Local 67
+  { topics: ['leave','fmla','leave of absence','military leave','personal leave','time off','sick leave'], articles: ['master:16','local:67','local:68'] },
+  // Sleeper / premium services — Master 43
+  { topics: ['sleeper','mileage','team run','sleeper team','premium service','layover','feeder run'], articles: ['master:43'] },
+  // Subcontracting — Master 26 + 32 + Local 66
+  { topics: ['subcontract','outside driver','foreign power','coyote','vendor trailer','contractor'], articles: ['master:26','master:32','local:66'] },
+  // Drug test / DOT — Master 35
   { topics: ['drug test','dot physical','dot test','substance','random test','sap program'], articles: ['master:35'] },
-  { topics: ['short check','missing pay','penalty pay','payroll','green check','short pay','48 hours','missing from my check'], articles: ['master:17'] },
-  { topics: ['workers comp','injury','light duty','tast','on the job injury'], articles: ['master:14'] },
-  { topics: ['past practice','maintenance of standards','local conditions'], articles: ['master:6'] },
+  // Short check / missing pay — Master 17 + Local 52
+  { topics: ['short check','missing pay','penalty pay','payroll','green check','short pay','48 hours','missing from my check','paid for time'], articles: ['master:17','local:52'] },
+  // Workers comp — Master 14
+  { topics: ['workers comp','injury','light duty','tast','on the job injury','compensation claim'], articles: ['master:14'] },
+  // Past practice / maintenance of standards — Master 6 + Local 65
+  { topics: ['past practice','maintenance of standards','local conditions'], articles: ['master:6','local:65'] },
+  // Picket line — Master 9
   { topics: ['picket line','sympathy strike','struck goods'], articles: ['master:9'] },
+  // Polygraph — Master 12
   { topics: ['polygraph','lie detector','interrogation'], articles: ['master:12'] },
-  { topics: ['daily guarantee','8 hour guarantee','sent home early','guarantee','8 hours'], articles: ['local:60'] },
-  { topics: ['part time guarantee','3.5 hours','hub guarantee'], articles: ['master:22'] },
+  // Daily guarantee / sent home early — Local 53 + Master 22
+  { topics: ['daily guarantee','8 hour guarantee','sent home early','guarantee','8 hours','wages and hours'], articles: ['local:53','master:22'] },
+  // Part-time guarantee — Master 22 + Local 63
+  { topics: ['part time guarantee','3.5 hours','hub guarantee','part-time employee'], articles: ['master:22','local:63'] },
+  // COLA — Master 33
   { topics: ['cola','cost of living','cost-of-living'], articles: ['master:33'] },
+  // Union membership — Master 3
   { topics: ['union shop','union membership','dues','check-off'], articles: ['master:3'] },
-  { topics: ['bargaining unit','jurisdiction','scope','covered employee'], articles: ['master:1'] },
+  // Scope / bargaining unit — Master 2
+  { topics: ['bargaining unit','jurisdiction','scope','covered employee'], articles: ['master:2'] },
+  // Probationary — Local 46
   { topics: ['probationary','new employee','seasonal','trial period'], articles: ['local:46'] },
-  { topics: ['overtime','double time','premium pay'], articles: ['local:60'] },
+  // Overtime / premium pay — Local 53 + Master 22
+  { topics: ['overtime','double time','premium pay','hours of work'], articles: ['local:53','master:22'] },
+  // Holidays — Local 54
+  { topics: ['holiday','paid holiday','christmas','thanksgiving','labor day','memorial day','new years'], articles: ['local:54'] },
+  // Vacations — Local 55
+  { topics: ['vacation','vacation selection','personal day','floating holiday'], articles: ['local:55'] },
+  // Discharge / suspension / discipline — Local 50 + Master 37
+  { topics: ['discharge','suspension','discipline','fired','termination','warning letter'], articles: ['local:50','master:37'] },
+  // Breakdown / impassable — Local 59
+  { topics: ['breakdown','impassable','stuck','tow','road failure'], articles: ['local:59'] },
+  // Nondiscrimination — Master 36
+  { topics: ['discrimination','race','religion','gender','protected class','nondiscrimination'], articles: ['master:36'] },
+  // Air operation — Master 40
+  { topics: ['air driver','air operation','next day air','air rate'], articles: ['master:40'] },
+  // Uniforms — Master 42 + Local 58
+  { topics: ['uniform','clothing','appearance','dress code'], articles: ['master:42','local:58'] },
+  // Pay period — Local 64
+  { topics: ['pay period','payday','paycheck','direct deposit'], articles: ['local:64'] },
+  // Change of operations — Master 38
+  { topics: ['change of operations','hub closure','transfer of work','relocation'], articles: ['master:38'] },
 ];
 
-// Keyword to article map for Q&A smart routing (same logic as analyze route)
+// Keyword to article map for Q&A smart routing
 const KEYWORD_ARTICLE_MAP = [
-  { keywords: ['bargaining unit','union work','scope','jurisdiction'], articles: ['master:1'] },
+  { keywords: ['bargaining unit','union work','scope','jurisdiction'], articles: ['master:2'] },
   { keywords: ['union membership','dues','check-off','union security'], articles: ['master:3'] },
   { keywords: ['steward','grievance processing','union business'], articles: ['master:4'] },
-  { keywords: ['past practice','maintenance of standards','local conditions'], articles: ['master:6'] },
-  { keywords: ['grievance procedure','panel','arbitration','timelines'], articles: ['master:7'] },
+  { keywords: ['past practice','maintenance of standards','local conditions'], articles: ['master:6','local:65'] },
+  { keywords: ['grievance procedure','panel','arbitration','timelines','grievance timeline'], articles: ['master:7','local:49'] },
   { keywords: ['picket line','sympathy strike','struck goods'], articles: ['master:9'] },
   { keywords: ['polygraph','lie detector','interrogation'], articles: ['master:12'] },
-  { keywords: ['workers comp','injury on duty','light duty','tast'], articles: ['master:14'] },
-  { keywords: ['leave of absence','fmla','personal leave','military leave'], articles: ['master:16'] },
-  { keywords: ['missing check','short pay','payroll shortage','48 hours','penalty pay','green check','short check','missing pay','paid wrong rate'], articles: ['master:17'] },
+  { keywords: ['workers comp','injury on duty','light duty','tast','compensation claim'], articles: ['master:14'] },
+  { keywords: ['leave of absence','fmla','personal leave','military leave'], articles: ['master:16','local:67'] },
+  { keywords: ['sick leave','sick day','sick time'], articles: ['local:68'] },
+  { keywords: ['missing check','short pay','payroll shortage','48 hours','penalty pay','green check','short check','missing pay','paid wrong rate','paid for time'], articles: ['master:17','local:52'] },
   { keywords: ['red tag','dvir','unsafe','bad brakes','fmcsa','refused to drive','heat stress','forced to pull','ordered me to drive','threatened over a red tag','mechanical issue','breakdown'], articles: ['master:18'] },
   { keywords: ['9.5 list','9.5 violation','excessive dispatch','over 9.5','triple time','3x pay'], articles: ['master:37'] },
   { keywords: ['harassment','harassed','intimidated','coerced','over-supervised','hostile','screaming','yelling','cursing','threatened','dignity','retaliation'], articles: ['master:37'] },
-  { keywords: ['foreign power','vendor trailer','outside truck','contractor','coyote','rail trailer'], articles: ['master:26','master:32'] },
-  { keywords: ['pension','health insurance','medical benefits','welfare fund'], articles: ['master:34'] },
-  { keywords: ['drug testing','dot physical','random test','sap program','discrimination'], articles: ['master:35'] },
-  { keywords: ['sleeper team','sleeper','team run','mileage rate','layover pay','under 550','550 miles'], articles: ['master:43'] },
-  { keywords: ['bypass','bypassed','junior driver','less senior','seniority list','run given away'], articles: ['local:48'] },
+  { keywords: ['discharge','suspension','fired','termination','warning letter','discipline'], articles: ['local:50'] },
+  { keywords: ['foreign power','vendor trailer','outside truck','contractor','coyote','rail trailer'], articles: ['master:26','master:32','local:66'] },
+  { keywords: ['pension','health insurance','medical benefits','welfare fund','health and welfare'], articles: ['master:34','local:61'] },
+  { keywords: ['drug testing','dot physical','random test','sap program'], articles: ['master:35'] },
+  { keywords: ['discrimination','nondiscrimination','race','religion','gender'], articles: ['master:36'] },
+  { keywords: ['sleeper team','sleeper','team run','mileage rate','layover pay','under 550','550 miles','premium service'], articles: ['master:43'] },
+  { keywords: ['bypass','bypassed','junior driver','less senior','seniority list','run given away'], articles: ['local:46','local:47','local:48'] },
   { keywords: ['worked through lunch','no meal period','skipped break','forced break','meal period','missed lunch'], articles: ['local:51','master:17'] },
-  { keywords: ['sent home early','cut short','guarantee','8 hours','minimum hours','reported for work','daily guarantee'], articles: ['local:60','master:22'] },
-  { keywords: ['raise','wage increase','pay increase','gwi','general wage','next raise','when do i get paid more'], articles: ['master:41','local:60'] },
-  { keywords: ['part time','part-time','hub pay','preload pay'], articles: ['master:22'] },
+  { keywords: ['sent home early','cut short','guarantee','8 hours','minimum hours','reported for work','daily guarantee','wages and hours'], articles: ['local:53','master:22'] },
+  { keywords: ['raise','wage increase','pay increase','gwi','general wage','next raise','when do i get paid more','wage rate'], articles: ['master:41','local:53'] },
+  { keywords: ['part time','part-time','hub pay','preload pay','part time employee'], articles: ['master:22','local:63'] },
   { keywords: ['cola','cost of living','cost-of-living'], articles: ['master:33'] },
+  { keywords: ['holiday','paid holiday','christmas','thanksgiving','labor day'], articles: ['local:54'] },
+  { keywords: ['vacation','vacation selection','personal day','floating holiday'], articles: ['local:55'] },
+  { keywords: ['uniform','clothing','dress code','appearance'], articles: ['master:42','local:58'] },
+  { keywords: ['breakdown','impassable','stuck','tow'], articles: ['local:59'] },
+  { keywords: ['air driver','air operation','next day air'], articles: ['master:40'] },
+  { keywords: ['pay period','payday','paycheck'], articles: ['local:64'] },
+  { keywords: ['change of operations','hub closure','transfer of work'], articles: ['master:38'] },
 ];
 
 // Compute today's date context for the AI
