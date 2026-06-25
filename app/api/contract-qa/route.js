@@ -138,57 +138,44 @@ const KEYWORD_ARTICLE_MAP = [
 ];
 
 // Compute today's date context for the AI
+// Pay rates and raise amounts come from the contract text — only dates/timing are computed here
 function getTodayContext() {
   const today = new Date();
   const todayStr = today.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-  // Raise schedule
-  const raises = [
-    { year: 2023, date: new Date('2023-08-01'), amount: '$2.75', applied: true },
-    { year: 2024, date: new Date('2024-08-01'), amount: '$0.75', applied: true },
-    { year: 2025, date: new Date('2025-08-01'), amount: '$0.75', applied: true },
-    { year: 2026, date: new Date('2026-08-01'), amount: '$1.00', applied: false },
-    { year: 2027, date: new Date('2027-08-01'), amount: '$2.25', applied: false },
+  const raiseDates = [
+    { year: 2023, date: new Date('2023-08-01') },
+    { year: 2024, date: new Date('2024-08-01') },
+    { year: 2025, date: new Date('2025-08-01') },
+    { year: 2026, date: new Date('2026-08-01') },
+    { year: 2027, date: new Date('2027-08-01') },
   ];
 
-  // Mark which raises have actually been applied based on today
-  raises.forEach(r => {
-    r.applied = today >= r.date;
-    const diffMs = r.date - today;
-    r.daysUntil = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-  });
+  const appliedYears = raiseDates.filter(r => today >= r.date).map(r => r.year);
+  const upcoming = raiseDates.filter(r => today < r.date);
+  const nextRaise = upcoming[0] || null;
 
-  const appliedRaises = raises.filter(r => r.applied);
-  const upcomingRaises = raises.filter(r => !r.applied);
-  const nextRaise = upcomingRaises[0] || null;
-
-  let raiseContext = `RAISES ALREADY APPLIED AS OF TODAY:\n`;
-  appliedRaises.forEach(r => {
-    raiseContext += `  - August 1, ${r.year}: ${r.amount}/hr (already received)\n`;
-  });
+  let raiseContext = `RAISE DATES — amounts are in the contract text (Article 41 / Local Article 53):\n`;
+  raiseContext += `  - Raises already effective: August 1 of ${appliedYears.join(', ')}\n`;
 
   if (nextRaise) {
-    raiseContext += `\nNEXT UPCOMING RAISE:\n`;
-    raiseContext += `  - August 1, ${nextRaise.year}: ${nextRaise.amount}/hr`;
-    if (nextRaise.daysUntil > 0) {
-      raiseContext += ` — ${nextRaise.daysUntil} days from today`;
+    const daysUntil = Math.ceil((nextRaise.date - today) / (1000 * 60 * 60 * 24));
+    raiseContext += `  - Next raise date: August 1, ${nextRaise.year}`;
+    if (daysUntil > 0) {
+      raiseContext += ` — ${daysUntil} days from today`;
     } else {
       raiseContext += ` — effective today or recently passed`;
     }
     raiseContext += `\n`;
-  }
-
-  if (upcomingRaises.length > 1) {
-    raiseContext += `\nFUTURE RAISES AFTER THAT:\n`;
-    upcomingRaises.slice(1).forEach(r => {
-      raiseContext += `  - August 1, ${r.year}: ${r.amount}/hr\n`;
-    });
+    if (upcoming.length > 1) {
+      raiseContext += `  - Future raise dates: ${upcoming.slice(1).map(r => `August 1, ${r.year}`).join('; ')}\n`;
+    }
   }
 
   return `TODAY'S DATE: ${todayStr}
 CONTRACT PERIOD: August 1, 2023 through July 31, 2028
 ${raiseContext}
-IMPORTANT: Always answer as of today's date (${todayStr}). When discussing raises, benefits, or timelines, tell the member what applies RIGHT NOW and what's coming next — not what was true at the start of the contract. If they ask "when is my next raise," calculate from today.`;
+IMPORTANT: Always answer as of today's date (${todayStr}). For pay rates and raise amounts, use ONLY what is written in the contract text provided — do not guess or use general knowledge. For timing questions, calculate from today's date above.`;
 }
 
 function extractArticleSection(text, articleNum, maxChars = 10000) {
