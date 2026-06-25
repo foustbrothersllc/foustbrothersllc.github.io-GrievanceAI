@@ -17,7 +17,6 @@ export default function ContractQA() {
   const [spellcheckEnabled, setSpellcheckEnabled] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
-  const [showClassInfo, setShowClassInfo] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -123,68 +122,6 @@ export default function ContractQA() {
         <div className="bg-gray-900 border-2 border-ups-brown rounded-lg p-6 mb-6">
           <h2 className="text-2xl font-bold text-ups-gold mb-1">📋 Contract Q&amp;A</h2>
           <p className="text-gray-400 text-sm">Ask anything about your contract — or say "show me Article 51" to read the contract directly.</p>
-        </div>
-
-        {/* Classification Info Panel */}
-        <div className="bg-gray-900 border-2 border-ups-brown rounded-lg mb-6 overflow-hidden">
-          <button
-            onClick={() => setShowClassInfo(!showClassInfo)}
-            className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-800 transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <span className="text-xl">ℹ️</span>
-              <div>
-                <p className="text-ups-gold font-bold text-sm">Not sure which contract covers you?</p>
-                <p className="text-gray-400 text-xs">Tap to see the difference between classifications</p>
-              </div>
-            </div>
-            <span className="text-ups-gold text-xl">{showClassInfo ? '▲' : '▼'}</span>
-          </button>
-
-          {showClassInfo && (
-            <div className="px-6 pb-6 border-t border-ups-brown">
-              <p className="text-gray-400 text-xs mt-4 mb-4">Just ask your question in plain English — you don't need to select anything. But if you're not sure what rules apply to you, here's the quick breakdown:</p>
-
-              <div className="space-y-3">
-                <div className="bg-gray-800 rounded-lg p-4 border-l-4 border-ups-gold">
-                  <p className="text-ups-gold font-bold text-sm mb-1">🚛 Feeder Driver / Sleeper Team</p>
-                  <p className="text-gray-300 text-xs">You drive tractor-trailers between hubs or on over-the-road runs. You're covered by the Atlantic Area Supplement for your daily guarantee (8 hrs), meal period, and bid rights. Sleeper teams have additional mileage and split-pay rules under Article 43.</p>
-                </div>
-
-                <div className="bg-gray-800 rounded-lg p-4 border-l-4 border-yellow-500">
-                  <p className="text-ups-gold font-bold text-sm mb-1">📦 Package Car Driver</p>
-                  <p className="text-gray-300 text-xs">You deliver and pick up packages on a daily route. You have an 8-hour daily guarantee, 9.5 overtime protections (if opted in), and route bid rights. Your harassment and dignity rights come from Article 37 of the National Master.</p>
-                </div>
-
-                <div className="bg-gray-800 rounded-lg p-4 border-l-4 border-blue-500">
-                  <p className="text-ups-gold font-bold text-sm mb-1">🔧 Mechanic</p>
-                  <p className="text-gray-300 text-xs">You maintain and repair UPS vehicles or equipment. Your pay rates, apprenticeship rules, and tool allowances are covered under the local Maintenance articles. Journeyman, Automotive Helper, and Maintenance Handyman rates are all different — ask specifically about your sub-classification.</p>
-                </div>
-
-                <div className="bg-gray-800 rounded-lg p-4 border-l-4 border-orange-500">
-                  <p className="text-ups-gold font-bold text-sm mb-1">📡 Specialist</p>
-                  <p className="text-gray-300 text-xs">Specialists are operational support employees — typically working in dispatch, yard control, inbounding, outbounding, or similar hub coordination roles. You are a full-time bargaining unit employee with an 8-hour daily guarantee. Your seniority, bid rights, and discipline protections follow the Atlantic Area Supplement.</p>
-                </div>
-
-                <div className="bg-gray-800 rounded-lg p-4 border-l-4 border-green-500">
-                  <p className="text-ups-gold font-bold text-sm mb-1">🔄 Combo Worker (22.4 / Inside-Outside)</p>
-                  <p className="text-gray-300 text-xs">You work a split shift combining inside hub work and driving. You have an 8-hour daily guarantee and are covered under Article 22 of the National Master for work preservation. Your rights differ from a regular package car driver — especially on overtime and bid priority.</p>
-                </div>
-
-                <div className="bg-gray-800 rounded-lg p-4 border-l-4 border-purple-500">
-                  <p className="text-ups-gold font-bold text-sm mb-1">📬 Part-Time (Hub / Preload / Air Driver)</p>
-                  <p className="text-gray-300 text-xs">You work a single sort or shift inside the building, or drive air packages. Your daily guarantee is 3.5 hours under Article 22 of the National Master. Part-time air drivers have a separate pay progression and slightly different guarantee rules than hub workers.</p>
-                </div>
-
-                <div className="bg-gray-800 rounded-lg p-4 border-l-4 border-gray-500">
-                  <p className="text-ups-gold font-bold text-sm mb-1">✈️ Full-Time Air Driver</p>
-                  <p className="text-gray-300 text-xs">You drive an air route full-time (typically Next Day Air or airport shuttle). You have an 8-hour daily and 40-hour weekly guarantee. Your pay progression and top rate are separate from ground package car drivers.</p>
-                </div>
-              </div>
-
-              <p className="text-gray-500 text-xs mt-4">💡 Tip: Just mention your job in your question — e.g. "I'm a feeder driver and..." — and the AI will apply the right contract rules automatically.</p>
-            </div>
-          )}
         </div>
 
         {error && <div className="bg-red-900 text-red-100 p-4 rounded mb-6 text-sm">{error}</div>}
