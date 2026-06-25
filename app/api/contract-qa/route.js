@@ -179,32 +179,63 @@ IMPORTANT: Always answer as of today's date (${todayStr}). For pay rates and rai
 }
 
 function extractArticleSection(text, articleNum, maxChars = 10000) {
-  // Contract headers use em dash: "ARTICLE 51—MEAL PERIOD"
-  // Match article number followed by anything that is not another digit
+  // We need to find the actual ARTICLE XX header, not a cross-reference like "Article 41, Section 2"
+  // Standalone headers are always uppercase: "ARTICLE 41." or "ARTICLE 41—" or "ARTICLE 41\n"
+  const upperText = text.toUpperCase();
   const searchStr = `ARTICLE ${articleNum}`;
-  const idx = text.toUpperCase().indexOf(searchStr);
   
-  if (idx === -1) return null;
+  let start = -1;
+  let searchFrom = 0;
   
-  // Make sure the character after the number is not another digit (avoid matching 51 in 510)
-  const charAfter = text[idx + searchStr.length];
-  if (charAfter && /\d/.test(charAfter)) return null;
-
-  const start = idx;
-
-  // Find the next ARTICLE header
-  let end = text.length;
-  let searchFrom = start + searchStr.length + 1;
-  while (searchFrom < text.length) {
-    const nextIdx = text.toUpperCase().indexOf('ARTICLE ', searchFrom);
-    if (nextIdx === -1) break;
-    // Make sure it's actually a new article (followed by a digit)
-    const afterArticle = text[nextIdx + 8];
-    if (afterArticle && /\d/.test(afterArticle) && nextIdx > start + 50) {
-      end = nextIdx;
+  // Find the first occurrence that looks like a standalone header (all caps followed by . — or newline)
+  while (searchFrom < upperText.length) {
+    const idx = upperText.indexOf(searchStr, searchFrom);
+    if (idx === -1) break;
+    
+    const charAfter = upperText[idx + searchStr.length];
+    // Must not be followed by another digit (avoid matching 41 in 410)
+    if (charAfter && /\d/.test(charAfter)) {
+      searchFrom = idx + 1;
+      continue;
+    }
+    
+    // Check if this is an uppercase standalone header (not a cross-reference mid-sentence)
+    // Look at the character before — if it's a letter, it's likely mid-sentence
+    const charBefore = idx > 0 ? text[idx - 1] : '\n';
+    if (charBefore !== '\n' && charBefore !== ' ' && charBefore !== '-') {
+      searchFrom = idx + 1;
+      continue;
+    }
+    
+    // Check if the word "ARTICLE" is uppercase in the original text (standalone headers are uppercase)
+    const originalSlice = text.slice(idx, idx + searchStr.length);
+    if (originalSlice.toUpperCase() === originalSlice && originalSlice === originalSlice.toUpperCase()) {
+      // It's uppercase — this is a standalone header
+      start = idx;
       break;
     }
-    searchFrom = nextIdx + 1;
+    
+    searchFrom = idx + 1;
+  }
+
+  if (start === -1) return null;
+
+  // Find the next standalone ARTICLE header
+  let end = text.length;
+  let searchFrom2 = start + searchStr.length + 1;
+  while (searchFrom2 < upperText.length) {
+    const nextIdx = upperText.indexOf('ARTICLE ', searchFrom2);
+    if (nextIdx === -1) break;
+    const afterArticle = upperText[nextIdx + 8];
+    if (afterArticle && /\d/.test(afterArticle) && nextIdx > start + 50) {
+      // Check it's an uppercase standalone header
+      const origSlice = text.slice(nextIdx, nextIdx + 8);
+      if (origSlice === 'ARTICLE ') {
+        end = nextIdx;
+        break;
+      }
+    }
+    searchFrom2 = nextIdx + 1;
   }
 
   return text.slice(start, Math.min(end, start + maxChars)).trim();
